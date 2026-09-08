@@ -1,0 +1,40 @@
+﻿@page
+@model FERRETERIA__Joel.Pages.ProductosModel
+@{
+}
+
+<h1>Lista de Productos</h1>
+
+<p>@Model.Mensaje</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>IdCategoria</th>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Marca</th>
+            <th>UnidadMedida</th>
+            <th>PrecioVenta</th>
+            <th>FechaRegistro</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListProductos)
+        {
+            <tr>
+                <td>@item.IdCategoria</td>
+                <td>@item.Codigo</td>
+                <td>@item.Nombre</td>
+                <td>@item.Descripcion</td>
+                <td>@item.Marca</td>
+                <td>@item.UnidadMedida</td>
+                <td>@item.PrecioVenta</td>
+                <td>@item.FechaRegistro</td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
