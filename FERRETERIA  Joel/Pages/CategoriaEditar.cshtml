@@ -44,6 +44,16 @@
             </div>
 
             <div class="fj-form-field fj-form-field--full">
+                <label class="fj-form-label" asp-for="CategoriaEdit.IdEmpleadoResponsable">Empleado responsable</label>
+                <select class="fj-input fj-select" asp-for="CategoriaEdit.IdEmpleadoResponsable">
+                    @foreach (var empleado in Model.Empleados)
+                    {
+                        <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="fj-form-field fj-form-field--full">
                 <label class="fj-form-label" asp-for="CategoriaEdit.Estado">Estado</label>
                 <select class="fj-input fj-select" asp-for="CategoriaEdit.Estado">
                     <option value="1">Activo</option>

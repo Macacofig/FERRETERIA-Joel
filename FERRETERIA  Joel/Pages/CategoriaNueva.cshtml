@@ -25,8 +25,6 @@
     }
 
     <form method="post" class="fj-card fj-form">
-        <input type="hidden" asp-for="NuevaCategoria.IdEmpleadoResponsable" />
-
         <div class="fj-form-grid">
             <div class="fj-form-field">
                 <label class="fj-form-label" asp-for="NuevaCategoria.Codigo">Código</label>
@@ -41,6 +39,17 @@
             <div class="fj-form-field fj-form-field--full">
                 <label class="fj-form-label" asp-for="NuevaCategoria.Descripcion">Descripción</label>
                 <textarea class="fj-input fj-input-area" asp-for="NuevaCategoria.Descripcion" rows="3" maxlength="255" placeholder="Detalle opcional de la categoría..."></textarea>
+            </div>
+
+            <div class="fj-form-field fj-form-field--full">
+                <label class="fj-form-label" asp-for="NuevaCategoria.IdEmpleadoResponsable">Empleado responsable</label>
+                <select class="fj-input fj-select" asp-for="NuevaCategoria.IdEmpleadoResponsable">
+                    <option value="">-- Seleccione --</option>
+                    @foreach (var empleado in Model.Empleados)
+                    {
+                        <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
+                    }
+                </select>
             </div>
 
             <div class="fj-form-field fj-form-field--full">
