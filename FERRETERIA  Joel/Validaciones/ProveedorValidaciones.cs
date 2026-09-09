@@ -27,13 +27,18 @@
             return !string.IsNullOrEmpty(telefono) && telefono.Length <= 30;
         }
 
-        public bool EsCorreoValido(string correoElectronico)
+        public bool EsCorreoValido(string? correoElectronico)
         {
             if(string.IsNullOrEmpty(correoElectronico))
             {
                 return true;
             }
             return correoElectronico.Contains("@");
+        }
+
+        public bool EsEmpleadoValido(short idEmpleadoResponsable)
+        {
+            return idEmpleadoResponsable > 0;
         }
 
     } 
