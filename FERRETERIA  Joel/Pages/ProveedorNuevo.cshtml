@@ -1,0 +1,155 @@
+﻿@page
+@model FERRETERIA__Joel.Pages.ProveedorNuevoModel
+@{
+}
+
+
+<h1>Nuevo Proveedor</h1>
+
+
+@if (Model.Errores.Any())
+{
+    <div class="alert alert-danger">
+
+        <ul class="mb-0">
+
+            @foreach (var error in Model.Errores)
+            {
+                <li>@error</li>
+            }
+
+        </ul>
+
+    </div>
+}
+
+
+<form method="post">
+
+
+    <input type="hidden"
+           asp-for="Proveedor.IdEmpleadoResponsable"
+           value="1" />
+
+
+    <div class="mb-3">
+
+        <label asp-for="Proveedor.RazonSocial"
+               class="form-label">
+            Razón Social
+        </label>
+
+        <input asp-for="Proveedor.RazonSocial"
+               class="form-control"
+               placeholder="Ingrese razón social" />
+
+    </div>
+
+
+
+    <div class="mb-3">
+
+        <label asp-for="Proveedor.NombreComercial"
+               class="form-label">
+            Nombre Comercial
+        </label>
+
+        <input asp-for="Proveedor.NombreComercial"
+               class="form-control"
+               placeholder="Ingrese nombre comercial" />
+
+    </div>
+
+
+
+    <div class="mb-3">
+
+        <label asp-for="Proveedor.Nit"
+               class="form-label">
+            NIT
+        </label>
+
+        <input asp-for="Proveedor.Nit"
+               class="form-control"
+               placeholder="Ingrese NIT" />
+
+    </div>
+
+
+
+    <div class="mb-3">
+
+        <label asp-for="Proveedor.NombreContacto"
+               class="form-label">
+            Nombre Contacto
+        </label>
+
+        <input asp-for="Proveedor.NombreContacto"
+               class="form-control"
+               placeholder="Ingrese nombre del contacto" />
+
+    </div>
+
+
+
+    <div class="mb-3">
+
+        <label asp-for="Proveedor.Telefono"
+               class="form-label">
+            Teléfono
+        </label>
+
+        <input asp-for="Proveedor.Telefono"
+               class="form-control"
+               placeholder="Ingrese teléfono" />
+
+    </div>
+
+
+
+    <div class="mb-3">
+
+        <label asp-for="Proveedor.CorreoElectronico"
+               class="form-label">
+            Correo Electrónico
+        </label>
+
+        <input asp-for="Proveedor.CorreoElectronico"
+               class="form-control"
+               placeholder="correo@ejemplo.com"
+               type="email" />
+
+    </div>
+
+
+
+    <div class="mb-3">
+
+        <label asp-for="Proveedor.Direccion"
+               class="form-label">
+            Dirección
+        </label>
+
+        <textarea asp-for="Proveedor.Direccion"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Ingrese dirección">
+        </textarea>
+
+    </div>
+
+
+
+    <button type="submit"
+            class="btn btn-primary">
+        Guardar
+    </button>
+
+
+    <a asp-page="Proveedores"
+       class="btn btn-secondary">
+        Cancelar
+    </a>
+
+
+</form>
