@@ -5,8 +5,6 @@ using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
 
-
-
 namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaNuevaModel : PageModel
@@ -41,17 +39,17 @@ namespace FERRETERIA__Joel.Pages
             try
             {
                 _repository.Insertar(NuevaCategoria);
-                TempData["Mensaje"] = "Categoría registrada con éxito.";
+                TempData["Mensaje"] = "CategorÃ­a registrada con Ã©xito.";
                 return RedirectToPage("Categorias");
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                MensajeError = $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.";
+                MensajeError = $"El cÃ³digo '{NuevaCategoria.Codigo}' ya existe en el sistema.";
                 return Page();
             }
             catch (Exception ex)
             {
-                MensajeError = "Error al registrar la categoría: " + ex.Message;
+                MensajeError = "Error al registrar la categorÃ­a: " + ex.Message;
                 return Page();
             }
         }
