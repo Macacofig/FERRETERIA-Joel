@@ -14,7 +14,7 @@
 
         public bool EsNitValido(string nit)
         {
-            return !string.IsNullOrEmpty(nit) && nit.Length == 30;
+            return (nit != "") && nit.Length < 30;
         }
 
         public bool EsNombreContactoValido(string nombreContacto)
