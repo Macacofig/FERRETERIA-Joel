@@ -34,7 +34,6 @@
 
     <form method="post" class="fj-card fj-form">
         <input type="hidden" asp-for="Proveedor.IdProveedor" />
-        <input type="hidden" asp-for="Proveedor.IdEmpleadoResponsable" value="1" />
 
         <div class="fj-form-grid">
             <div class="fj-form-field">
@@ -65,6 +64,16 @@
             <div class="fj-form-field">
                 <label class="fj-form-label" asp-for="Proveedor.CorreoElectronico">Correo Electrónico</label>
                 <input class="fj-input" asp-for="Proveedor.CorreoElectronico" type="email" />
+            </div>
+
+            <div class="fj-form-field fj-form-field--full">
+                <label class="fj-form-label" asp-for="Proveedor.IdEmpleadoResponsable">Empleado responsable</label>
+                <select class="fj-input fj-select" asp-for="Proveedor.IdEmpleadoResponsable">
+                    @foreach (var empleado in Model.Empleados)
+                    {
+                        <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
+                    }
+                </select>
             </div>
 
             <div class="fj-form-field fj-form-field--full">
