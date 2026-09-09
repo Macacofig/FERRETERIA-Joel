@@ -17,5 +17,8 @@ namespace FERRETERIA__Joel.Models
         public DateTime FechaRegistro { get; set; }
         public DateTime? FechaActualizacion { get; set; }
         public short IdEmpleadoResponsable { get; set; }
+
+        // Solo para mostrar en la lista (viene del JOIN con categoria)
+        public string? NombreCategoria { get; set; }
     }
 }

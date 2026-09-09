@@ -5,36 +5,43 @@
 
 <h1>Lista de Productos</h1>
 
-<p>@Model.Mensaje</p>
+<a class="btn btn-primary mb-3" asp-page="ProductoNuevo">+ Agregar Producto</a>
+
+<p class="text-danger">@Model.Mensaje</p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>IdCategoria</th>
             <th>Codigo</th>
             <th>Nombre</th>
+            <th>Categoria</th>
             <th>Descripcion</th>
             <th>Marca</th>
             <th>UnidadMedida</th>
             <th>PrecioVenta</th>
             <th>FechaRegistro</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.ListProductos)
         {
             <tr>
-                <td>@item.IdCategoria</td>
                 <td>@item.Codigo</td>
                 <td>@item.Nombre</td>
+                <td>@item.NombreCategoria</td>
                 <td>@item.Descripcion</td>
                 <td>@item.Marca</td>
                 <td>@item.UnidadMedida</td>
                 <td>@item.PrecioVenta</td>
                 <td>@item.FechaRegistro</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-secondary" asp-page="ProductoEditar" asp-route-id="@item.IdProducto">Editar</a>
+                    <form method="post" asp-page-handler="Eliminar" asp-route-idProducto="@item.IdProducto" style="display:inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    </form>
+                </td>
             </tr>
         }
-
     </tbody>
-
 </table>
