@@ -27,7 +27,7 @@ namespace FERRETERIA__Joel.Pages
             var categoria = _repository.ObtenerPorId(id);
             if (categoria == null)
             {
-                TempData["Mensaje"] = "Categoría no encontrada.";
+                TempData["Mensaje"] = "CategorÃ­a no encontrada.";
                 return RedirectToPage("Categorias");
             }
 
@@ -39,19 +39,19 @@ namespace FERRETERIA__Joel.Pages
         {
             if (!_validador.EsValida(CategoriaEdit))
             {
-                MensajeError = "Verifique los datos: el código y nombre son obligatorios y deben respetar el límite de caracteres.";
+                MensajeError = "Verifique los datos: el cÃ³digo y nombre son obligatorios y deben respetar el lÃ­mite de caracteres.";
                 return Page();
             }
 
             try
             {
                 _repository.Actualizar(CategoriaEdit);
-                TempData["Mensaje"] = "Categoría actualizada con éxito.";
+                TempData["Mensaje"] = "CategorÃ­a actualizada con Ã©xito.";
                 return RedirectToPage("Categorias");
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                MensajeError = $"El código '{CategoriaEdit.Codigo}' ya pertenece a otra categoría.";
+                MensajeError = $"El cÃ³digo '{CategoriaEdit.Codigo}' ya pertenece a otra categorÃ­a.";
                 return Page();
             }
             catch (Exception ex)
