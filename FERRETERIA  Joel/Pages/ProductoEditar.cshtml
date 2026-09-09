@@ -1,0 +1,65 @@
+@page "{id:int}"
+@model FERRETERIA__Joel.Pages.ProductoEditarModel
+@{
+}
+
+<h1>Editar Producto</h1>
+
+@if (Model.Errores.Any())
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var error in Model.Errores)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<form method="post" class="form-control">
+    <input type="hidden" asp-for="Producto.IdProducto" />
+
+    <label asp-for="Producto.Codigo"></label>
+    <input asp-for="Producto.Codigo" class="form-control" />
+
+    <label asp-for="Producto.Nombre"></label>
+    <input asp-for="Producto.Nombre" class="form-control" />
+
+    <label asp-for="Producto.Descripcion"></label>
+    <textarea asp-for="Producto.Descripcion" class="form-control"></textarea>
+
+    <label asp-for="Producto.Marca"></label>
+    <input asp-for="Producto.Marca" class="form-control" />
+
+    <label asp-for="Producto.IdCategoria"></label>
+    <select asp-for="Producto.IdCategoria" class="form-control">
+        @foreach (var categoria in Model.Categorias)
+        {
+            <option value="@categoria.IdCategoria">@categoria.Nombre</option>
+        }
+    </select>
+
+    <label asp-for="Producto.UnidadMedida"></label>
+    <select asp-for="Producto.UnidadMedida" class="form-control">
+        @foreach (var unidad in FERRETERIA__Joel.Pages.ProductoNuevoModel.UnidadesMedida)
+        {
+            <option value="@unidad">@unidad</option>
+        }
+    </select>
+
+    <label asp-for="Producto.PrecioVenta"></label>
+    <input asp-for="Producto.PrecioVenta" class="form-control" type="number" step="0.01" />
+
+    <label asp-for="Producto.IdEmpleadoResponsable"></label>
+    <select asp-for="Producto.IdEmpleadoResponsable" class="form-control">
+        @foreach (var empleado in Model.Empleados)
+        {
+            <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
+        }
+    </select>
+
+    <br />
+    <button type="submit" class="btn-primary btn-lg">Actualizar</button>
+    <a asp-page="Productos" class="btn-secondary btn-lg">Cancelar</a>
+</form>
