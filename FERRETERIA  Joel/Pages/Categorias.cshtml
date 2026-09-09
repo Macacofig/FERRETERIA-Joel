@@ -1,68 +1,137 @@
 @page
 @model FERRETERIA__Joel.Pages.CategoriasModel
 @{
-    ViewData["Title"] = "Categor�as";
+    ViewData["Title"] = "Categorías";
+    ViewData["ActiveMenu"] = "Categorias";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/productos.css" asp-append-version="true" />
 }
 
-<h1>Lista de Categor�as</h1>
+<div class="fj-container fj-page-products">
 
-<a class="btn btn-primary mb-3" asp-page="CategoriaNueva">+ Agregar Categor�a</a>
+    <section class="fj-page-head">
+        <p class="fj-eyebrow">Módulo · Catálogo</p>
+        <h1>Categorías</h1>
+        <p class="fj-page-sub">Clasificación por familias de productos.</p>
+    </section>
 
-@if (TempData["Mensaje"] != null)
-{
-<div class="alert alert-success">
-    @TempData["Mensaje"]
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="fj-alert fj-alert-success" role="status">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+            <span>@TempData["Mensaje"]</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="fj-alert" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+            <span>No se pudo conectar a la base de datos: @Model.Mensaje</span>
+        </div>
+    }
+
+    <section class="fj-toolbar fj-toolbar-simple">
+        <p class="fj-toolbar-count">
+            <strong>@Model.ListCategorias.Count</strong>
+            @(Model.ListCategorias.Count == 1 ? "categoría" : "categorías") registradas
+        </p>
+
+        <div class="fj-toolbar-actions">
+            <a class="fj-btn fj-btn-primary" asp-page="CategoriaNueva">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                Agregar categoría
+            </a>
+        </div>
+    </section>
+
+    <section class="fj-card fj-table-card" aria-label="Listado de categorías">
+        <div class="fj-table-wrap">
+            <table class="fj-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Fecha de Registro</th>
+                        <th scope="col" class="fj-td-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ListCategorias.Count == 0 && string.IsNullOrEmpty(Model.Mensaje))
+                    {
+                        <tr>
+                            <td colspan="6" class="fj-table-vacio">
+                                <div class="fj-empty">
+                                    <span class="fj-empty-ico" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>
+                                    </span>
+                                    <p>Sin categorías registradas</p>
+                                    <span>Cuando existan categorías en el sistema, aparecerán aquí.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else if (Model.ListCategorias.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="fj-table-vacio">
+                                <div class="fj-empty">
+                                    <span class="fj-empty-ico" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                                    </span>
+                                    <p>No se pudo cargar el listado</p>
+                                    <span>Revisa la conexión a la base de datos e inténtalo nuevamente.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                    @foreach (var item in Model.ListCategorias)
+                    {
+                        <tr>
+                            <td class="fj-td-codigo"><span class="fj-codigo">@item.Codigo</span></td>
+                            <td>
+                                <span class="fj-nombre">@item.Nombre</span>
+                            </td>
+                            <td class="fj-td-secundario">
+                                @if (!string.IsNullOrEmpty(item.Descripcion))
+                                {
+                                    <span class="fj-ellipsis" title="@item.Descripcion">@item.Descripcion</span>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
+                            <td class="fj-td-estado">
+                                <span class="fj-pill" style="--pill: var(@(item.Estado == 1 ? "--success" : "--texto-ter"));">@(item.Estado == 1 ? "Activo" : "Inactivo")</span>
+                            </td>
+                            <td class="fj-td-secundario">@item.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="fj-td-acciones">
+                                <div class="fj-acciones">
+                                    <a class="fj-btn fj-btn-edit" asp-page="CategoriaEditar" asp-route-id="@item.IdCategoria">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                                        Editar
+                                    </a>
+                                    @if (item.Estado == 1)
+                                    {
+                                        <form method="post" asp-page-handler="Eliminar" asp-route-id="@item.IdCategoria" class="fj-inline-form">
+                                            <button type="submit" class="fj-btn fj-btn-sm fj-btn-danger">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                                Desactivar
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 </div>
-}
-
-@if (!string.IsNullOrEmpty(Model.Mensaje))
-{
-<div class="alert alert-danger">@Model.Mensaje</div>
-}
-
-<table class="table table-striped table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>C�digo</th>
-            <th>Nombre</th>
-            <th>Descripci�n</th>
-            <th>Estado</th>
-            <th>Fecha de Registro</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.ListCategorias)
-        {
-        <tr>
-            <td>@item.IdCategoria</td>
-            <td>@item.Codigo</td>
-            <td>@item.Nombre</td>
-            <td>@item.Descripcion</td>
-            <td>
-                @if (item.Estado == 1)
-                    {
-                <span class="badge bg-success">Activo</span>
-                    }
-                    else
-                    {
-                <span class="badge bg-secondary">Inactivo</span>
-                    }
-            </td>
-            <td>@item.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
-            <td>
-                <div class="d-flex gap-2">
-                    <a asp-page="CategoriaEditar" asp-route-id="@item.IdCategoria" class="btn btn-sm btn-outline-warning">Editar</a>
-                    @if (item.Estado == 1)
-                        {
-                    <form method="post" asp-page-handler="Eliminar" asp-route-id="@item.IdCategoria" onsubmit="return confirm('�Desea desactivar esta categor�a?');">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
-                    </form>
-                        }
-                </div>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
