@@ -1,0 +1,94 @@
+﻿@page
+@model FERRETERIA__Joel.Pages.ProveedoresModel
+@{
+}
+
+
+<h1>Lista de Proveedores</h1>
+
+<a class="btn btn-primary mb-3" asp-page="ProveedorNuevo">Agregar Proveedor+</a>
+
+@if (TempData["Mensaje"] != null)
+{
+	<div class="alert alert-success">
+		@TempData["Mensaje"]
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+	<div class="alert alert-danger">
+		@Model.Mensaje
+	</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Razón Social</th>
+            <th>Nombre Comercial</th>
+            <th>NIT</th>
+            <th>Contacto</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Dirección</th>
+            <th>Fecha Registro</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.ListProveedores)
+        {
+            <tr>
+                <td>@item.RazonSocial</td>
+
+                <td>@item.NombreComercial</td>
+
+                <td>@item.Nit</td>
+
+                <td>@item.NombreContacto</td>
+
+                <td>@item.Telefono</td>
+
+                <td>@item.CorreoElectronico</td>
+
+                <td>@item.Direccion</td>
+
+                <td>@item.FechaRegistro</td>
+
+                <td>
+                    @if (item.Estado == 1)
+                    {
+                        <span class="badge bg-success">Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactivo</span>
+                    }
+                </td>
+
+                <td>
+                    <a class="btn btn-sm btn-outline-secondary"
+                       asp-page="ProveedorEditar"
+                       asp-route-id="@item.IdProveedor">
+                        Editar
+                    </a>
+
+                    <form method="post"
+                          asp-page-handler="Eliminar"
+                          asp-route-idProveedor="@item.IdProveedor"
+                          style="display:inline">
+
+                        <button type="submit"
+                                class="btn btn-sm btn-outline-danger">
+                            Eliminar
+                        </button>
+
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
