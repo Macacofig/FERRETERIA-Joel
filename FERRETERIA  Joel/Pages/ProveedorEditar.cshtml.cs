@@ -43,7 +43,6 @@ namespace FERRETERIA__Joel.Pages
 
         public IActionResult OnPost()
         {
-            Console.WriteLine("NIT recibido: " + Proveedor.Nit);
             NormalizarDatos();
             Validar();
             if (Errores.Any())
