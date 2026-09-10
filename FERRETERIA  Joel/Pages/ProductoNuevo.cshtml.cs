@@ -11,7 +11,7 @@ namespace FERRETERIA__Joel.Pages
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<ProductoNuevoModel> _logger;
-        private readonly ValidacionProducto _validacion = new();
+        private readonly ProductoValidaciones _validacion = new();
 
         [BindProperty]
         public Producto Producto { get; set; } = new();

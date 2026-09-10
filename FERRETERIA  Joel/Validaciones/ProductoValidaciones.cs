@@ -1,6 +1,6 @@
 namespace FERRETERIA__Joel.Validaciones
 {
-    internal class ValidacionProducto
+    internal class ProductoValidaciones
     {
         public bool EsCodigoValido(string codigo)
         {
@@ -12,9 +12,22 @@ namespace FERRETERIA__Joel.Validaciones
             return !string.IsNullOrWhiteSpace(nombre) && nombre.Trim().Length <= 150;
         }
 
-        public bool EsUnidadMedidaValida(string unidadMedida)
+        public bool EsDescripcionValida(string? descripcion)
         {
-            return !string.IsNullOrWhiteSpace(unidadMedida);
+            return string.IsNullOrWhiteSpace(descripcion)
+                || descripcion.Trim().Length <= 500;
+        }
+
+        public bool EsMarcaValida(string? marca)
+        {
+            return string.IsNullOrWhiteSpace(marca)
+                || marca.Trim().Length <= 100;
+        }
+
+        public bool EsUnidadMedidaValida(string? unidadMedida)
+        {
+            return !string.IsNullOrWhiteSpace(unidadMedida)
+                && unidadMedida.Trim().Length <= 30;
         }
 
         public bool EsPrecioValido(decimal precioVenta)

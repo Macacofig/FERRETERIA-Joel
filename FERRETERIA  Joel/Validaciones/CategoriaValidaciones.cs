@@ -2,26 +2,25 @@ using FERRETERIA__Joel.Models;
 
 namespace FERRETERIA__Joel.Validaciones
 {
-	public class CategoriaValidaciones
-	{
-		public bool EsCodigoValido(string codigo)
-		{
-			return !string.IsNullOrWhiteSpace(codigo) && codigo.Trim().Length <= 20;
-		}
+    public class CategoriaValidaciones
+    {
+        public bool EsCodigoValido(string? codigo)
+        {
+            return !string.IsNullOrWhiteSpace(codigo)
+                && codigo.Trim().Length <= 20;
+        }
 
-		public bool EsNombreValido(string nombre)
-		{
-			return !string.IsNullOrWhiteSpace(nombre) && nombre.Trim().Length <= 100;
-		}
+        public bool EsNombreValido(string? nombre)
+        {
+            return !string.IsNullOrWhiteSpace(nombre)
+                && nombre.Trim().Length <= 100;
+        }
 
-		public bool EsDescripcionValida(string? descripcion)
-		{
-			if (string.IsNullOrEmpty(descripcion))
-			{
-				return true;
-			}
-			return descripcion.Length <= 255;
-		}
+        public bool EsDescripcionValida(string? descripcion)
+        {
+            return string.IsNullOrWhiteSpace(descripcion)
+                || descripcion.Trim().Length <= 255;
+        }
 
 		public bool EsPorcentajeGananciaValido(decimal porcentajeGanancia)
 		{

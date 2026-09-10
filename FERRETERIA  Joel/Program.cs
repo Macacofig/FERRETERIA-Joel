@@ -7,6 +7,8 @@ builder.Services.AddRazorPages();
 
 // Inyección de dependencias para Categoría (SOLID - Inversión de dependencias)
 builder.Services.AddScoped<ICategoriaRepository, MySqlCategoriaRepository>();
+builder.Services.AddScoped<IProductoRepository, MySqlProductoRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

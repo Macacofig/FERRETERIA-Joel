@@ -1,46 +1,68 @@
-﻿namespace FERRETERIA__Joel.Validaciones
+﻿using System.Net.Mail;
+
+namespace FERRETERIA__Joel.Validaciones
 {
     public class ProveedorValidaciones
     {
-        public bool EsRazonSocialValida(string razonSocial)
+        public bool EsRazonSocialValida(string? razonSocial)
         {
-            return !string.IsNullOrEmpty(razonSocial) && razonSocial.Length <= 150;
+            return !string.IsNullOrWhiteSpace(razonSocial)
+                && razonSocial.Trim().Length <= 150;
         }
 
-        public bool EsNombreComercialValido(string nombreComercial)
+        public bool EsNombreComercialValido(string? nombreComercial)
         {
-            return !string.IsNullOrEmpty(nombreComercial) && nombreComercial.Length <= 150;
+            return !string.IsNullOrWhiteSpace(nombreComercial)
+                && nombreComercial.Trim().Length <= 150;
         }
 
-        public bool EsNitValido(string nit)
+        public bool EsNitValido(string? nit)
         {
-            return (nit != "") && nit.Length < 30;
+            return !string.IsNullOrWhiteSpace(nit)
+                && nit.Trim().Length <= 30;
         }
 
-        public bool EsNombreContactoValido(string nombreContacto)
+        public bool EsNombreContactoValido(string? nombreContacto)
         {
-            return !string.IsNullOrEmpty(nombreContacto) && nombreContacto.Length <= 150;
+            return !string.IsNullOrWhiteSpace(nombreContacto)
+                && nombreContacto.Trim().Length <= 150;
         }
 
-        public bool EsTelefonoValido(string telefono)
+        public bool EsTelefonoValido(string? telefono)
         {
-            return !string.IsNullOrEmpty(telefono) && telefono.Length <= 30;
+            return !string.IsNullOrWhiteSpace(telefono)
+                && telefono.Trim().Length <= 30;
         }
 
         public bool EsCorreoValido(string? correoElectronico)
         {
-            if(string.IsNullOrEmpty(correoElectronico))
+            if (string.IsNullOrWhiteSpace(correoElectronico))
             {
                 return true;
             }
-            return correoElectronico.Contains("@");
+
+            try
+            {
+                var correo = new MailAddress(correoElectronico);
+
+                return correo.Address == correoElectronico;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool EsDireccionValida(string? direccion)
+        {
+            return string.IsNullOrWhiteSpace(direccion)
+                || direccion.Trim().Length <= 255;
         }
 
         public bool EsEmpleadoValido(short idEmpleadoResponsable)
         {
             return idEmpleadoResponsable > 0;
         }
+    }
 
-    } 
-    
 }
