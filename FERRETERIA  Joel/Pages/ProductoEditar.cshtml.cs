@@ -158,24 +158,87 @@ namespace FERRETERIA__Joel.Pages
             Empleados = CatalogoHelper.EmpleadosActivos(connectionString);
         }
 
+        decimal ObtenerPrecioActual(int idProducto)
+        {
+            string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
+
+            const string query = @"SELECT PrecioVenta
+                           FROM producto
+                           WHERE IdProducto = @IdProducto";
+
+            using var connection = new MySqlConnection(connectionString);
+            using var command = new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@IdProducto", idProducto);
+
+            connection.Open();
+
+            return Convert.ToDecimal(command.ExecuteScalar());
+        }
+
+        void CerrarHistorico(int idProducto)
+        {
+            string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
+
+            const string query = @"UPDATE historico_precio
+                           SET FechaFinVigencia = NOW()
+                           WHERE IdProducto = @IdProducto
+                           AND FechaFinVigencia IS NULL";
+
+            using var connection = new MySqlConnection(connectionString);
+            using var command = new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@IdProducto", idProducto);
+
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+
+        void RegistrarHistorico(int idProducto)
+        {
+            string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
+
+            const string query = @"INSERT INTO historico_precio
+                            (IdProducto, Precio, FechaInicioVigencia,
+                             FechaFinVigencia, MotivoCambio, Estado,
+                             FechaRegistro, IdEmpleadoResponsable)
+                            VALUES
+                            (@IdProducto, @Precio, NOW(),
+                             NULL, 'Cambio de precio', 1,
+                             NOW(), @IdEmpleadoResponsable)";
+
+            using var connection = new MySqlConnection(connectionString);
+            using var command = new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@IdProducto", Producto.IdProducto);
+            command.Parameters.AddWithValue("@Precio", Producto.PrecioVenta);
+            command.Parameters.AddWithValue("@IdEmpleadoResponsable", Producto.IdEmpleadoResponsable);
+
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+
         void Actualizar()
         {
             string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
 
+            decimal precioAnterior = ObtenerPrecioActual(Producto.IdProducto);
+
             const string query = @"UPDATE producto SET
-                                      IdCategoria = @IdCategoria,
-                                      Codigo = @Codigo,
-                                      Nombre = @Nombre,
-                                      Descripcion = @Descripcion,
-                                      Marca = @Marca,
-                                      UnidadMedida = @UnidadMedida,
-                                      PrecioVenta = @PrecioVenta,
-                                      FechaActualizacion = NOW(),
-                                      IdEmpleadoResponsable = @IdEmpleadoResponsable
-                                   WHERE IdProducto = @IdProducto";
+                              IdCategoria = @IdCategoria,
+                              Codigo = @Codigo,
+                              Nombre = @Nombre,
+                              Descripcion = @Descripcion,
+                              Marca = @Marca,
+                              UnidadMedida = @UnidadMedida,
+                              PrecioVenta = @PrecioVenta,
+                              FechaActualizacion = NOW(),
+                              IdEmpleadoResponsable = @IdEmpleadoResponsable
+                           WHERE IdProducto = @IdProducto";
 
             using var connection = new MySqlConnection(connectionString);
             using var command = new MySqlCommand(query, connection);
+
             command.Parameters.AddWithValue("@IdCategoria", Producto.IdCategoria);
             command.Parameters.AddWithValue("@Codigo", Producto.Codigo.Trim().ToUpper());
             command.Parameters.AddWithValue("@Nombre", Producto.Nombre.Trim());
@@ -187,7 +250,18 @@ namespace FERRETERIA__Joel.Pages
             command.Parameters.AddWithValue("@IdProducto", Producto.IdProducto);
 
             connection.Open();
+
             command.ExecuteNonQuery();
+
+
+            if (precioAnterior != Producto.PrecioVenta)
+            {
+                CerrarHistorico(Producto.IdProducto);
+                RegistrarHistorico(Producto.IdProducto);
+            }
         }
+
+
+
     }
 }

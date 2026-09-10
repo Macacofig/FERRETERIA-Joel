@@ -1,0 +1,148 @@
+﻿@page "{id:int}"
+@model FERRETERIA__Joel.Pages.ProductoHistoricoPrecioModel
+@{
+    ViewData["Title"] = "Histórico de precios";
+    ViewData["ActiveMenu"] = "Productos";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/productos.css" asp-append-version="true" />
+}
+
+
+<div class="fj-container fj-page-products">
+
+
+    <section class="fj-page-head">
+        <p class="fj-eyebrow">Módulo · Catálogo</p>
+        <h1>Histórico de precios</h1>
+        <p class="fj-page-sub">
+            Cambios registrados del producto.
+        </p>
+    </section>
+
+
+
+    <section class="fj-card" style="padding:25px; margin-bottom:25px">
+
+        <h2>
+            @Model.NombreProducto
+        </h2>
+
+        <p class="fj-page-sub">
+            Historial de modificaciones de precio
+        </p>
+
+    </section>
+
+
+
+    <section class="fj-card fj-table-card">
+
+        <div class="fj-table-wrap">
+
+            <table class="fj-table">
+
+                <thead>
+                    <tr>
+                        <th>Precio</th>
+                        <th>Inicio vigencia</th>
+                        <th>Fin vigencia</th>
+                        <th>Motivo</th>
+                        <th>Responsable</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+
+                    @if (Model.Historicos.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="fj-table-vacio">
+
+                                <div class="fj-empty">
+                                    <p>No existe histórico de precios</p>
+                                    <span>
+                                        Los cambios aparecerán aquí.
+                                    </span>
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+
+
+
+                    @foreach (var item in Model.Historicos)
+                    {
+                        <tr>
+
+                            <td class="fj-td-precio">
+                                <span class="fj-precio">
+                                    @item.Precio.ToString("N2")
+                                </span>
+
+                                <span class="fj-currency">
+                                    Bs
+                                </span>
+                            </td>
+
+
+                            <td class="fj-td-secundario">
+                                @item.FechaInicioVigencia.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+
+                            <td class="fj-td-secundario">
+
+                                @if (item.FechaFinVigencia.HasValue)
+                                {
+                                    @item.FechaFinVigencia.Value.ToString("dd/MM/yyyy HH:mm")
+                                }
+                                else
+                                {
+                                    <span class="fj-status fj-status-active">
+                                        Vigente
+                                    </span>
+                                }
+
+                            </td>
+
+
+                            <td class="fj-td-secundario">
+                                @item.MotivoCambio
+                            </td>
+
+
+                            <td class="fj-td-secundario">
+                                @item.NombreEmpleadoResponsable
+                            </td>
+
+
+                        </tr>
+                    }
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+    <br>
+
+
+    <a class="fj-btn fj-btn-edit" asp-page="Productos">
+        Volver a productos
+    </a>
+
+
+</div>

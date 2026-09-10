@@ -121,14 +121,15 @@ namespace FERRETERIA__Joel.Pages
             string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
 
             const string query = @"INSERT INTO producto
-                                      (IdCategoria, Codigo, Nombre, Descripcion, Marca, UnidadMedida,
-                                       PrecioVenta, Estado, FechaRegistro, IdEmpleadoResponsable)
-                                      VALUES
-                                      (@IdCategoria, @Codigo, @Nombre, @Descripcion, @Marca, @UnidadMedida,
-                                       @PrecioVenta, 1, NOW(), @IdEmpleadoResponsable)";
+                              (IdCategoria, Codigo, Nombre, Descripcion, Marca, UnidadMedida,
+                               PrecioVenta, Estado, FechaRegistro, IdEmpleadoResponsable)
+                              VALUES
+                              (@IdCategoria, @Codigo, @Nombre, @Descripcion, @Marca, @UnidadMedida,
+                               @PrecioVenta, 1, NOW(), @IdEmpleadoResponsable)";
 
             using var connection = new MySqlConnection(connectionString);
             using var command = new MySqlCommand(query, connection);
+
             command.Parameters.AddWithValue("@IdCategoria", Producto.IdCategoria);
             command.Parameters.AddWithValue("@Codigo", Producto.Codigo.Trim().ToUpper());
             command.Parameters.AddWithValue("@Nombre", Producto.Nombre.Trim());
@@ -139,7 +140,25 @@ namespace FERRETERIA__Joel.Pages
             command.Parameters.AddWithValue("@IdEmpleadoResponsable", Producto.IdEmpleadoResponsable);
 
             connection.Open();
+
             command.ExecuteNonQuery();
+
+            int idProducto = Convert.ToInt32(command.LastInsertedId);
+
+            const string queryHistorico = @"INSERT INTO historico_precio
+                                      (IdProducto, Precio, FechaInicioVigencia, FechaFinVigencia,
+                                       MotivoCambio, Estado, FechaRegistro, IdEmpleadoResponsable)
+                                      VALUES
+                                      (@IdProducto, @Precio, NOW(), NULL,
+                                       'Precio inicial', 1, NOW(), @IdEmpleadoResponsable)";
+
+            using var commandHistorico = new MySqlCommand(queryHistorico, connection);
+
+            commandHistorico.Parameters.AddWithValue("@IdProducto", idProducto);
+            commandHistorico.Parameters.AddWithValue("@Precio", Producto.PrecioVenta);
+            commandHistorico.Parameters.AddWithValue("@IdEmpleadoResponsable", Producto.IdEmpleadoResponsable);
+
+            commandHistorico.ExecuteNonQuery();
         }
     }
 }
