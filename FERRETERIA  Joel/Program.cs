@@ -8,6 +8,8 @@ builder.Services.AddRazorPages();
 // Inyección de dependencias para Categoría (SOLID - Inversión de dependencias)
 builder.Services.AddScoped<ICategoriaRepository, MySqlCategoriaRepository>();
 builder.Services.AddScoped<IProductoRepository, MySqlProductoRepository>();
+builder.Services.AddScoped<IProveedorRepository, MySqlProveedorRepository>();
+builder.Services.AddScoped<IEmpleadoRepository, MySqlEmpleadoRepository>();
 
 var app = builder.Build();
 
