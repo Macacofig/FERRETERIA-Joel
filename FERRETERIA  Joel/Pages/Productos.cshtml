@@ -140,6 +140,14 @@
                                         Editar
                                     </a>
 
+                                    
+                                    <a class="fj-btn fj-btn-edit"
+                                       asp-page="ProductoHistoricoPrecio"
+                                       asp-route-id="@item.IdProducto">
+                                        Historial
+                                    </a>
+
+
                                     <form method="post"
                                           asp-page-handler="Eliminar"
                                           asp-route-idProducto="@item.IdProducto"
