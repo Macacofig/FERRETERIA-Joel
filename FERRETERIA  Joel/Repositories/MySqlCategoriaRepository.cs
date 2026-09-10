@@ -1,4 +1,3 @@
-using System.Data;
 using MySql.Data.MySqlClient;
 using FERRETERIA__Joel.Models;
 
@@ -15,101 +14,114 @@ namespace FERRETERIA__Joel.Repositories
 
         public List<Categoria> ObtenerTodas()
         {
-            var lista = new List<Categoria>();
-            const string query = @"SELECT IdCategoria, Codigo, Nombre, Descripcion, PorcentajeGanancia, Estado, FechaRegistro 
-                                  FROM categoria 
-                                  ORDER BY Nombre  ASC;";
+            List<Categoria> categorias = new();
 
-            using var connection = new MySqlConnection(_connectionString);
-            using var command = new MySqlCommand(query, connection);
+            const string query = @"
+                SELECT
+                    IdCategoria,
+                    Codigo,
+                    Nombre,
+                    Descripcion,
+                    PorcentajeGanancia,
+                    Estado,
+                    FechaRegistro,
+                    FechaActualizacion,
+                    IdEmpleadoResponsable
+                FROM categoria
+                ORDER BY Nombre ASC";
+
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
             connection.Open();
 
-            using var adapter = new MySqlDataAdapter(command);
-            var table = new DataTable();
-            adapter.Fill(table);
+            using MySqlDataReader reader =
+                command.ExecuteReader();
 
-            foreach (DataRow row in table.Rows)
+            while (reader.Read())
             {
-                lista.Add(new Categoria
-                {
-                    IdCategoria = Convert.ToInt16(row["IdCategoria"]),
-                    Codigo = row["Codigo"].ToString() ?? "",
-                    Nombre = row["Nombre"].ToString() ?? "",
-                    Descripcion = row["Descripcion"] != DBNull.Value ? row["Descripcion"].ToString() : "",
-                    PorcentajeGanancia = Convert.ToDecimal(row["PorcentajeGanancia"]),
-                    Estado = Convert.ToByte(row["Estado"]),
-                    FechaRegistro = Convert.ToDateTime(row["FechaRegistro"])
-                });
+                categorias.Add(MapearCategoria(reader));
             }
-            return lista;
+
+            return categorias;
         }
 
         public List<Categoria> ObtenerActivas()
         {
-            var lista = new List<Categoria>();
+            List<Categoria> categorias = new();
 
             const string query = @"
-        SELECT
-            IdCategoria,
-            Codigo,
-            Nombre,
-            Descripcion,
-            PorcentajeGanancia,
-            Estado,
-            FechaRegistro
-        FROM categoria
-        WHERE Estado = 1
-        ORDER BY Nombre ASC";
+                SELECT
+                    IdCategoria,
+                    Codigo,
+                    Nombre,
+                    Descripcion,
+                    PorcentajeGanancia,
+                    Estado,
+                    FechaRegistro,
+                    FechaActualizacion,
+                    IdEmpleadoResponsable
+                FROM categoria
+                WHERE Estado = 1
+                ORDER BY Nombre ASC";
 
-            using var connection = new MySqlConnection(_connectionString);
-            using var command = new MySqlCommand(query, connection);
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
 
             connection.Open();
 
-            using var reader = command.ExecuteReader();
+            using MySqlDataReader reader =
+                command.ExecuteReader();
 
             while (reader.Read())
             {
-                lista.Add(new Categoria
-                {
-                    IdCategoria = Convert.ToInt16(reader["IdCategoria"]),
-                    Codigo = reader["Codigo"].ToString() ?? "",
-                    Nombre = reader["Nombre"].ToString() ?? "",
-                    Descripcion = reader["Descripcion"] != DBNull.Value
-                        ? reader["Descripcion"].ToString()
-                        : "",
-                    PorcentajeGanancia = Convert.ToDecimal(reader["PorcentajeGanancia"]),
-                    Estado = Convert.ToByte(reader["Estado"]),
-                    FechaRegistro = Convert.ToDateTime(reader["FechaRegistro"])
-                });
+                categorias.Add(MapearCategoria(reader));
             }
 
-            return lista;
+            return categorias;
         }
+
         public Categoria? ObtenerPorId(short id)
         {
-            const string query = @"SELECT IdCategoria, Codigo, Nombre, Descripcion, PorcentajeGanancia, Estado, IdEmpleadoResponsable 
-                                  FROM categoria 
-                                  WHERE IdCategoria = @IdCategoria LIMIT 1;";
+            const string query = @"
+                SELECT
+                    IdCategoria,
+                    Codigo,
+                    Nombre,
+                    Descripcion,
+                    PorcentajeGanancia,
+                    Estado,
+                    FechaRegistro,
+                    FechaActualizacion,
+                    IdEmpleadoResponsable
+                FROM categoria
+                WHERE IdCategoria = @IdCategoria
+                LIMIT 1";
 
-            using var connection = new MySqlConnection(_connectionString);
-            using var command = new MySqlCommand(query, connection);
-            command.Parameters.AddWithValue("@IdCategoria", id);
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue(
+                "@IdCategoria",
+                id);
+
             connection.Open();
 
-            using var reader = command.ExecuteReader();
-            if (!reader.Read()) return null;
+            using MySqlDataReader reader =
+                command.ExecuteReader();
 
-            return new Categoria
-            {
-                IdCategoria = Convert.ToInt16(reader["IdCategoria"]),
-                Codigo = reader["Codigo"].ToString() ?? "",
-                Nombre = reader["Nombre"].ToString() ?? "",
-                Descripcion = reader["Descripcion"] != DBNull.Value ? reader["Descripcion"].ToString() : "",
-                PorcentajeGanancia = Convert.ToDecimal(reader["PorcentajeGanancia"]),
-                Estado = Convert.ToByte(reader["Estado"]),
-                IdEmpleadoResponsable = Convert.ToInt16(reader["IdEmpleadoResponsable"])
-            };
+            return reader.Read()
+                ? MapearCategoria(reader)
+                : null;
         }
 
         public void Insertar(Categoria categoria)
@@ -119,8 +131,11 @@ namespace FERRETERIA__Joel.Repositories
                                   VALUES 
                                   (@Codigo, @Nombre, @Descripcion, @PorcentajeGanancia, @Estado, @IdEmpleadoResponsable);";
 
-            using var connection = new MySqlConnection(_connectionString);
-            using var command = new MySqlCommand(query, connection);
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@Codigo", categoria.Codigo.Trim().ToUpper());
             command.Parameters.AddWithValue("@Nombre", categoria.Nombre.Trim());
@@ -144,8 +159,11 @@ namespace FERRETERIA__Joel.Repositories
                                       FechaActualizacion = CURRENT_TIMESTAMP 
                                   WHERE IdCategoria = @IdCategoria;";
 
-            using var connection = new MySqlConnection(_connectionString);
-            using var command = new MySqlCommand(query, connection);
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@Codigo", categoria.Codigo.Trim().ToUpper());
             command.Parameters.AddWithValue("@Nombre", categoria.Nombre.Trim());
@@ -164,12 +182,36 @@ namespace FERRETERIA__Joel.Repositories
                                   SET Estado = 0, FechaActualizacion = CURRENT_TIMESTAMP 
                                   WHERE IdCategoria = @IdCategoria;";
 
-            using var connection = new MySqlConnection(_connectionString);
-            using var command = new MySqlCommand(query, connection);
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
             command.Parameters.AddWithValue("@IdCategoria", id);
 
             connection.Open();
             command.ExecuteNonQuery();
+        }
+
+        private Categoria MapearCategoria(MySqlDataReader reader)
+        {
+            return new Categoria
+            {
+                IdCategoria = reader.GetInt16("IdCategoria"),
+                Codigo = reader["Codigo"].ToString() ?? "",
+                Nombre = reader["Nombre"].ToString() ?? "",
+                Descripcion = reader["Descripcion"] == DBNull.Value
+                    ? null
+                    : reader["Descripcion"].ToString(),
+                PorcentajeGanancia = reader.GetDecimal("PorcentajeGanancia"),
+                Estado = reader.GetByte("Estado"),
+                FechaRegistro = reader.GetDateTime("FechaRegistro"),
+                FechaActualizacion = reader["FechaActualizacion"] == DBNull.Value
+                    ? null
+                    : reader.GetDateTime("FechaActualizacion"),
+                IdEmpleadoResponsable = reader.GetInt16("IdEmpleadoResponsable")
+            };
         }
     }
 }
