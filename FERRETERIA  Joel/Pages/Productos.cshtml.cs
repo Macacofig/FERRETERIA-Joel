@@ -2,8 +2,6 @@ using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySql.Data.MySqlClient;
-using System.Data;
 
 namespace FERRETERIA__Joel.Pages
 {
@@ -11,16 +9,19 @@ namespace FERRETERIA__Joel.Pages
     {
         private readonly IProductoRepository _productoRepository;
         private readonly ICategoriaRepository _categoriaRepository;
+        private readonly ILogger<ProductosModel> _logger;
 
         public List<Producto> ListProductos { get; set; } = new();
         public List<Categoria> Categorias { get; set; } = new();
 
         public ProductosModel(
             IProductoRepository productoRepository,
-            ICategoriaRepository categoriaRepository)
+            ICategoriaRepository categoriaRepository,
+            ILogger<ProductosModel> logger)
         {
             _productoRepository = productoRepository;
             _categoriaRepository = categoriaRepository;
+            _logger = logger;
         }
 
         public void OnGet()
@@ -30,6 +31,29 @@ namespace FERRETERIA__Joel.Pages
 
             Categorias =
                 _categoriaRepository.ObtenerTodas();
+        }
+
+        public IActionResult OnPostEliminar(int idProducto)
+        {
+            try
+            {
+                _productoRepository.CambiarEstado(idProducto);
+
+                TempData["Mensaje"] =
+                    "Producto eliminado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error al eliminar el producto {IdProducto}.",
+                    idProducto);
+
+                TempData["MensajeError"] =
+                    "No se pudo eliminar el producto. Inténtalo nuevamente.";
+            }
+
+            return RedirectToPage();
         }
     }
 }

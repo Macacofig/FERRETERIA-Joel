@@ -35,6 +35,7 @@ namespace FERRETERIA__Joel.Repositories
                     FechaActualizacion,
                     IdEmpleadoResponsable
                 FROM producto
+                WHERE Estado = 1
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
