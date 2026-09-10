@@ -18,7 +18,7 @@ namespace FERRETERIA__Joel.Repositories
             var lista = new List<Categoria>();
             const string query = @"SELECT IdCategoria, Codigo, Nombre, Descripcion, PorcentajeGanancia, Estado, FechaRegistro 
                                   FROM categoria 
-                                  ORDER BY IdCategoria ASC;";
+                                  ORDER BY Nombre  ASC;";
 
             using var connection = new MySqlConnection(_connectionString);
             using var command = new MySqlCommand(query, connection);
