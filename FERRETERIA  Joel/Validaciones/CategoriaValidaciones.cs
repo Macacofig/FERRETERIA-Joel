@@ -23,6 +23,11 @@ namespace FERRETERIA__Joel.Validaciones
 			return descripcion.Length <= 255;
 		}
 
+		public bool EsPorcentajeGananciaValido(decimal porcentajeGanancia)
+		{
+			return porcentajeGanancia >= 0 && porcentajeGanancia <= 100;
+		}
+
 		public bool EsEmpleadoValido(short idEmpleadoResponsable)
 		{
 			return idEmpleadoResponsable > 0;
@@ -33,6 +38,7 @@ namespace FERRETERIA__Joel.Validaciones
 			return EsCodigoValido(categoria.Codigo) &&
 				   EsNombreValido(categoria.Nombre) &&
 				   EsDescripcionValida(categoria.Descripcion) &&
+				   EsPorcentajeGananciaValido(categoria.PorcentajeGanancia) &&
 				   EsEmpleadoValido(categoria.IdEmpleadoResponsable);
 		}
 	}

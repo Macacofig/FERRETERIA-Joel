@@ -62,6 +62,7 @@
                         <th scope="col">Código</th>
                         <th scope="col">Nombre</th>
                         <th scope="col">Descripción</th>
+                        <th scope="col">Ganancia</th>
                         <th scope="col">Estado</th>
                         <th scope="col">Fecha de Registro</th>
                         <th scope="col" class="fj-td-acciones">Acciones</th>
@@ -71,7 +72,7 @@
                     @if (Model.ListCategorias.Count == 0 && string.IsNullOrEmpty(Model.Mensaje))
                     {
                         <tr>
-                            <td colspan="6" class="fj-table-vacio">
+                            <td colspan="7" class="fj-table-vacio">
                                 <div class="fj-empty">
                                     <span class="fj-empty-ico" aria-hidden="true">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>
@@ -85,7 +86,7 @@
                     else if (Model.ListCategorias.Count == 0)
                     {
                         <tr>
-                            <td colspan="6" class="fj-table-vacio">
+                            <td colspan="7" class="fj-table-vacio">
                                 <div class="fj-empty">
                                     <span class="fj-empty-ico" aria-hidden="true">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
@@ -114,6 +115,7 @@
                                     <span>—</span>
                                 }
                             </td>
+                            <td class="fj-td-secundario">@item.PorcentajeGanancia.ToString("N2")%</td>
                             <td class="fj-td-estado">
                                 <span class="fj-pill" style="--pill: var(@(item.Estado == 1 ? "--success" : "--texto-ter"));">@(item.Estado == 1 ? "Activo" : "Inactivo")</span>
                             </td>
@@ -141,5 +143,4 @@
             </table>
         </div>
     </section>
-
 </div>
