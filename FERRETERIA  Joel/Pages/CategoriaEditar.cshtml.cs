@@ -2,107 +2,61 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using FERRETERIA__Joel.Models;
-using System.Data;
+using FERRETERIA__Joel.Repositories;
+using FERRETERIA__Joel.Validaciones;
 
 namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaEditarModel : PageModel
     {
-        private readonly IConfiguration configuration;
+        private readonly ICategoriaRepository _repository;
+        private readonly CategoriaValidaciones _validador = new();
 
         [BindProperty]
-        public Categoria CategoriaEdit { get; set; } = new Categoria();
+        public Categoria CategoriaEdit { get; set; } = new ();
 
         public string MensajeError { get; set; } = "";
 
-        public CategoriaEditarModel(IConfiguration configuration)
+        public CategoriaEditarModel(ICategoriaRepository repository)
         {
-            this.configuration = configuration;
+            _repository = repository;
         }
 
         public IActionResult OnGet(short id)
         {
-            string connectionString = configuration.GetConnectionString("MySqlConnection")!;
-            string query = @"SELECT IdCategoria, Codigo, Nombre, Descripcion, Estado 
-                            FROM categoria 
-                            WHERE IdCategoria = @IdCategoria LIMIT 1;";
-
-            try
+            var categoria = _repository.ObtenerPorId(id);
+            if (categoria == null)
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@IdCategoria", id);
-                    connection.Open();
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            CategoriaEdit.IdCategoria = Convert.ToInt16(reader["IdCategoria"]);
-                            CategoriaEdit.Codigo = reader["Codigo"].ToString() ?? "";
-                            CategoriaEdit.Nombre = reader["Nombre"].ToString() ?? "";
-                            CategoriaEdit.Descripcion = reader["Descripcion"] != DBNull.Value ? reader["Descripcion"].ToString() : "";
-                            CategoriaEdit.Estado = Convert.ToByte(reader["Estado"]);
-                            return Page();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MensajeError = ex.Message;
+                TempData["Mensaje"] = "Categoría no encontrada.";
+                return RedirectToPage("Categorias");
             }
 
-            return RedirectToPage("Categorias");
+            CategoriaEdit = categoria;
+            return Page();
         }
 
         public IActionResult OnPost()
         {
-            if (string.IsNullOrWhiteSpace(CategoriaEdit.Codigo) || string.IsNullOrWhiteSpace(CategoriaEdit.Nombre))
+            if (!_validador.EsValida(CategoriaEdit))
             {
-                MensajeError = "El código y el nombre son obligatorios.";
+                MensajeError = "Verifique los datos: el código y nombre son obligatorios y deben respetar el límite de caracteres.";
                 return Page();
             }
 
-            string connectionString = configuration.GetConnectionString("MySqlConnection")!;
-            string query = @"UPDATE categoria 
-                            SET Codigo = @Codigo, 
-                                Nombre = @Nombre, 
-                                Descripcion = @Descripcion, 
-                                Estado = @Estado, 
-                                FechaActualizacion = CURRENT_TIMESTAMP 
-                            WHERE IdCategoria = @IdCategoria;";
-
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Codigo", CategoriaEdit.Codigo.Trim().ToUpper());
-                        command.Parameters.AddWithValue("@Nombre", CategoriaEdit.Nombre.Trim());
-                        command.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(CategoriaEdit.Descripcion) ? (object)DBNull.Value : CategoriaEdit.Descripcion.Trim());
-                        command.Parameters.AddWithValue("@Estado", CategoriaEdit.Estado);
-                        command.Parameters.AddWithValue("@IdCategoria", CategoriaEdit.IdCategoria);
-
-                        connection.Open();
-                        command.ExecuteNonQuery();
-                    }
-                }
-
+                _repository.Actualizar(CategoriaEdit);
+                TempData["Mensaje"] = "Categoría actualizada con éxito.";
                 return RedirectToPage("Categorias");
             }
-            catch (MySqlException ex)
+            catch (MySqlException ex) when (ex.Number == 1062)
             {
-                MensajeError = ex.Number == 1062
-                    ? $"El código '{CategoriaEdit.Codigo}' ya pertenece a otra categoría."
-                    : "Error de base de datos: " + ex.Message;
+                MensajeError = $"El código '{CategoriaEdit.Codigo}' ya pertenece a otra categoría.";
                 return Page();
             }
             catch (Exception ex)
             {
-                MensajeError = "Error inesperado: " + ex.Message;
+                MensajeError = "Error al actualizar: " + ex.Message;
                 return Page();
             }
         }

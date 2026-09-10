@@ -2,21 +2,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using FERRETERIA__Joel.Models;
+using FERRETERIA__Joel.Repositories;
+using FERRETERIA__Joel.Validaciones;
+
+
 
 namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaNuevaModel : PageModel
     {
-        private readonly IConfiguration configuration;
+        private readonly ICategoriaRepository _repository;
+        private readonly CategoriaValidaciones _validador = new();
 
         [BindProperty]
-        public Categoria NuevaCategoria { get; set; } = new Categoria();
+        public Categoria NuevaCategoria { get; set; } = new ();
 
         public string MensajeError { get; set; } = "";
 
-        public CategoriaNuevaModel(IConfiguration configuration)
+        public CategoriaNuevaModel(ICategoriaRepository repository)
         {
-            this.configuration = configuration;
+            _repository = repository;
         }
 
         public void OnGet()
@@ -27,53 +32,26 @@ namespace FERRETERIA__Joel.Pages
 
         public IActionResult OnPost()
         {
-            if (string.IsNullOrWhiteSpace(NuevaCategoria.Codigo) || string.IsNullOrWhiteSpace(NuevaCategoria.Nombre))
+            if (!_validador.EsValida(NuevaCategoria))
             {
-                MensajeError = "El código y el nombre de la categoría son obligatorios.";
+                MensajeError = "Los datos ingresados no cumplen con el formato o longitud requerida.";
                 return Page();
             }
 
-            string connectionString = configuration.GetConnectionString("MySqlConnection")!;
-            string query = @"INSERT INTO categoria 
-                            (Codigo, Nombre, Descripcion, Estado, IdEmpleadoResponsable) 
-                            VALUES 
-                            (@Codigo, @Nombre, @Descripcion, @Estado, @IdEmpleadoResponsable);";
-
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Codigo", NuevaCategoria.Codigo.Trim().ToUpper());
-                        command.Parameters.AddWithValue("@Nombre", NuevaCategoria.Nombre.Trim());
-                        command.Parameters.AddWithValue("@Descripcion", string.IsNullOrWhiteSpace(NuevaCategoria.Descripcion) ? (object)DBNull.Value : NuevaCategoria.Descripcion.Trim());
-                        command.Parameters.AddWithValue("@Estado", NuevaCategoria.Estado);
-                        command.Parameters.AddWithValue("@IdEmpleadoResponsable", NuevaCategoria.IdEmpleadoResponsable);
-
-                        connection.Open();
-                        command.ExecuteNonQuery();
-                    }
-                }
-
+                _repository.Insertar(NuevaCategoria);
                 TempData["Mensaje"] = "Categoría registrada con éxito.";
                 return RedirectToPage("Categorias");
             }
-            catch (MySqlException ex)
+            catch (MySqlException ex) when (ex.Number == 1062)
             {
-                if (ex.Number == 1062)
-                {
-                    MensajeError = $"El código '{NuevaCategoria.Codigo}' ya existe. Debe ingresar uno diferente.";
-                }
-                else
-                {
-                    MensajeError = "Error de base de datos: " + ex.Message;
-                }
+                MensajeError = $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.";
                 return Page();
             }
             catch (Exception ex)
             {
-                MensajeError = "Error inesperado: " + ex.Message;
+                MensajeError = "Error al registrar la categoría: " + ex.Message;
                 return Page();
             }
         }

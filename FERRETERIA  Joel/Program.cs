@@ -1,8 +1,12 @@
+using FERRETERIA__Joel.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Inyección de dependencias para Categoria (SOLID - Inversión de dependencias)
+builder.Services.AddScoped<ICategoriaRepository, MySqlCategoriaRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
