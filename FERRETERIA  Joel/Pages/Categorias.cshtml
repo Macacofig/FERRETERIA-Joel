@@ -1,0 +1,68 @@
+@page
+@model FERRETERIA__Joel.Pages.CategoriasModel
+@{
+    ViewData["Title"] = "Categorías";
+}
+
+<h1>Lista de Categorías</h1>
+
+<a class="btn btn-primary mb-3" asp-page="CategoriaNueva">+ Agregar Categoría</a>
+
+@if (TempData["Mensaje"] != null)
+{
+<div class="alert alert-success">
+    @TempData["Mensaje"]
+</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+<div class="alert alert-danger">@Model.Mensaje</div>
+}
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Fecha de Registro</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListCategorias)
+        {
+        <tr>
+            <td>@item.IdCategoria</td>
+            <td>@item.Codigo</td>
+            <td>@item.Nombre</td>
+            <td>@item.Descripcion</td>
+            <td>
+                @if (item.Estado == 1)
+                    {
+                <span class="badge bg-success">Activo</span>
+                    }
+                    else
+                    {
+                <span class="badge bg-secondary">Inactivo</span>
+                    }
+            </td>
+            <td>@item.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>
+                <div class="d-flex gap-2">
+                    <a asp-page="CategoriaEditar" asp-route-id="@item.IdCategoria" class="btn btn-sm btn-outline-warning">Editar</a>
+                    @if (item.Estado == 1)
+                        {
+                    <form method="post" asp-page-handler="Eliminar" asp-route-id="@item.IdCategoria" onsubmit="return confirm('¿Desea desactivar esta categoría?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
+                    </form>
+                        }
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

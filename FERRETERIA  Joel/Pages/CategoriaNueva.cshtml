@@ -1,0 +1,54 @@
+@page
+@model FERRETERIA__Joel.Pages.CategoriaNuevaModel
+@{
+    ViewData["Title"] = "Nueva Categoría";
+}
+
+<div class="container mt-4">
+    <h2>Registrar Nueva Categoría</h2>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(Model.MensajeError))
+    {
+    <div class="alert alert-danger" role="alert">
+        @Model.MensajeError
+    </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Código</label>
+                    <input type="text" class="form-control" asp-for="NuevaCategoria.Codigo" placeholder="Ej: CAT-011" maxlength="20" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre de la Categoría</label>
+                    <input type="text" class="form-control" asp-for="NuevaCategoria.Nombre" placeholder="Ej: Cerrajería" maxlength="100" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" asp-for="NuevaCategoria.Descripcion" rows="3" placeholder="Detalle opcional de la categoría..." maxlength="255"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" asp-for="NuevaCategoria.Estado">
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+
+                <!-- Empleado responsable (fijado temporalmente en 1) -->
+                <input type="hidden" asp-for="NuevaCategoria.IdEmpleadoResponsable" />
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">Guardar Categoría</button>
+                    <a asp-page="Categorias" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

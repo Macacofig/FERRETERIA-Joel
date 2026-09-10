@@ -1,0 +1,51 @@
+@page "{id:int}"
+@model FERRETERIA__Joel.Pages.CategoriaEditarModel
+@{
+    ViewData["Title"] = "Editar Categoría";
+}
+
+<div class="container mt-4">
+    <h2>Editar Categoría</h2>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(Model.MensajeError))
+    {
+    <div class="alert alert-danger">@Model.MensajeError</div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <input type="hidden" asp-for="CategoriaEdit.IdCategoria" />
+
+                <div class="mb-3">
+                    <label class="form-label">Código</label>
+                    <input type="text" class="form-control" asp-for="CategoriaEdit.Codigo" maxlength="20" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" asp-for="CategoriaEdit.Nombre" maxlength="100" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" asp-for="CategoriaEdit.Descripcion" rows="3" maxlength="255"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" asp-for="CategoriaEdit.Estado">
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-warning">Actualizar Cambios</button>
+                    <a asp-page="Categorias" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
