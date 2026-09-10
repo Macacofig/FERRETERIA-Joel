@@ -35,7 +35,6 @@ namespace FERRETERIA__Joel.Repositories
                     FechaActualizacion,
                     IdEmpleadoResponsable
                 FROM producto
-                WHERE Estado = 1
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
@@ -187,6 +186,7 @@ namespace FERRETERIA__Joel.Repositories
                     UnidadMedida = @unidadMedida,
                     PrecioVenta = @precioVenta,
                     IdEmpleadoResponsable = @idEmpleadoResponsable,
+                    Estado = @estado,
                     FechaActualizacion = CURRENT_TIMESTAMP
                 WHERE IdProducto = @idProducto";
 
@@ -231,6 +231,10 @@ namespace FERRETERIA__Joel.Repositories
             command.Parameters.AddWithValue(
                 "@idEmpleadoResponsable",
                 producto.IdEmpleadoResponsable);
+
+            command.Parameters.AddWithValue(
+                "@estado",
+                producto.Estado);
 
             connection.Open();
 

@@ -80,6 +80,14 @@
                 <label class="fj-form-label" asp-for="Proveedor.Direccion">Dirección</label>
                 <textarea class="fj-input fj-input-area" asp-for="Proveedor.Direccion" rows="3"></textarea>
             </div>
+
+            <div class="fj-form-field fj-form-field--full">
+                <label class="fj-form-label" asp-for="Proveedor.Estado">Estado</label>
+                <select class="fj-input fj-select" asp-for="Proveedor.Estado">
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+            </div>
         </div>
 
         <div class="fj-form-actions">

@@ -140,17 +140,21 @@
                                         Editar
                                     </a>
 
-                                    <form method="post"
-                                          asp-page-handler="Eliminar"
-                                          asp-route-idProveedor="@item.IdProveedor"
-                                          class="fj-inline-form">
+                                    @if (item.Estado == 1)
+                                    {
+                                        <form method="post"
+                                              asp-page-handler="Eliminar"
+                                              asp-route-idProveedor="@item.IdProveedor"
+                                              class="fj-inline-form"
+                                              onsubmit="return confirm('¿Desea desactivar este proveedor?');">
 
-                                        <button type="submit" class="fj-btn fj-btn-sm fj-btn-danger">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
-                                            Eliminar
-                                        </button>
+                                            <button type="submit" class="fj-btn fj-btn-sm fj-btn-danger">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                                Desactivar
+                                            </button>
 
-                                    </form>
+                                        </form>
+                                    }
 
                                 </div>
                             </td>
