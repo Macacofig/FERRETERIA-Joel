@@ -5,31 +5,33 @@
 :root {
     --amarillo: #ffc824;
     --amarillo-hover: #ffd64d;
-    --amarillo-borde: rgba(255, 200, 36, 0.35);
-    --amarillo-bg: rgba(255, 200, 36, 0.1);
+    --amarillo-borde: rgba(255, 200, 36, 0.45);
+    --amarillo-bg: rgba(255, 200, 36, 0.16);
+    --amarillo-texto: #a16207;
+    --amarillo-texto-hover: #7c4a03;
 
-    --fondo: #0a0a0c;
-    --fondo-elevado: #101013;
-    --fondo-card: #151518;
-    --fondo-panel: #1b1b20;
-    --fondo-sutil: #202026;
+    --fondo: #f4f4f6;
+    --fondo-elevado: #ffffff;
+    --fondo-card: #ffffff;
+    --fondo-panel: #ededf0;
+    --fondo-sutil: #e3e3e7;
 
-    --borde: #26262d;
-    --borde-suave: #1d1d23;
+    --borde: #d2d2d7;
+    --borde-suave: #e7e7ea;
 
-    --texto: #f5f5f7;
-    --texto-sec: #a1a1a8;
-    --texto-ter: #6e6e76;
+    --texto: #1d1d1f;
+    --texto-sec: #5f5f66;
+    --texto-ter: #8a8a91;
 
-    --success: #2ecc71;
-    --warning: #ffd60a;
-    --danger: #ff453a;
+    --success: #1d9b4c;
+    --warning: #b45309;
+    --danger: #d83a2c;
 
     --radius: 14px;
     --radius-sm: 9px;
     --radius-pill: 999px;
 
-    --sombra-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --sombra-card: 0 2px 10px rgba(0, 0, 0, 0.07);
     --ff-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --ff-mono: "SF Mono", "JetBrains Mono", Consolas, "Courier New", monospace;
 }
@@ -57,17 +59,17 @@ body {
 }
 
 ::selection {
-    background: rgba(255, 200, 36, 0.28);
-    color: #fff;
+    background: rgba(255, 200, 36, 0.45);
+    color: #1d1d1f;
 }
 
 a {
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
     text-decoration: none;
 }
 
 a:hover {
-    color: var(--amarillo-hover);
+    color: var(--amarillo-texto-hover);
 }
 
 :focus-visible {
@@ -85,12 +87,12 @@ a:hover {
     background: var(--fondo);
 }
 ::-webkit-scrollbar-thumb {
-    background: #2c2c33;
+    background: #c7c7cc;
     border-radius: 6px;
     border: 2px solid var(--fondo);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #3a3a42;
+    background: #afafb5;
 }
 
 /* ============================================================
@@ -101,7 +103,7 @@ a:hover {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(10, 10, 12, 0.82);
+    background: rgba(255, 255, 255, 0.85);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid var(--borde-suave);
@@ -162,7 +164,7 @@ a:hover {
 }
 
 .fj-brand-name strong {
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
     font-weight: 800;
     letter-spacing: 0.16em;
 }
@@ -201,11 +203,11 @@ a:hover {
 
 a.fj-menu-link:hover {
     color: var(--texto);
-    background: rgba(255, 255, 255, 0.055);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .fj-menu-item.is-active > a.fj-menu-link {
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 .fj-menu-item.is-active > a.fj-menu-link::after {
@@ -267,7 +269,7 @@ a.fj-menu-link:hover {
 }
 
 .fj-icon-btn:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(0, 0, 0, 0.05);
     color: var(--texto);
 }
 
@@ -312,7 +314,7 @@ a.fj-menu-link:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 .fj-userchip-avatar svg {
@@ -397,7 +399,7 @@ a.fj-menu-link:hover {
 }
 
 .fj-mega-shell {
-    background: rgba(22, 22, 26, 0.96);
+    background: rgba(255, 255, 255, 0.96);
     -webkit-backdrop-filter: blur(24px) saturate(160%);
     backdrop-filter: blur(24px) saturate(160%);
     border: 1px solid var(--borde);
@@ -415,7 +417,7 @@ a.fj-menu-link:hover {
     transform: translateX(-50%) rotate(45deg);
     width: 12px;
     height: 12px;
-    background: rgba(22, 22, 26, 0.96);
+    background: rgba(255, 255, 255, 0.96);
     border-left: 1px solid var(--borde);
     border-top: 1px solid var(--borde);
 }
@@ -467,7 +469,7 @@ a.fj-mega-card:hover {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 .fj-mega-card {
@@ -482,7 +484,7 @@ a.fj-mega-card:hover {
     align-items: center;
     justify-content: center;
     background: var(--fondo-panel);
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
     margin-bottom: 4px;
 }
 
@@ -520,7 +522,7 @@ a.fj-mega-card:hover {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
     border: 1px solid var(--amarillo-borde);
     background: var(--amarillo-bg);
     padding: 3px 7px;
@@ -578,7 +580,7 @@ a.fj-mega-card:hover {
 
 .fj-btn-ghost:hover {
     color: var(--texto);
-    border-color: #3a3a42;
+    border-color: #b0b0b5;
 }
 
 .fj-btn-edit {
@@ -587,12 +589,12 @@ a.fj-mega-card:hover {
     font-size: 0.78rem;
     background: var(--amarillo-bg);
     border-color: var(--amarillo-borde);
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 .fj-btn-edit:hover {
-    color: var(--amarillo);
-    background: rgba(255, 200, 36, 0.2);
+    color: var(--amarillo-texto-hover);
+    background: rgba(255, 200, 36, 0.24);
 }
 
 .fj-btn-danger {
@@ -783,7 +785,7 @@ a.fj-mega-card:hover {
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 /* ============================================================
@@ -849,7 +851,7 @@ a.fj-mega-card:hover {
 }
 
 .fj-footer-list a:hover {
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 .fj-footer-list span {
@@ -870,7 +872,7 @@ a.fj-mega-card:hover {
     width: 16px;
     height: 16px;
     flex: none;
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 .fj-footer-bottom {
@@ -904,7 +906,7 @@ a.fj-mega-card:hover {
         right: 0;
         display: none;
         flex-direction: column;
-        background: rgba(12, 12, 15, 0.98);
+        background: rgba(255, 255, 255, 0.98);
         -webkit-backdrop-filter: blur(24px);
         backdrop-filter: blur(24px);
         border-bottom: 1px solid var(--borde);

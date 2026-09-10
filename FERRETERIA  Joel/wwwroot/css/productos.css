@@ -65,7 +65,7 @@
 }
 
 .fj-notice strong {
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
 }
 
 /* Estadísticas superiores */
@@ -185,7 +185,7 @@
 
 .fj-search-clear:hover {
     color: var(--texto);
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.06);
 }
 
 .fj-search-clear svg {
@@ -240,7 +240,7 @@
 }
 
 .fj-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(0, 0, 0, 0.035);
 }
 
 .fj-table tbody tr:last-child td {
@@ -253,7 +253,7 @@
     font-family: var(--ff-mono);
     font-size: 0.78rem;
     font-weight: 600;
-    color: var(--amarillo);
+    color: var(--amarillo-texto);
     background: var(--amarillo-bg);
     border: 1px solid var(--amarillo-borde);
     padding: 4px 10px;
