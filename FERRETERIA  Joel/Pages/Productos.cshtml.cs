@@ -8,104 +8,94 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductosModel : PageModel
     {
-        private readonly IConfiguration configuration;
-        public string Mensaje { get; set; }
-        public List<Producto> ListProductos { get; set; } = new List<Producto>();
-        public ProductosModel(IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<ProductosModel> _logger;
+
+        public string Mensaje { get; set; } = "";
+        public List<Producto> ListProductos { get; set; } = new();
+
+        public ProductosModel(IConfiguration configuration, ILogger<ProductosModel> logger)
         {
-            this.configuration = configuration;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         public void OnGet()
         {
-            Select();
-
+            CargarCatalogo();
         }
 
         public IActionResult OnPostEliminar(int idProducto)
         {
-            Eliminar(idProducto);
+            try
+            {
+                Desactivar(idProducto);
+                TempData["Mensaje"] = "Producto eliminado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al eliminar el producto {IdProducto}.", idProducto);
+                TempData["MensajeError"] = "No se pudo eliminar el producto. Inténtalo nuevamente.";
+            }
             return RedirectToPage();
         }
 
-        void Select()
+        void CargarCatalogo()
         {
-            string connectionString = configuration.GetConnectionString("MySqlConnection")!;
+            string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
 
-            string query = @"SELECT p.IdProducto, p.IdCategoria, c.Nombre AS NombreCategoria, p.Codigo,
-                                     p.Nombre, p.Descripcion, p.Marca, p.UnidadMedida, p.PrecioVenta, p.FechaRegistro
-                              FROM producto p
-                              INNER JOIN categoria c ON c.IdCategoria = p.IdCategoria
-                              WHERE p.Estado = 1
-                              ORDER BY p.Nombre";
+            const string query = @"SELECT p.IdProducto, p.IdCategoria, c.Nombre AS NombreCategoria, p.Codigo,
+                                          p.Nombre, p.Descripcion, p.Marca, p.UnidadMedida, p.PrecioVenta, p.FechaRegistro
+                                   FROM producto p
+                                   INNER JOIN categoria c ON c.IdCategoria = p.IdCategoria
+                                   WHERE p.Estado = 1
+                                   ORDER BY p.Nombre";
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                using var connection = new MySqlConnection(connectionString);
+                using var command = new MySqlCommand(query, connection);
+                connection.Open();
+
+                using var adapter = new MySqlDataAdapter(command);
+                var tablaProductos = new DataTable();
+                adapter.Fill(tablaProductos);
+
+                foreach (DataRow row in tablaProductos.Rows)
                 {
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    //command.CommandText = query;
-                    //command.Connection = connection;
-
-                    connection.Open();
-
-                    //Si la conexión está abierta
-                    //Se ejecuta la consulta SQL y el resultado pasa al DataAdapter
-                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
-                    DataTable tableClientes = new DataTable();
-
-                    adapter.Fill(tableClientes);
-                    foreach (DataRow row in tableClientes.Rows)
+                    ListProductos.Add(new Producto
                     {
-                        Producto producto = new Producto
-                        {
-                            IdProducto = Convert.ToInt32(row["IdProducto"]),
-                            IdCategoria = Convert.ToInt16(row["IdCategoria"]),
-                            NombreCategoria = row["NombreCategoria"].ToString(),
-                            Codigo = row["Codigo"].ToString()!,
-                            Nombre = row["Nombre"].ToString()!,
-                            Descripcion = row["Descripcion"].ToString(),
-                            Marca = row["Marca"].ToString(),
-                            UnidadMedida = row["UnidadMedida"].ToString()!,
-                            PrecioVenta = Convert.ToDecimal(row["PrecioVenta"]),
-                            FechaRegistro = Convert.ToDateTime(row["FechaRegistro"])
-                        };
-
-                        ListProductos.Add(producto);
-                    }
+                        IdProducto = Convert.ToInt32(row["IdProducto"]),
+                        IdCategoria = Convert.ToInt16(row["IdCategoria"]),
+                        NombreCategoria = row["NombreCategoria"].ToString(),
+                        Codigo = row["Codigo"].ToString() ?? "",
+                        Nombre = row["Nombre"].ToString() ?? "",
+                        Descripcion = row["Descripcion"].ToString(),
+                        Marca = row["Marca"].ToString(),
+                        UnidadMedida = row["UnidadMedida"].ToString() ?? "",
+                        PrecioVenta = Convert.ToDecimal(row["PrecioVenta"]),
+                        FechaRegistro = Convert.ToDateTime(row["FechaRegistro"])
+                    });
                 }
-
             }
             catch (Exception ex)
             {
-                Mensaje = ex.Message;
+                _logger.LogError(ex, "Error al cargar el catálogo de productos.");
+                Mensaje = "No se pudo cargar el catálogo de productos.";
             }
-
         }
 
-        void Eliminar(int idProducto)
+        void Desactivar(int idProducto)
         {
-            string connectionString = configuration.GetConnectionString("MySqlConnection")!;
- 
-            // Borrado lógico: no se elimina físicamente el registro
-            string query = @"UPDATE producto SET Estado = 0, FechaActualizacion = NOW()
-                              WHERE IdProducto = @IdProducto";
- 
-            try
-            {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    MySqlCommand command = new MySqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@IdProducto", idProducto);
- 
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                Mensaje = ex.Message;
-            }
+            string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
+
+            const string query = "UPDATE producto SET Estado = 0, FechaActualizacion = NOW() WHERE IdProducto = @IdProducto";
+
+            using var connection = new MySqlConnection(connectionString);
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@IdProducto", idProducto);
+            connection.Open();
+            command.ExecuteNonQuery();
         }
     }
 }

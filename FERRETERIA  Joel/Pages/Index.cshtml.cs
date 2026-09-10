@@ -5,9 +5,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
+        public IActionResult OnGet()
         {
-
+            return RedirectToPage("/Productos");
         }
     }
 }

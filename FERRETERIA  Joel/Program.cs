@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-// Inyección de dependencias para Categoria (SOLID - Inversión de dependencias)
+// InyecciÃ³n de dependencias para CategorÃ­a (SOLID - InversiÃ³n de dependencias)
 builder.Services.AddScoped<ICategoriaRepository, MySqlCategoriaRepository>();
 var app = builder.Build();
 

@@ -1,148 +1,94 @@
 ﻿@page "{id:int}"
 @model FERRETERIA__Joel.Pages.ProveedorEditarModel
 @{
+    ViewData["Title"] = "Editar Proveedor";
+    ViewData["ActiveMenu"] = "Proveedores";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/productos.css" asp-append-version="true" />
 }
 
-<h1>Editar Proveedor</h1>
+<div class="fj-container fj-page-products">
 
+    <section class="fj-page-head">
+        <p class="fj-eyebrow">Módulo · Catálogo</p>
+        <h1>Editar Proveedor</h1>
+        <p class="fj-page-sub">Actualiza la información del proveedor.</p>
+    </section>
 
-@if (Model.Errores.Any())
-{
-    <div class="alert alert-danger">
+    @if (Model.Errores.Any())
+    {
+        <div class="fj-alert" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            <div>
+                <strong>Verifica los siguientes datos:</strong>
+                <ul class="fj-alert-lista">
+                    @foreach (var error in Model.Errores)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
 
-        <ul class="mb-0">
+    <form method="post" class="fj-card fj-form">
+        <input type="hidden" asp-for="Proveedor.IdProveedor" />
 
-            @foreach (var error in Model.Errores)
-            {
-                <li>@error</li>
-            }
+        <div class="fj-form-grid">
+            <div class="fj-form-field">
+                <label class="fj-form-label" asp-for="Proveedor.RazonSocial">Razón Social</label>
+                <input class="fj-input" asp-for="Proveedor.RazonSocial" />
+            </div>
 
-        </ul>
+            <div class="fj-form-field">
+                <label class="fj-form-label" asp-for="Proveedor.NombreComercial">Nombre Comercial</label>
+                <input class="fj-input" asp-for="Proveedor.NombreComercial" />
+            </div>
 
-    </div>
-}
+            <div class="fj-form-field">
+                <label class="fj-form-label" asp-for="Proveedor.Nit">NIT</label>
+                <input class="fj-input" asp-for="Proveedor.Nit" />
+            </div>
 
+            <div class="fj-form-field">
+                <label class="fj-form-label" asp-for="Proveedor.NombreContacto">Nombre Contacto</label>
+                <input class="fj-input" asp-for="Proveedor.NombreContacto" />
+            </div>
 
-<form method="post">
+            <div class="fj-form-field">
+                <label class="fj-form-label" asp-for="Proveedor.Telefono">Teléfono</label>
+                <input class="fj-input" asp-for="Proveedor.Telefono" />
+            </div>
 
-    <input type="hidden"
-           asp-for="Proveedor.IdProveedor" />
+            <div class="fj-form-field">
+                <label class="fj-form-label" asp-for="Proveedor.CorreoElectronico">Correo Electrónico</label>
+                <input class="fj-input" asp-for="Proveedor.CorreoElectronico" type="email" />
+            </div>
 
+            <div class="fj-form-field fj-form-field--full">
+                <label class="fj-form-label" asp-for="Proveedor.IdEmpleadoResponsable">Empleado responsable</label>
+                <select class="fj-input fj-select" asp-for="Proveedor.IdEmpleadoResponsable">
+                    @foreach (var empleado in Model.Empleados)
+                    {
+                        <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
+                    }
+                </select>
+            </div>
 
-    <div class="mb-3">
+            <div class="fj-form-field fj-form-field--full">
+                <label class="fj-form-label" asp-for="Proveedor.Direccion">Dirección</label>
+                <textarea class="fj-input fj-input-area" asp-for="Proveedor.Direccion" rows="3"></textarea>
+            </div>
+        </div>
 
-        <label asp-for="Proveedor.RazonSocial"
-               class="form-label">
-            Razón Social
-        </label>
+        <div class="fj-form-actions">
+            <a asp-page="Proveedores" class="fj-btn fj-btn-ghost">Cancelar</a>
+            <button type="submit" class="fj-btn fj-btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+                Actualizar
+            </button>
+        </div>
+    </form>
 
-        <input asp-for="Proveedor.RazonSocial"
-               class="form-control" />
-
-    </div>
-
-
-
-    <div class="mb-3">
-
-        <label asp-for="Proveedor.NombreComercial"
-               class="form-label">
-            Nombre Comercial
-        </label>
-
-        <input asp-for="Proveedor.NombreComercial"
-               class="form-control" />
-
-    </div>
-
-
-
-    <div class="mb-3">
-
-        <label asp-for="Proveedor.Nit"
-               class="form-label">
-            NIT
-        </label>
-
-        <input asp-for="Proveedor.Nit"
-               class="form-control" />
-
-    </div>
-
-
-
-    <div class="mb-3">
-
-        <label asp-for="Proveedor.NombreContacto"
-               class="form-label">
-            Nombre Contacto
-        </label>
-
-        <input asp-for="Proveedor.NombreContacto"
-               class="form-control" />
-
-    </div>
-
-
-
-    <div class="mb-3">
-
-        <label asp-for="Proveedor.Telefono"
-               class="form-label">
-            Teléfono
-        </label>
-
-        <input asp-for="Proveedor.Telefono"
-               class="form-control" />
-
-    </div>
-
-
-
-    <div class="mb-3">
-
-        <label asp-for="Proveedor.CorreoElectronico"
-               class="form-label">
-            Correo Electrónico
-        </label>
-
-        <input asp-for="Proveedor.CorreoElectronico"
-               class="form-control"
-               type="email" />
-
-    </div>
-
-
-
-    <div class="mb-3">
-
-        <label asp-for="Proveedor.Direccion"
-               class="form-label">
-            Dirección
-        </label>
-
-        <textarea asp-for="Proveedor.Direccion"
-                  class="form-control"
-                  rows="3">
-        </textarea>
-
-    </div>
-
-
-    <input type="hidden"
-           asp-for="Proveedor.IdEmpleadoResponsable"
-           value="1" />
-
-
-    <button type="submit"
-            class="btn btn-primary">
-        Actualizar
-    </button>
-
-
-    <a asp-page="Proveedores"
-       class="btn btn-secondary">
-        Cancelar
-    </a>
-
-</form>
+</div>

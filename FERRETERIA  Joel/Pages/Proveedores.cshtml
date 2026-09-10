@@ -1,94 +1,145 @@
 ﻿@page
 @model FERRETERIA__Joel.Pages.ProveedoresModel
 @{
+    ViewData["Title"] = "Proveedores";
+    ViewData["ActiveMenu"] = "Proveedores";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/productos.css" asp-append-version="true" />
 }
 
+<div class="fj-container fj-page-products">
 
-<h1>Lista de Proveedores</h1>
+    <section class="fj-page-head">
+        <p class="fj-eyebrow">Módulo · Catálogo</p>
+        <h1>Proveedores</h1>
+        <p class="fj-page-sub">Administración y consulta de proveedores.</p>
+    </section>
 
-<a class="btn btn-primary mb-3" asp-page="ProveedorNuevo">Agregar Proveedor+</a>
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="fj-alert fj-alert-success" role="status">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+            <span>@TempData["Mensaje"]</span>
+        </div>
+    }
 
-@if (TempData["Mensaje"] != null)
-{
-	<div class="alert alert-success">
-		@TempData["Mensaje"]
-	</div>
-}
+    @if (TempData["MensajeError"] != null)
+    {
+        <div class="fj-alert" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+            <span>@TempData["MensajeError"]</span>
+        </div>
+    }
 
-@if (!string.IsNullOrEmpty(Model.Mensaje))
-{
-	<div class="alert alert-danger">
-		@Model.Mensaje
-	</div>
-}
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="fj-alert" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+            <span>@Model.Mensaje</span>
+        </div>
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Razón Social</th>
-            <th>Nombre Comercial</th>
-            <th>NIT</th>
-            <th>Contacto</th>
-            <th>Teléfono</th>
-            <th>Correo</th>
-            <th>Dirección</th>
-            <th>Fecha Registro</th>
-            <th>Estado</th>
-            <th></th>
-        </tr>
-    </thead>
+    <section class="fj-toolbar fj-toolbar-simple">
+        <p class="fj-toolbar-count">
+            <strong>@Model.ListProveedores.Count</strong>
+            @(Model.ListProveedores.Count == 1 ? "proveedor" : "proveedores") registrados
+        </p>
 
-    <tbody>
-        @foreach (var item in Model.ListProveedores)
-        {
-            <tr>
-                <td>@item.RazonSocial</td>
+        <div class="fj-toolbar-actions">
+            <a class="fj-btn fj-btn-primary" asp-page="ProveedorNuevo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                Agregar proveedor
+            </a>
+        </div>
+    </section>
 
-                <td>@item.NombreComercial</td>
-
-                <td>@item.Nit</td>
-
-                <td>@item.NombreContacto</td>
-
-                <td>@item.Telefono</td>
-
-                <td>@item.CorreoElectronico</td>
-
-                <td>@item.Direccion</td>
-
-                <td>@item.FechaRegistro</td>
-
-                <td>
-                    @if (item.Estado == 1)
+    <section class="fj-card fj-table-card" aria-label="Listado de proveedores">
+        <div class="fj-table-wrap">
+            <table class="fj-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Razón Social</th>
+                        <th scope="col">NIT</th>
+                        <th scope="col">Contacto</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col" class="fj-td-estado">Estado</th>
+                        <th scope="col" class="fj-td-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ListProveedores.Count == 0 && string.IsNullOrEmpty(Model.Mensaje))
                     {
-                        <span class="badge bg-success">Activo</span>
+                        <tr>
+                            <td colspan="7" class="fj-table-vacio">
+                                <div class="fj-empty">
+                                    <span class="fj-empty-ico" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
+                                    </span>
+                                    <p>Sin proveedores registrados</p>
+                                    <span>Cuando existan proveedores en el sistema, aparecerán aquí.</span>
+                                </div>
+                            </td>
+                        </tr>
                     }
-                    else
+                    else if (Model.ListProveedores.Count == 0)
                     {
-                        <span class="badge bg-secondary">Inactivo</span>
+                        <tr>
+                            <td colspan="7" class="fj-table-vacio">
+                                <div class="fj-empty">
+                                    <span class="fj-empty-ico" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                                    </span>
+                                    <p>No se pudo cargar el listado</p>
+                                    <span>Revisa la conexión a la base de datos e inténtalo nuevamente.</span>
+                                </div>
+                            </td>
+                        </tr>
                     }
-                </td>
 
-                <td>
-                    <a class="btn btn-sm btn-outline-secondary"
-                       asp-page="ProveedorEditar"
-                       asp-route-id="@item.IdProveedor">
-                        Editar
-                    </a>
+                    @foreach (var item in Model.ListProveedores)
+                    {
+                        <tr>
+                            <td>
+                                <span class="fj-nombre">@item.RazonSocial</span>
+                                <span class="fj-nombre-sub">@item.NombreComercial</span>
+                            </td>
+                            <td class="fj-td-codigo"><span class="fj-codigo">@item.Nit</span></td>
+                            <td class="fj-td-secundario">@item.NombreContacto</td>
+                            <td class="fj-td-secundario">@item.Telefono</td>
+                            <td class="fj-td-secundario">
+                                @if (!string.IsNullOrEmpty(item.CorreoElectronico))
+                                {
+                                    <span class="fj-ellipsis" title="@item.CorreoElectronico">@item.CorreoElectronico</span>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
+                            <td class="fj-td-estado">
+                                <span class="fj-pill" style="--pill: var(@(item.Estado == 1 ? "--success" : "--texto-ter"));">@(item.Estado == 1 ? "Activo" : "Inactivo")</span>
+                            </td>
+                            <td class="fj-td-acciones">
+                                <div class="fj-acciones">
+                                    <a class="fj-btn fj-btn-edit" asp-page="ProveedorEditar" asp-route-id="@item.IdProveedor">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                                        Editar
+                                    </a>
+                                    <form method="post" asp-page-handler="Eliminar" asp-route-idProveedor="@item.IdProveedor" class="fj-inline-form">
+                                        <button type="submit" class="fj-btn fj-btn-sm fj-btn-danger">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-                    <form method="post"
-                          asp-page-handler="Eliminar"
-                          asp-route-idProveedor="@item.IdProveedor"
-                          style="display:inline">
-
-                        <button type="submit"
-                                class="btn btn-sm btn-outline-danger">
-                            Eliminar
-                        </button>
-
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+</div>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -9,25 +10,32 @@ namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaEditarModel : PageModel
     {
-        private readonly ICategoriaRepository _repository;
+        private readonly ICategoriaRepository _repositorio;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<CategoriaEditarModel> _logger;
         private readonly CategoriaValidaciones _validador = new();
 
         [BindProperty]
-        public Categoria CategoriaEdit { get; set; } = new ();
+        public Categoria CategoriaEdit { get; set; } = new();
 
+        public List<Empleado> Empleados { get; set; } = new();
         public string MensajeError { get; set; } = "";
 
-        public CategoriaEditarModel(ICategoriaRepository repository)
+        public CategoriaEditarModel(ICategoriaRepository repositorio, IConfiguration configuration, ILogger<CategoriaEditarModel> logger)
         {
-            _repository = repository;
+            _repositorio = repositorio;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         public IActionResult OnGet(short id)
         {
-            var categoria = _repository.ObtenerPorId(id);
+            CargarEmpleados();
+
+            var categoria = _repositorio.ObtenerPorId(id);
             if (categoria == null)
             {
-                TempData["Mensaje"] = "CategorÌa no encontrada.";
+                TempData["MensajeError"] = "La categor√≠a solicitada no existe.";
                 return RedirectToPage("Categorias");
             }
 
@@ -39,26 +47,36 @@ namespace FERRETERIA__Joel.Pages
         {
             if (!_validador.EsValida(CategoriaEdit))
             {
-                MensajeError = "Verifique los datos: el cÛdigo y nombre son obligatorios y deben respetar el lÌmite de caracteres.";
+                MensajeError = "Verifique los datos: el c√≥digo, nombre y empleado responsable son obligatorios y deben respetar el l√≠mite de caracteres.";
+                CargarEmpleados();
                 return Page();
             }
 
             try
             {
-                _repository.Actualizar(CategoriaEdit);
-                TempData["Mensaje"] = "CategorÌa actualizada con Èxito.";
+                _repositorio.Actualizar(CategoriaEdit);
+                TempData["Mensaje"] = "Categor√≠a actualizada con √©xito.";
                 return RedirectToPage("Categorias");
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                MensajeError = $"El cÛdigo '{CategoriaEdit.Codigo}' ya pertenece a otra categorÌa.";
+                MensajeError = $"El c√≥digo '{CategoriaEdit.Codigo}' ya pertenece a otra categor√≠a.";
+                CargarEmpleados();
                 return Page();
             }
             catch (Exception ex)
             {
-                MensajeError = "Error al actualizar: " + ex.Message;
+                _logger.LogError(ex, "Error al actualizar la categor√≠a {Id}.", CategoriaEdit.IdCategoria);
+                MensajeError = "No se pudo actualizar la categor√≠a. Int√©ntalo nuevamente.";
+                CargarEmpleados();
                 return Page();
             }
+        }
+
+        void CargarEmpleados()
+        {
+            string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
+            Empleados = CatalogoHelper.EmpleadosActivos(connectionString);
         }
     }
 }

@@ -4,17 +4,17 @@ namespace FERRETERIA__Joel.Validaciones
     {
         public bool EsCodigoValido(string codigo)
         {
-            return (codigo != "") && (codigo.Length <= 30);
+            return !string.IsNullOrWhiteSpace(codigo) && codigo.Trim().Length <= 30;
         }
 
         public bool EsNombreValido(string nombre)
         {
-            return (nombre != "") && (nombre.Length <= 150);
+            return !string.IsNullOrWhiteSpace(nombre) && nombre.Trim().Length <= 150;
         }
 
         public bool EsUnidadMedidaValida(string unidadMedida)
         {
-            return (unidadMedida != "");
+            return !string.IsNullOrWhiteSpace(unidadMedida);
         }
 
         public bool EsPrecioValido(decimal precioVenta)

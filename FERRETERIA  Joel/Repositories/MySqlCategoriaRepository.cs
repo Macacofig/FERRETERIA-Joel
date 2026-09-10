@@ -45,7 +45,7 @@ namespace FERRETERIA__Joel.Repositories
 
         public Categoria? ObtenerPorId(short id)
         {
-            const string query = @"SELECT IdCategoria, Codigo, Nombre, Descripcion, Estado 
+            const string query = @"SELECT IdCategoria, Codigo, Nombre, Descripcion, Estado, IdEmpleadoResponsable 
                                   FROM categoria 
                                   WHERE IdCategoria = @IdCategoria LIMIT 1;";
 
@@ -63,7 +63,8 @@ namespace FERRETERIA__Joel.Repositories
                 Codigo = reader["Codigo"].ToString() ?? "",
                 Nombre = reader["Nombre"].ToString() ?? "",
                 Descripcion = reader["Descripcion"] != DBNull.Value ? reader["Descripcion"].ToString() : "",
-                Estado = Convert.ToByte(reader["Estado"])
+                Estado = Convert.ToByte(reader["Estado"]),
+                IdEmpleadoResponsable = Convert.ToInt16(reader["IdEmpleadoResponsable"])
             };
         }
 
