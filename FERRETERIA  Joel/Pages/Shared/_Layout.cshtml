@@ -27,6 +27,10 @@
             <nav class="fj-nav" id="fjNav" aria-label="Navegación principal">
                 <ul class="fj-menu">
 
+                    <li class="fj-menu-item@(activo == "Home" ? " is-active" : "")">
+                        <a class="fj-menu-link" asp-page="/Index">Home</a>
+                    </li>
+
                     <li class="fj-menu-item@(activo == "Productos" ? " is-active" : "")">
                         <a class="fj-menu-link" asp-page="/Productos">Productos</a>
                     </li>

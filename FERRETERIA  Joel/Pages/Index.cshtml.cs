@@ -7,7 +7,8 @@ namespace FERRETERIA__Joel.Pages
     {
         public IActionResult OnGet()
         {
-            return RedirectToPage("/Productos");
+            ViewData["ActiveMenu"] = "Home";
+            return Page();
         }
     }
 }
