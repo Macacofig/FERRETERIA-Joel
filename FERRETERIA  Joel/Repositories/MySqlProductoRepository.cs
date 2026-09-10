@@ -100,7 +100,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public void Insertar(Producto producto)
+        public int Insertar(Producto producto)
         {
             const string query = @"
                 INSERT INTO producto
@@ -169,6 +169,7 @@ namespace FERRETERIA__Joel.Repositories
             connection.Open();
 
             command.ExecuteNonQuery();
+            return Convert.ToInt32(command.LastInsertedId);
         }
 
 

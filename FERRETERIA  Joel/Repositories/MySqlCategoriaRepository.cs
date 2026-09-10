@@ -44,6 +44,48 @@ namespace FERRETERIA__Joel.Repositories
             return lista;
         }
 
+        public List<Categoria> ObtenerActivas()
+        {
+            var lista = new List<Categoria>();
+
+            const string query = @"
+        SELECT
+            IdCategoria,
+            Codigo,
+            Nombre,
+            Descripcion,
+            PorcentajeGanancia,
+            Estado,
+            FechaRegistro
+        FROM categoria
+        WHERE Estado = 1
+        ORDER BY Nombre ASC";
+
+            using var connection = new MySqlConnection(_connectionString);
+            using var command = new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new Categoria
+                {
+                    IdCategoria = Convert.ToInt16(reader["IdCategoria"]),
+                    Codigo = reader["Codigo"].ToString() ?? "",
+                    Nombre = reader["Nombre"].ToString() ?? "",
+                    Descripcion = reader["Descripcion"] != DBNull.Value
+                        ? reader["Descripcion"].ToString()
+                        : "",
+                    PorcentajeGanancia = Convert.ToDecimal(reader["PorcentajeGanancia"]),
+                    Estado = Convert.ToByte(reader["Estado"]),
+                    FechaRegistro = Convert.ToDateTime(reader["FechaRegistro"])
+                });
+            }
+
+            return lista;
+        }
         public Categoria? ObtenerPorId(short id)
         {
             const string query = @"SELECT IdCategoria, Codigo, Nombre, Descripcion, PorcentajeGanancia, Estado, IdEmpleadoResponsable 

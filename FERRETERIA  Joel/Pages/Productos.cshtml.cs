@@ -10,19 +10,26 @@ namespace FERRETERIA__Joel.Pages
     public class ProductosModel : PageModel
     {
         private readonly IProductoRepository _productoRepository;
+        private readonly ICategoriaRepository _categoriaRepository;
 
         public List<Producto> ListProductos { get; set; } = new();
+        public List<Categoria> Categorias { get; set; } = new();
 
         public ProductosModel(
-            IProductoRepository productoRepository)
+            IProductoRepository productoRepository,
+            ICategoriaRepository categoriaRepository)
         {
             _productoRepository = productoRepository;
+            _categoriaRepository = categoriaRepository;
         }
 
         public void OnGet()
         {
             ListProductos =
                 _productoRepository.ObtenerTodos();
+
+            Categorias =
+                _categoriaRepository.ObtenerTodas();
         }
     }
 }

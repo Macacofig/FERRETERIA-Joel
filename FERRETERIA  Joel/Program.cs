@@ -10,6 +10,7 @@ builder.Services.AddScoped<ICategoriaRepository, MySqlCategoriaRepository>();
 builder.Services.AddScoped<IProductoRepository, MySqlProductoRepository>();
 builder.Services.AddScoped<IProveedorRepository, MySqlProveedorRepository>();
 builder.Services.AddScoped<IEmpleadoRepository, MySqlEmpleadoRepository>();
+builder.Services.AddScoped<IHistoricoPrecioRepository, MySqlHistoricoPrecioRepository>();
 
 var app = builder.Build();
 

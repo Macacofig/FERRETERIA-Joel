@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -11,7 +10,7 @@ namespace FERRETERIA__Joel.Pages
     public class CategoriaEditarModel : PageModel
     {
         private readonly ICategoriaRepository _repositorio;
-        private readonly IConfiguration _configuration;
+        private readonly IEmpleadoRepository _empleadoRepository;
         private readonly ILogger<CategoriaEditarModel> _logger;
         private readonly CategoriaValidaciones _validador = new();
 
@@ -21,10 +20,13 @@ namespace FERRETERIA__Joel.Pages
         public List<Empleado> Empleados { get; set; } = new();
         public string MensajeError { get; set; } = "";
 
-        public CategoriaEditarModel(ICategoriaRepository repositorio, IConfiguration configuration, ILogger<CategoriaEditarModel> logger)
+        public CategoriaEditarModel(
+        ICategoriaRepository repositorio,
+        IEmpleadoRepository empleadoRepository,
+        ILogger<CategoriaEditarModel> logger)
         {
             _repositorio = repositorio;
-            _configuration = configuration;
+            _empleadoRepository = empleadoRepository;
             _logger = logger;
         }
 
@@ -73,10 +75,9 @@ namespace FERRETERIA__Joel.Pages
             }
         }
 
-        void CargarEmpleados()
+        private void CargarEmpleados()
         {
-            string connectionString = _configuration.GetConnectionString("MySqlConnection")!;
-            Empleados = CatalogoHelper.EmpleadosActivos(connectionString);
+            Empleados = _empleadoRepository.ObtenerActivos();
         }
     }
 }

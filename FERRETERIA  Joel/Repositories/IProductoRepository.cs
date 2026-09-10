@@ -6,7 +6,7 @@
 
         Models.Producto? ObtenerPorId(int idProducto);
 
-        void Insertar(Models.Producto producto);
+        int Insertar(Models.Producto producto);
 
         void Actualizar(Models.Producto producto);
 

@@ -107,7 +107,12 @@
                             </td>
 
                             <td class="fj-td-secundario">
-                                @item.IdCategoria
+                                @{
+                                    var categoria = Model.Categorias
+                                        .FirstOrDefault(c => c.IdCategoria == item.IdCategoria);
+                                }
+
+                                @(categoria?.Nombre ?? "Sin categoría")
                             </td>
 
                             <td class="fj-td-secundario">
