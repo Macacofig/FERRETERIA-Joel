@@ -19,7 +19,7 @@ namespace FERRETERIA__Joel.Pages
         public Categoria NuevaCategoria { get; set; } = new();
 
         public List<Empleado> Empleados { get; set; } = new();
-        public string MensajeError { get; set; } = "";
+        public List<string> Errores { get; set; } = new();
 
         public CategoriaNuevaModel(
             ICategoriaRepository repositorio,
@@ -34,16 +34,17 @@ namespace FERRETERIA__Joel.Pages
         public void OnGet()
         {
             NuevaCategoria.Estado = 1;
+            NuevaCategoria.Codigo = _repositorio.ObtenerSiguienteCodigo();
             CargarEmpleados();
         }
 
         public IActionResult OnPost()
         {
-            if (!_validador.EsValida(NuevaCategoria))
-            {
-                MensajeError =
-                    "Verifique los datos: el código, nombre y empleado responsable son obligatorios y deben respetar el límite de caracteres.";
+            NormalizarDatos();
+            Validar();
 
+            if (Errores.Any())
+            {
                 CargarEmpleados();
                 return Page();
             }
@@ -59,8 +60,8 @@ namespace FERRETERIA__Joel.Pages
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                MensajeError =
-                    $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.";
+                Errores.Add(
+                    $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.");
 
                 CargarEmpleados();
                 return Page();
@@ -71,11 +72,65 @@ namespace FERRETERIA__Joel.Pages
                     ex,
                     "Error al registrar la categoría.");
 
-                MensajeError =
-                    "No se pudo registrar la categoría. Inténtalo nuevamente.";
+                Errores.Add(
+                    "No se pudo registrar la categoría. Inténtalo nuevamente.");
 
                 CargarEmpleados();
                 return Page();
+            }
+        }
+
+        private void NormalizarDatos()
+        {
+            NuevaCategoria.Codigo =
+                NuevaCategoria.Codigo?.Trim().ToUpper() ?? "";
+
+            NuevaCategoria.Nombre =
+                NuevaCategoria.Nombre?.Trim() ?? "";
+
+            NuevaCategoria.Descripcion =
+                string.IsNullOrWhiteSpace(NuevaCategoria.Descripcion)
+                    ? null
+                    : NuevaCategoria.Descripcion.Trim();
+        }
+
+        private void Validar()
+        {
+            if (!_validador.EsCodigoValido(NuevaCategoria.Codigo))
+            {
+                Errores.Add(
+                    "El código es obligatorio y debe tener máximo 20 caracteres.");
+            }
+            else if (_repositorio.ExisteCodigo(NuevaCategoria.Codigo))
+            {
+                Errores.Add(
+                    $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.");
+            }
+
+            if (!_validador.EsNombreValido(NuevaCategoria.Nombre))
+            {
+                Errores.Add(
+                    "El nombre es obligatorio y debe tener máximo 100 caracteres.");
+            }
+
+            if (!_validador.EsDescripcionValida(NuevaCategoria.Descripcion))
+            {
+                Errores.Add(
+                    "La descripción no debe superar los 255 caracteres.");
+            }
+
+            if (!_validador.EsPorcentajeGananciaValido(
+                NuevaCategoria.PorcentajeGanancia))
+            {
+                Errores.Add(
+                    "El porcentaje de ganancia debe estar entre 0 y 100.");
+            }
+
+            if (!_validador.EsEmpleadoValido(
+                NuevaCategoria.IdEmpleadoResponsable))
+            {
+                Errores.Add(
+                    "Debe seleccionar un empleado responsable.");
             }
         }
 

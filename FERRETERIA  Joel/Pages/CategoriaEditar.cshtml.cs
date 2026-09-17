@@ -18,7 +18,7 @@ namespace FERRETERIA__Joel.Pages
         public Categoria CategoriaEdit { get; set; } = new();
 
         public List<Empleado> Empleados { get; set; } = new();
-        public string MensajeError { get; set; } = "";
+        public List<string> Errores { get; set; } = new();
 
         public CategoriaEditarModel(
         ICategoriaRepository repositorio,
@@ -47,9 +47,11 @@ namespace FERRETERIA__Joel.Pages
 
         public IActionResult OnPost()
         {
-            if (!_validador.EsValida(CategoriaEdit))
+            NormalizarDatos();
+            Validar();
+
+            if (Errores.Any())
             {
-                MensajeError = "Verifique los datos: el código, nombre y empleado responsable son obligatorios y deben respetar el límite de caracteres.";
                 CargarEmpleados();
                 return Page();
             }
@@ -62,16 +64,73 @@ namespace FERRETERIA__Joel.Pages
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                MensajeError = $"El código '{CategoriaEdit.Codigo}' ya pertenece a otra categoría.";
+                Errores.Add(
+                    $"El código '{CategoriaEdit.Codigo}' ya pertenece a otra categoría.");
                 CargarEmpleados();
                 return Page();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al actualizar la categoría {Id}.", CategoriaEdit.IdCategoria);
-                MensajeError = "No se pudo actualizar la categoría. Inténtalo nuevamente.";
+                Errores.Add("No se pudo actualizar la categoría. Inténtalo nuevamente.");
                 CargarEmpleados();
                 return Page();
+            }
+        }
+
+        private void NormalizarDatos()
+        {
+            CategoriaEdit.Codigo =
+                CategoriaEdit.Codigo?.Trim().ToUpper() ?? "";
+
+            CategoriaEdit.Nombre =
+                CategoriaEdit.Nombre?.Trim() ?? "";
+
+            CategoriaEdit.Descripcion =
+                string.IsNullOrWhiteSpace(CategoriaEdit.Descripcion)
+                    ? null
+                    : CategoriaEdit.Descripcion.Trim();
+        }
+
+        private void Validar()
+        {
+            if (!_validador.EsCodigoValido(CategoriaEdit.Codigo))
+            {
+                Errores.Add(
+                    "El código es obligatorio y debe tener máximo 20 caracteres.");
+            }
+            else if (_repositorio.ExisteCodigo(
+                CategoriaEdit.Codigo,
+                CategoriaEdit.IdCategoria))
+            {
+                Errores.Add(
+                    $"El código '{CategoriaEdit.Codigo}' ya pertenece a otra categoría.");
+            }
+
+            if (!_validador.EsNombreValido(CategoriaEdit.Nombre))
+            {
+                Errores.Add(
+                    "El nombre es obligatorio y debe tener máximo 100 caracteres.");
+            }
+
+            if (!_validador.EsDescripcionValida(CategoriaEdit.Descripcion))
+            {
+                Errores.Add(
+                    "La descripción no debe superar los 255 caracteres.");
+            }
+
+            if (!_validador.EsPorcentajeGananciaValido(
+                CategoriaEdit.PorcentajeGanancia))
+            {
+                Errores.Add(
+                    "El porcentaje de ganancia debe estar entre 0 y 100.");
+            }
+
+            if (!_validador.EsEmpleadoValido(
+                CategoriaEdit.IdEmpleadoResponsable))
+            {
+                Errores.Add(
+                    "Debe seleccionar un empleado responsable.");
             }
         }
 

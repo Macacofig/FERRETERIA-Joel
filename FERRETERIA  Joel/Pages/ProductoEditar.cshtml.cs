@@ -138,6 +138,18 @@ namespace FERRETERIA__Joel.Pages
                     "El nombre es obligatorio y debe tener máximo 150 caracteres.");
             }
 
+            if (!_validacion.EsMarcaValida(Producto.Marca))
+            {
+                Errores.Add(
+                    "La marca no debe superar los 100 caracteres.");
+            }
+
+            if (!_validacion.EsDescripcionValida(Producto.Descripcion))
+            {
+                Errores.Add(
+                    "La descripción no debe superar los 500 caracteres.");
+            }
+
             if (!_validacion.EsUnidadMedidaValida(Producto.UnidadMedida))
             {
                 Errores.Add(

@@ -1,37 +1,48 @@
 ﻿using System.Net.Mail;
+using System.Text.RegularExpressions;
+using FERRETERIA__Joel.ConfiguracionValidacion;
 
 namespace FERRETERIA__Joel.Validaciones
 {
     public class ProveedorValidaciones
     {
+        private static readonly Regex FormatoTelefono =
+            new(@"^\+?[0-9][0-9 ()-]{5,}[0-9]$", RegexOptions.Compiled);
         public bool EsRazonSocialValida(string? razonSocial)
         {
             return !string.IsNullOrWhiteSpace(razonSocial)
-                && razonSocial.Trim().Length <= 150;
+                && razonSocial.Trim().Length <= ConfiguracionProveedor.RazonSocialMaxLength;
         }
 
         public bool EsNombreComercialValido(string? nombreComercial)
         {
             return !string.IsNullOrWhiteSpace(nombreComercial)
-                && nombreComercial.Trim().Length <= 150;
+                && nombreComercial.Trim().Length <= ConfiguracionProveedor.NombreComercialMaxLength;
         }
 
         public bool EsNitValido(string? nit)
         {
             return !string.IsNullOrWhiteSpace(nit)
-                && nit.Trim().Length <= 30;
+                && nit.Trim().Length <= ConfiguracionProveedor.NitMaxLength;
         }
 
         public bool EsNombreContactoValido(string? nombreContacto)
         {
             return !string.IsNullOrWhiteSpace(nombreContacto)
-                && nombreContacto.Trim().Length <= 150;
+                && nombreContacto.Trim().Length <= ConfiguracionProveedor.NombreContactoMaxLength;
         }
 
         public bool EsTelefonoValido(string? telefono)
         {
-            return !string.IsNullOrWhiteSpace(telefono)
-                && telefono.Trim().Length <= 30;
+            if (string.IsNullOrWhiteSpace(telefono))
+            {
+                return false;
+            }
+
+            string limpio = telefono.Trim();
+
+            return limpio.Length <= ConfiguracionProveedor.TelefonoMaxLength
+                && FormatoTelefono.IsMatch(limpio);
         }
 
         public bool EsCorreoValido(string? correoElectronico)
@@ -56,12 +67,12 @@ namespace FERRETERIA__Joel.Validaciones
         public bool EsDireccionValida(string? direccion)
         {
             return string.IsNullOrWhiteSpace(direccion)
-                || direccion.Trim().Length <= 255;
+                || direccion.Trim().Length <= ConfiguracionProveedor.DireccionMaxLength;
         }
 
         public bool EsEmpleadoValido(short idEmpleadoResponsable)
         {
-            return idEmpleadoResponsable > 0;
+            return idEmpleadoResponsable >= ConfiguracionProveedor.EmpleadoMinimo;
         }
     }
 

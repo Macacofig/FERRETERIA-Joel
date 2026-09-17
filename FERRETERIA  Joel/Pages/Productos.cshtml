@@ -164,7 +164,7 @@
                                               asp-page-handler="Eliminar"
                                               asp-route-idProducto="@item.IdProducto"
                                               class="fj-inline-form"
-                                              onsubmit="return confirm('¿Desea desactivar este producto?');">
+                                              data-fj-confirm="¿Desea desactivar el producto '@item.Nombre'?">
 
                                             <button type="submit" class="fj-btn fj-btn-sm fj-btn-danger">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -188,3 +188,5 @@
     </section>
 
 </div>
+
+<partial name="_ConfirmModal" />

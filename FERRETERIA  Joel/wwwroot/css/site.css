@@ -1281,3 +1281,130 @@ a.fj-mega-card:hover {
         padding: 1.75rem 1rem 3rem;
     }
 }
+
+/* ============================================================
+   Input solo lectura
+   ============================================================ */
+
+.fj-input[readonly] {
+    background: var(--fondo-sutil);
+    border-color: var(--borde-suave);
+    color: var(--texto-sec);
+    cursor: not-allowed;
+}
+
+/* ============================================================
+   Texto auxiliar bajo campos (hint)
+   ============================================================ */
+
+.fj-form-hint {
+    display: block;
+    margin-top: 0.3125rem;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: var(--texto-ter);
+}
+
+/* ============================================================
+   Modal de confirmación reutilizable
+   ============================================================ */
+
+body.fj-modal-open {
+    overflow: hidden;
+}
+
+.fj-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.fj-modal.is-open {
+    display: flex;
+}
+
+.fj-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    animation: fj-fade-in 0.18s ease;
+}
+
+.fj-modal-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 1rem;
+    pointer-events: none;
+}
+
+.fj-modal-dialog {
+    pointer-events: auto;
+    background: var(--fondo-card);
+    border: 0.0625rem solid var(--borde);
+    border-radius: var(--radius);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.18);
+    padding: 2rem 2rem 1.5rem;
+    width: 100%;
+    max-width: 26rem;
+    text-align: center;
+    animation: fj-slide-in 0.18s ease;
+}
+
+.fj-modal-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: rgba(255, 69, 58, 0.08);
+    color: var(--danger);
+    margin: 0 auto 1rem;
+}
+
+    .fj-modal-icon svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+.fj-modal-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--texto);
+    margin: 0 0 0.5rem;
+}
+
+.fj-modal-message {
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--texto-sec);
+    margin: 0 0 1.5rem;
+}
+
+.fj-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+    .fj-modal-actions .fj-btn {
+        flex: 1;
+        max-width: 10rem;
+    }
+
+@keyframes fj-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes fj-slide-in {
+    from { opacity: 0; transform: translateY(0.75rem) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}

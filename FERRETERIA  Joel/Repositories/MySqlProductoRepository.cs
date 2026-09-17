@@ -327,6 +327,26 @@ namespace FERRETERIA__Joel.Repositories
             return Convert.ToInt32(
                 command.ExecuteScalar()) > 0;
         }
+
+        public string ObtenerSiguienteCodigo()
+        {
+            const string query = @"
+                SELECT CONCAT('PRO-', LPAD(
+                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 5) AS UNSIGNED)), 0) + 1,
+                    3, '0'))
+                FROM producto
+                WHERE Codigo LIKE 'PRO-%'";
+
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            return command.ExecuteScalar()?.ToString() ?? "PRO-001";
+        }
         private Producto MapearProducto(MySqlDataReader reader)
         {
             return new Producto

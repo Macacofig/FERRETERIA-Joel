@@ -25,7 +25,7 @@ namespace FERRETERIA__Joel.Pages
         public List<string> Errores { get; set; } = new();
 
         public static readonly string[] UnidadesMedida =
-            { "Unidad", "Kilogramo", "Metro", "Litro", "Par", "Caja" };
+            { "Caja", "Kilogramo", "Litro", "Metro", "Par", "Unidad" };
 
         public ProductoNuevoModel(
         IProductoRepository productoRepository,
@@ -43,11 +43,20 @@ namespace FERRETERIA__Joel.Pages
 
         public void OnGet()
         {
+            Producto.Codigo =
+                _productoRepository.ObtenerSiguienteCodigo();
+
             CargarCatalogos();
         }
 
         public IActionResult OnPost()
         {
+            if (string.IsNullOrWhiteSpace(Producto.Codigo))
+            {
+                Producto.Codigo =
+                    _productoRepository.ObtenerSiguienteCodigo();
+            }
+
             NormalizarDatos();
             Validar();
 
@@ -127,6 +136,18 @@ namespace FERRETERIA__Joel.Pages
             {
                 Errores.Add(
                     "El nombre es obligatorio y debe tener máximo 150 caracteres.");
+            }
+
+            if (!_validacion.EsMarcaValida(Producto.Marca))
+            {
+                Errores.Add(
+                    "La marca no debe superar los 100 caracteres.");
+            }
+
+            if (!_validacion.EsDescripcionValida(Producto.Descripcion))
+            {
+                Errores.Add(
+                    "La descripción no debe superar los 500 caracteres.");
             }
 
             if (!_validacion.EsUnidadMedidaValida(Producto.UnidadMedida))

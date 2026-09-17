@@ -176,6 +176,54 @@ namespace FERRETERIA__Joel.Repositories
             command.ExecuteNonQuery();
         }
 
+        public string ObtenerSiguienteCodigo()
+        {
+            const string query = @"
+                SELECT CONCAT('CAT-', LPAD(
+                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 5) AS UNSIGNED)), 0) + 1,
+                    3, '0'))
+                FROM categoria
+                WHERE Codigo LIKE 'CAT-%'";
+
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            return command.ExecuteScalar()?.ToString() ?? "CAT-001";
+        }
+
+        public bool ExisteCodigo(string codigo, short? idCategoriaExcluir = null)
+        {
+            const string query = @"
+                SELECT COUNT(*)
+                FROM categoria
+                WHERE Codigo = @codigo
+                AND (@idCategoriaExcluir IS NULL
+                    OR IdCategoria <> @idCategoriaExcluir)";
+
+            using MySqlConnection connection =
+                new MySqlConnection(_connectionString);
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@codigo", codigo);
+            command.Parameters.AddWithValue(
+                "@idCategoriaExcluir",
+                idCategoriaExcluir.HasValue
+                    ? idCategoriaExcluir.Value
+                    : DBNull.Value);
+
+            connection.Open();
+
+            return Convert.ToInt32(
+                command.ExecuteScalar()) > 0;
+        }
+
         public void Desactivar(short id)
         {
             const string query = @"UPDATE categoria 

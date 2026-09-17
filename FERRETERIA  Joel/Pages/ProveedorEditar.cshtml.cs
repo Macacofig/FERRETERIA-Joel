@@ -158,7 +158,7 @@ namespace FERRETERIA__Joel.Pages
             if (!_validacion.EsTelefonoValido(Proveedor.Telefono))
             {
                 Errores.Add(
-                    "El teléfono es obligatorio y debe tener máximo 30 caracteres.");
+                    "El teléfono es obligatorio, debe tener máximo 30 caracteres y contener solo números, espacios, guiones o paréntesis.");
             }
 
             if (!_validacion.EsCorreoValido(Proveedor.CorreoElectronico))

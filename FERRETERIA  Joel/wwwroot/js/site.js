@@ -57,3 +57,81 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+// ---------------------------------------------------------
+// Modal de confirmación reutilizable.
+// Cualquier <form> con data-fj-confirm="mensaje" intercepta su
+// envío, muestra el modal y solo envía si el usuario confirma.
+// ---------------------------------------------------------
+(function () {
+    var modal = document.getElementById('fjConfirmModal');
+    if (!modal) return;
+
+    var mensajeEl = document.getElementById('fjConfirmMessage');
+    var botonOk = document.getElementById('fjConfirmOk');
+    var formularioPendiente = null;
+
+    function abrirModal(msj, form) {
+        formularioPendiente = form;
+        if (mensajeEl) mensajeEl.textContent = msj;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('fj-modal-open');
+        if (botonOk) botonOk.focus();
+    }
+
+    function cerrarModal() {
+        formularioPendiente = null;
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('fj-modal-open');
+    }
+
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (!form || form.nodeName !== 'FORM') return;
+
+        var msj = form.getAttribute('data-fj-confirm');
+        if (!msj) return;
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        abrirModal(msj, form);
+    });
+
+    if (botonOk) {
+        botonOk.addEventListener('click', function () {
+            var form = formularioPendiente;
+            cerrarModal();
+            if (!form) return;
+            form.removeAttribute('data-fj-confirm');
+            form.submit();
+        });
+    }
+
+    modal.addEventListener('click', function (event) {
+        if (event.target.classList.contains('fj-modal-backdrop') ||
+            event.target.closest('[data-fj-modal-close]')) {
+            cerrarModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') cerrarModal();
+    });
+})();
+
+// ---------------------------------------------------------
+// Normalización de textos de formularios: elimina espacios
+// redundantes al inicio/fin antes de enviar.
+// ---------------------------------------------------------
+(function () {
+    document.querySelectorAll('form.fj-form').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            form.querySelectorAll('input[type="text"], input[type="tel"], input[type="number"], input:not([type]), textarea').forEach(function (campo) {
+                if (campo.readOnly) return;
+                if (campo.value) campo.value = campo.value.trim();
+            });
+        });
+    });
+})();

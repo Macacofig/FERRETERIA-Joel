@@ -15,5 +15,7 @@
         bool ExisteCodigo(string codigo, int? idProductoExcluir = null);
 
         bool ExisteCategoriaActiva(short idCategoria);
+
+        string ObtenerSiguienteCodigo();
     }
 }

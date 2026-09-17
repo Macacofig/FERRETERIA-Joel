@@ -10,5 +10,7 @@ namespace FERRETERIA__Joel.Repositories
 		void Insertar(Categoria categoria);
 		void Actualizar(Categoria categoria);
 		void Desactivar(short id);
+        string ObtenerSiguienteCodigo();
+        bool ExisteCodigo(string codigo, short? idCategoriaExcluir = null);
 	}
 }
