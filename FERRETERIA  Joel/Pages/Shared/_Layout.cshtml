@@ -31,65 +31,52 @@
                         <a class="fj-menu-link" asp-page="/Index">Home</a>
                     </li>
 
-                    <li class="fj-menu-item@(activo == "Productos" ? " is-active" : "")">
-                        <a class="fj-menu-link" asp-page="/Productos">Productos</a>
-                    </li>
-
-                    <li class="fj-menu-item@(activo == "Categorias" ? " is-active" : "")">
-                        <a class="fj-menu-link" asp-page="/Categorias">Categorías</a>
-                    </li>
-
-                    <li class="fj-menu-item@(activo == "Proveedores" ? " is-active" : "")">
-                        <a class="fj-menu-link" asp-page="/Proveedores">Proveedores</a>
-                    </li>
-
-                    <li class="fj-menu-item has-mega">
-                        <span class="fj-menu-link">
-                            Módulos
-                            <svg class="fj-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
-                        </span>
-                        <button type="button" class="fj-mega-toggle" data-fj-mega-toggle aria-label="Abrir submenú de módulos" aria-expanded="false">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                    <li class="fj-menu-item">
+                        <!-- Botón principal que abre el mega menú (sin borde, con chevron que rota) -->
+                        <button id="menuOpcionesToggle" class="fj-menu-link mm-toggle" aria-haspopup="true" aria-expanded="false" type="button">
+                            <span class="mm-toggle-label">Menú de opciones</span>
+                            <svg class="mm-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="9 6 15 12 9 18" />
+                            </svg>
                         </button>
-                        <section class="fj-mega" aria-label="Próximos módulos del sistema">
-                            <div class="fj-mega-shell">
-                                <p class="fj-mega-title">Próximos módulos</p>
-                                <div class="fj-mega-grid">
-                                    <div class="fj-mega-card is-soon">
-                                        <span class="fj-mega-ico" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>
-                                        </span>
-                                        <span class="fj-mega-nombre">Inventario <span class="fj-badge">Próximamente</span></span>
-                                        <span class="fj-mega-desc">Control de existencias y movimientos de stock.</span>
-                                    </div>
-                                    <div class="fj-mega-card is-soon">
-                                        <span class="fj-mega-ico" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" /></svg>
-                                        </span>
-                                        <span class="fj-mega-nombre">Ventas <span class="fj-badge">Próximamente</span></span>
-                                        <span class="fj-mega-desc">Emisión de ventas y atención al cliente.</span>
-                                    </div>
-                                    <div class="fj-mega-card is-soon">
-                                        <span class="fj-mega-ico" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
-                                        </span>
-                                        <span class="fj-mega-nombre">Compras <span class="fj-badge">Próximamente</span></span>
-                                        <span class="fj-mega-desc">Registro de compras y órdenes de pedido.</span>
-                                    </div>
-                                    <div class="fj-mega-card is-soon">
-                                        <span class="fj-mega-ico" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
-                                        </span>
-                                        <span class="fj-mega-nombre">Reportes <span class="fj-badge">Próximamente</span></span>
-                                        <span class="fj-mega-desc">Indicadores y consultas para la gerencia.</span>
-                                    </div>
-                                    <div class="fj-mega-card is-soon">
-                                        <span class="fj-mega-ico" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
-                                        </span>
-                                        <span class="fj-mega-nombre">Usuarios <span class="fj-badge">Próximamente</span></span>
-                                        <span class="fj-mega-desc">Gestión de usuarios y permisos del sistema.</span>
-                                    </div>
+
+                        <!-- Panel desplegable (estilo moderno, plano) -->
+                        <section id="menuOpciones" class="mm-panel" role="menu" aria-label="Menú de opciones" aria-hidden="true" hidden>
+                            <div class="mm-grid">
+                                <!-- PRODUCTOS -->
+                                <div class="mm-col" data-section="productos">
+                                    <div class="mm-title" tabindex="0" aria-expanded="false">PRODUCTOS</div>
+                                    <hr class="mm-sep" />
+                                    <ul class="mm-list" role="menu">
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Productos/Create"><span class="mm-ico">＋</span> Crear producto</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Productos/Edit"><span class="mm-ico">✎</span> Editar producto</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Productos"><span class="mm-ico">📋</span> Mostrar productos</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link mm-link-destructive" asp-page="/Productos/Delete"><span class="mm-ico">🗑</span> Eliminar producto</a></li>
+                                    </ul>
+                                </div>
+
+                                <!-- CATEGORÍAS -->
+                                <div class="mm-col" data-section="categorias">
+                                    <div class="mm-title" tabindex="0" aria-expanded="false">CATEGORÍAS</div>
+                                    <hr class="mm-sep" />
+                                    <ul class="mm-list" role="menu">
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Categorias/Create"><span class="mm-ico">＋</span> Crear categoría</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Categorias/Edit"><span class="mm-ico">✎</span> Editar categoría</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Categorias"><span class="mm-ico">📋</span> Mostrar categorías</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link mm-link-destructive" asp-page="/Categorias/Delete"><span class="mm-ico">🗑</span> Eliminar categoría</a></li>
+                                    </ul>
+                                </div>
+
+                                <!-- PROVEEDORES -->
+                                <div class="mm-col" data-section="proveedores">
+                                    <div class="mm-title" tabindex="0" aria-expanded="false">PROVEEDORES</div>
+                                    <hr class="mm-sep" />
+                                    <ul class="mm-list" role="menu">
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Proveedores/Create"><span class="mm-ico">＋</span> Crear proveedor</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Proveedores/Edit"><span class="mm-ico">✎</span> Editar proveedor</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Proveedores"><span class="mm-ico">📋</span> Mostrar proveedores</a></li>
+                                        <li role="none"><a role="menuitem" class="mm-link mm-link-destructive" asp-page="/Proveedores/Delete"><span class="mm-ico">🗑</span> Eliminar proveedor</a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </section>
@@ -189,6 +176,66 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        /* Mega menú moderno: apertura, cierre, accesibilidad y acordeón en móvil */
+        (function () {
+            var toggle = document.getElementById('menuOpcionesToggle');
+            var panel = document.getElementById('menuOpciones');
+
+            function setPanel(open) {
+                if (!panel || !toggle) return;
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (open) {
+                    panel.hidden = false;
+                    panel.setAttribute('aria-hidden', 'false');
+                    toggle.closest('.fj-menu-item')?.classList.add('is-open');
+                } else {
+                    panel.hidden = true;
+                    panel.setAttribute('aria-hidden', 'true');
+                    toggle.closest('.fj-menu-item')?.classList.remove('is-open');
+                    // cerrar secciones internas en móvil
+                    document.querySelectorAll('.mm-col.is-open').forEach(function (c) {
+                        c.classList.remove('is-open');
+                        var t = c.querySelector('.mm-title');
+                        if (t) t.setAttribute('aria-expanded', 'false');
+                    });
+                }
+            }
+
+            if (panel) { panel.hidden = true; panel.setAttribute('aria-hidden', 'true'); }
+
+            toggle?.addEventListener('click', function () { setPanel(toggle.getAttribute('aria-expanded') !== 'true'); });
+
+            // cerrar con ESC
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setPanel(false); toggle?.focus(); } });
+
+            // click fuera cierra
+            document.addEventListener('click', function (e) {
+                if (!panel || !toggle) return;
+                if (!panel.contains(e.target) && !toggle.contains(e.target)) setPanel(false);
+            });
+
+            // acordeón móvil: toggle en cada título
+            document.querySelectorAll('.mm-title').forEach(function (title) {
+                title.addEventListener('click', function () {
+                    var col = title.closest('.mm-col');
+                    if (!col) return;
+                    var open = col.classList.toggle('is-open');
+                    title.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+                title.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); title.click(); } });
+            });
+
+            // focus inicial al abrir con ArrowDown
+            toggle?.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowDown' && panel && !panel.hidden) {
+                    var first = panel.querySelector('.mm-link');
+                    first?.focus();
+                    e.preventDefault();
+                }
+            });
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
