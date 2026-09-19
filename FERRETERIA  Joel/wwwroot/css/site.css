@@ -724,6 +724,257 @@ a.fj-mega-card:hover {
     line-height: 1.45;
 }
 
+/* Menú de opciones: columnas con encabezados desplegables */
+.option-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0;
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.fj-option-list {
+    list-style: none;
+    margin: 0.375rem 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.fj-option-list li a {
+    display: inline-block;
+    padding: 0.25rem 0.25rem;
+    color: var(--texto-sec);
+    border-radius: 0.375rem;
+}
+
+.fj-option-list li a:hover {
+    color: var(--texto);
+    background: rgba(0,0,0,0.04);
+}
+
+/* cuando esté abierto */
+.fj-option-chevron {
+    width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    flex: none;
+    color: var(--texto-ter);
+    transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.fj-mega-card.is-open .fj-option-chevron {
+    transform: rotate(90deg);
+    color: var(--amarillo-texto);
+}
+
+.fj-mega-card.is-open .fj-option-list {
+    display: flex;
+}
+
+@media (max-width: 720px) {
+    .fj-mega-grid {
+        grid-template-columns: 1fr;
+    }
+    .fj-mega {
+        left: 50%;
+        width: calc(100vw - 2rem);
+        transform: translateX(-50%) translateY(0.5rem);
+    }
+}
+
+/* -------------------------
+   Mega menú estilo moderno
+   Tecnología: HTML/CSS puro
+   ------------------------- */
+
+/* Variables específicas del mega menú (ajústalas si hace falta) */
+:root {
+    --mm-accent: var(--amarillo);         /* color de acento (usa variable global) */
+    --mm-text: var(--texto);              /* color texto oscuro */
+    --mm-muted: #6b7280;                  /* color links inactivo (gris medio) */
+    --mm-gap: 3rem;                       /* gap entre columnas ~48px */
+    --mm-radius: 12px;                    /* radio panel */
+    --mm-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    --mm-padding: 32px;                   /* padding panel */
+    --mm-transition: 200ms ease;          /* animación entrada */
+}
+
+.mm-panel {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 720px;
+    max-width: calc(100vw - 2rem);
+    background: #fff;
+    border-radius: var(--mm-radius);
+    box-shadow: var(--mm-shadow);
+    padding: var(--mm-padding);
+    z-index: 1200;
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: top center;
+    transition: opacity var(--mm-transition), transform var(--mm-transition);
+    transform: translateX(-50%) translateY(-6px);
+}
+
+/* Cuando se abra: fade in + slide down */
+.mm-panel[aria-hidden="false"],
+.mm-panel[aria-hidden="true"][hidden="false"] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.mm-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--mm-gap);
+    align-items: start;
+}
+
+.mm-col {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.mm-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--mm-text);
+    margin-bottom: 8px;
+    outline: none;
+}
+
+.mm-sep {
+    border: none;
+    height: 1px;
+    background: rgba(0,0,0,0.06);
+    margin: 8px 0 16px 0;
+}
+
+.mm-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mm-link {
+    color: var(--mm-muted);
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 150ms ease, transform 150ms ease;
+    transform: translateX(0);
+}
+
+.mm-ico {
+    font-size: 14px;
+    line-height: 1;
+    color: inherit;
+    display: inline-flex;
+    width: 18px;
+    justify-content: center;
+    opacity: 0.95;
+}
+
+.mm-link:hover,
+.mm-link:focus {
+    color: var(--mm-accent);
+    transform: translateX(2px);
+    outline: none;
+}
+
+.mm-link-destructive:hover,
+.mm-link-destructive:focus {
+    color: #b43b33;
+}
+
+.fj-menu-item.is-active > a.fj-menu-link {
+    color: var(--mm-accent);
+    font-weight: 700;
+    position: relative;
+}
+.fj-menu-item.is-active > a.fj-menu-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -8px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--mm-accent);
+}
+
+@media (max-width: 720px) {
+    .mm-panel {
+        left: 50%;
+        transform: translateX(-50%) translateY(0);
+        width: calc(100vw - 2rem);
+        padding: 20px;
+    }
+    .mm-grid { grid-template-columns: 1fr; gap: 16px; }
+    .mm-title { cursor: pointer; padding: 8px 0; }
+    .mm-list { display: none; }
+    .mm-col.is-open .mm-list { display: flex; }
+}
+
+/* Estilos para el toggle del menú (sin borde extraño) */
+.mm-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    padding: 0.5625rem 0.875rem;
+    cursor: pointer;
+    color: inherit;
+}
+
+.mm-toggle:focus {
+    outline: none;
+}
+
+.mm-toggle:focus-visible {
+    outline: 0.125rem solid var(--amarillo);
+    outline-offset: 0.125rem;
+    border-radius: 0.25rem;
+}
+
+.mm-toggle-label {
+    font-weight: 600;
+}
+
+.mm-toggle-chevron {
+    width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    flex: none;
+    color: var(--texto-ter);
+    transition: transform 150ms ease, color 150ms ease;
+}
+
+/* Rotar el chevron cuando el botón tiene aria-expanded=true */
+#menuOpcionesToggle[aria-expanded="true"] .mm-toggle-chevron,
+.mm-toggle[aria-expanded="true"] .mm-toggle-chevron {
+    transform: rotate(90deg);
+    color: var(--amarillo-texto);
+}
+
+
+
 .fj-mega-card.is-soon {
     opacity: 0.72;
 }
