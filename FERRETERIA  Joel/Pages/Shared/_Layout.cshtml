@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - Ferretería Joel</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="icon" type="image/png" href="~/favicon.png" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
     <link rel="stylesheet" href="~/FERRETERIA__Joel.styles.css" asp-append-version="true" />
 </head>
@@ -27,57 +28,30 @@
             <nav class="fj-nav" id="fjNav" aria-label="Navegación principal">
                 <ul class="fj-menu">
 
-                    <li class="fj-menu-item@(activo == "Home" ? " is-active" : "")">
-                        <a class="fj-menu-link" asp-page="/Index">Home</a>
-                    </li>
+                    @if (activo == "Home")
+                    {
+                        <li class="fj-menu-item is-active">
+                            <a class="fj-menu-link" asp-page="/Index" aria-current="page">Home</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="fj-menu-item">
+                            <a class="fj-menu-link" asp-page="/Index">Home</a>
+                        </li>
+                    }
 
                     <li class="fj-menu-item">
-                        <!-- Botón principal que abre el mega menú (sin borde, con chevron que rota) -->
+                        <!-- Toggle del menú de opciones -->
                         <button id="menuOpcionesToggle" class="fj-menu-link mm-toggle" aria-haspopup="true" aria-expanded="false" type="button">
                             <span class="mm-toggle-label">Menú de opciones</span>
-                            <svg class="mm-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <polyline points="9 6 15 12 9 18" />
-                            </svg>
+                            <svg class="mm-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18" /></svg>
                         </button>
 
-                        <!-- Panel desplegable (estilo moderno, plano) -->
-                        <section id="menuOpciones" class="mm-panel" role="menu" aria-label="Menú de opciones" aria-hidden="true" hidden>
-                            <div class="mm-grid">
-                                <!-- PRODUCTOS -->
-                                <div class="mm-col" data-section="productos">
-                                    <div class="mm-title" tabindex="0" aria-expanded="false">PRODUCTOS</div>
-                                    <hr class="mm-sep" />
-                                    <ul class="mm-list" role="menu">
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Productos/Create"><span class="mm-ico">＋</span> Crear producto</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Productos/Edit"><span class="mm-ico">✎</span> Editar producto</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Productos"><span class="mm-ico">📋</span> Mostrar productos</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link mm-link-destructive" asp-page="/Productos/Delete"><span class="mm-ico">🗑</span> Eliminar producto</a></li>
-                                    </ul>
-                                </div>
-
-                                <!-- CATEGORÍAS -->
-                                <div class="mm-col" data-section="categorias">
-                                    <div class="mm-title" tabindex="0" aria-expanded="false">CATEGORÍAS</div>
-                                    <hr class="mm-sep" />
-                                    <ul class="mm-list" role="menu">
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Categorias/Create"><span class="mm-ico">＋</span> Crear categoría</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Categorias/Edit"><span class="mm-ico">✎</span> Editar categoría</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Categorias"><span class="mm-ico">📋</span> Mostrar categorías</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link mm-link-destructive" asp-page="/Categorias/Delete"><span class="mm-ico">🗑</span> Eliminar categoría</a></li>
-                                    </ul>
-                                </div>
-
-                                <!-- PROVEEDORES -->
-                                <div class="mm-col" data-section="proveedores">
-                                    <div class="mm-title" tabindex="0" aria-expanded="false">PROVEEDORES</div>
-                                    <hr class="mm-sep" />
-                                    <ul class="mm-list" role="menu">
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Proveedores/Create"><span class="mm-ico">＋</span> Crear proveedor</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Proveedores/Edit"><span class="mm-ico">✎</span> Editar proveedor</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link" asp-page="/Proveedores"><span class="mm-ico">📋</span> Mostrar proveedores</a></li>
-                                        <li role="none"><a role="menuitem" class="mm-link mm-link-destructive" asp-page="/Proveedores/Delete"><span class="mm-ico">🗑</span> Eliminar proveedor</a></li>
-                                    </ul>
-                                </div>
+                        <!-- Panel: el contenido se genera por JS a partir de menuData -->
+                        <section id="menuOpciones" class="mm-panel" role="dialog" aria-label="Menú de opciones" aria-hidden="true" hidden>
+                            <div class="mm-panel-inner">
+                                <div id="mmGrid" class="mm-grid" role="menu" aria-orientation="vertical" tabindex="-1"></div>
                             </div>
                         </section>
                     </li>
@@ -89,7 +63,7 @@
                         <span class="fj-dot" aria-hidden="true"></span>
                     </button>
                     <button class="fj-icon-btn" type="button" aria-label="Configuración">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h.09c.7 0 1.25-.45 1.51-1a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06c.45.45 1.1.6 1.7.36.5-.2 1.05-.3 1.61-.3H9c.55 0 1.09.1 1.61.3.59.24 1.25.09 1.7-.36l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06c-.45.45-.6 1.1-.36 1.7.2.5.3 1.05.3 1.61V9c0 .55.1 1.09.3 1.61.24.59.09 1.25-.36 1.7l-.06.06a2 2 0 0 1 0 2.83z" /></svg>
                     </button>
                     <a class="fj-userchip" href="#" aria-label="Perfil de usuario">
                         <span class="fj-userchip-avatar" aria-hidden="true">
@@ -177,63 +151,211 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-        /* Mega menú moderno: apertura, cierre, accesibilidad y acordeón en móvil */
+        /* Generador del menú a partir de un array de datos (Razor Pages + Vanilla JS)
+           Tecnología: Razor Pages (HTML/CSS) + JavaScript simple
+           Requisitos: el array menuData contiene grupos y opciones con { label, icon, route, enabled }
+        */
         (function () {
-            var toggle = document.getElementById('menuOpcionesToggle');
-            var panel = document.getElementById('menuOpciones');
+            // Datos del menú (grupo > opciones). Cambiar enabled a true cuando el módulo esté listo.
+            const menuData = [
+                {
+                    title: 'GESTIÓN DE PRODUCTOS', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 7h18v13H3z"/></svg>',
+                    items: [
+                        { label: 'Productos', route: '/Productos', enabled: true },
+                        { label: 'Categorías', route: '/Categorias', enabled: true },
+                        { label: 'Imágenes de productos', route: '#', enabled: false },
+                        { label: 'Unidades de venta', route: '#', enabled: false },
+                        { label: 'Precios y ofertas', route: '#', enabled: false }
+                    ]
+                },
+                {
+                    title: 'GESTIÓN DE INVENTARIO', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 7h18v10H3z"/></svg>',
+                    items: [
+                        { label: 'Proveedores', route: '/Proveedores', enabled: true },
+                        { label: 'Inventario', route: '#', enabled: false },
+                        { label: 'Compras', route: '#', enabled: false },
+                        { label: 'Historial de compras', route: '#', enabled: false }
+                    
+                    ]
+                },
+                {
+                    title: 'VENTAS Y CAJA', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 6h18M6 6v12"/></svg>',
+                    items: [
+                        { label: 'Nueva venta', route: '#', enabled: false },
+                        { label: 'Historial de ventas', route: '#', enabled: false },
+                        { label: 'Recibos', route: '#', enabled: false },
+                        { label: 'Descuentos mayoristas', route: '#', enabled: false },
+                        { label: 'Cierre de caja', route: '#', enabled: false }
+                    ]
+                },
+                {
+                    title: 'ADMINISTRACIÓN', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/></svg>',
+                    items: [
+                        { label: 'Reportes y estadísticas', route: '#', enabled: false },
+                        { label: 'Clientes', route: '#', enabled: false },
+                        { label: 'Empleados y roles', route: '#', enabled: false },
+                        { label: 'Configuración', route: '#', enabled: false }
+                    ]
+                }
+            ];
 
-            function setPanel(open) {
-                if (!panel || !toggle) return;
-                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-                if (open) {
-                    panel.hidden = false;
-                    panel.setAttribute('aria-hidden', 'false');
-                    toggle.closest('.fj-menu-item')?.classList.add('is-open');
-                } else {
-                    panel.hidden = true;
-                    panel.setAttribute('aria-hidden', 'true');
-                    toggle.closest('.fj-menu-item')?.classList.remove('is-open');
-                    // cerrar secciones internas en móvil
-                    document.querySelectorAll('.mm-col.is-open').forEach(function (c) {
-                        c.classList.remove('is-open');
-                        var t = c.querySelector('.mm-title');
-                        if (t) t.setAttribute('aria-expanded', 'false');
+            // Renderizar menú a partir de menuData
+            function renderMenu() {
+                const grid = document.getElementById('mmGrid');
+                if (!grid) return;
+                grid.innerHTML = '';
+
+                menuData.forEach(group => {
+                    const col = document.createElement('div');
+                    col.className = 'mm-col';
+
+                    const title = document.createElement('div');
+                    title.className = 'mm-col-title';
+                    title.setAttribute('tabindex', '0');
+                    title.setAttribute('aria-expanded', 'false');
+                    title.innerHTML = (group.icon || '') + '<span>' + group.title + '</span>';
+                    col.appendChild(title);
+
+                    const hr = document.createElement('hr'); hr.setAttribute('aria-hidden','true'); col.appendChild(hr);
+
+                    const ul = document.createElement('ul'); ul.className = 'mm-list'; ul.setAttribute('role','menu');
+
+                    group.items.forEach(item => {
+                        const li = document.createElement('li'); li.setAttribute('role','none');
+
+                        // Si la opción tiene acciones, renderizamos un botón toggle y un sublist
+                        if (item.acciones && Array.isArray(item.acciones)) {
+                            const btn = document.createElement('button');
+                            btn.className = 'mm-item has-actions ' + (item.enabled ? 'enabled' : 'disabled');
+                            btn.setAttribute('type','button');
+                            btn.setAttribute('aria-expanded','false');
+                            btn.setAttribute('role','menuitem');
+                            if (!item.enabled) btn.setAttribute('aria-disabled','true');
+
+                            // icon + label
+                            const ico = document.createElement('span'); ico.className = 'mm-item-icon'; ico.innerHTML = item.icon || '';
+                            btn.appendChild(ico);
+                            const lbl = document.createElement('span'); lbl.textContent = item.label; btn.appendChild(lbl);
+
+                            // small chevron
+                            const chev = document.createElement('span'); chev.className = 'mm-item-chev'; chev.setAttribute('aria-hidden','true'); chev.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
+                             btn.appendChild(chev);
+                            // crear sublista oculta
+                            const sub = document.createElement('ul'); sub.className = 'mm-sublist'; sub.setAttribute('role','menu'); sub.hidden = true;
+
+                            item.acciones.forEach(action => {
+                                const sli = document.createElement('li'); sli.setAttribute('role','none');
+                                const sa = document.createElement('a'); sa.className = 'mm-subitem'; sa.setAttribute('role','menuitem'); sa.setAttribute('href', action.route); sa.style.fontSize = '13px';
+                                sa.innerHTML = '<span class="mm-subitem-icon">' + (action.icon || '') + '</span><span class="mm-subitem-label">' + action.label + '</span>';
+                                sli.appendChild(sa);
+                                sub.appendChild(sli);
+                            });
+
+                            // eventos: abrir/cerrar (solo una abierto a la vez)
+                            btn.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                const open = btn.getAttribute('aria-expanded') === 'true';
+                                // cerrar todos
+                                document.querySelectorAll('.mm-item.has-actions[aria-expanded="true"]').forEach(function(t){ t.setAttribute('aria-expanded','false'); t.classList.remove('is-open'); const s=t.nextElementSibling; if(s && s.classList.contains('mm-sublist')) s.hidden=true; });
+                                if (!open) { btn.setAttribute('aria-expanded','true'); btn.classList.add('is-open'); sub.hidden = false; }
+                            });
+                            // keyboard: Enter/Space toggle
+                            btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
+
+                            ul.appendChild(li); li.appendChild(btn); li.appendChild(sub);
+                        }
+                        else {
+                            const a = document.createElement(item.enabled ? 'a' : 'button');
+                            a.className = 'mm-item ' + (item.enabled ? 'enabled' : 'disabled');
+                            a.setAttribute('role','menuitem');
+                            if (item.enabled) { a.setAttribute('href', item.route); }
+                            else { a.setAttribute('aria-disabled','true'); a.setAttribute('type','button'); }
+
+                            const ico = document.createElement('span'); ico.className = 'mm-item-icon'; ico.innerHTML = item.icon || '';
+                            a.appendChild(ico);
+                            const label = document.createElement('span'); label.textContent = item.label; a.appendChild(label);
+
+                            if (!item.enabled) {
+                                a.addEventListener('click', (e) => { e.preventDefault(); showToast('Módulo en desarrollo'); });
+                            }
+
+                            ul.appendChild(li); li.appendChild(a);
+                        }
                     });
+
+                    col.appendChild(ul);
+                    grid.appendChild(col);
+                });
+
+                // leyenda final: disponible / próximamente
+                const panelInner = grid.parentElement;
+                if (panelInner) {
+                    // eliminar leyenda previa si existe
+                    const prev = panelInner.querySelector('.mm-legend'); if (prev) prev.remove();
+                    const legend = document.createElement('div'); legend.className = 'mm-legend';
+                    legend.innerHTML = '<span class="dot"><span class="marker available"></span> Disponible</span><span class="dot"><span class="marker soon"></span> Próximamente</span>';
+                    panelInner.appendChild(legend);
                 }
             }
 
-            if (panel) { panel.hidden = true; panel.setAttribute('aria-hidden', 'true'); }
-
-            toggle?.addEventListener('click', function () { setPanel(toggle.getAttribute('aria-expanded') !== 'true'); });
-
-            // cerrar con ESC
-            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setPanel(false); toggle?.focus(); } });
-
-            // click fuera cierra
-            document.addEventListener('click', function (e) {
-                if (!panel || !toggle) return;
-                if (!panel.contains(e.target) && !toggle.contains(e.target)) setPanel(false);
-            });
-
-            // acordeón móvil: toggle en cada título
-            document.querySelectorAll('.mm-title').forEach(function (title) {
-                title.addEventListener('click', function () {
-                    var col = title.closest('.mm-col');
-                    if (!col) return;
-                    var open = col.classList.toggle('is-open');
-                    title.setAttribute('aria-expanded', open ? 'true' : 'false');
-                });
-                title.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); title.click(); } });
-            });
-
-            // focus inicial al abrir con ArrowDown
-            toggle?.addEventListener('keydown', function (e) {
-                if (e.key === 'ArrowDown' && panel && !panel.hidden) {
-                    var first = panel.querySelector('.mm-link');
-                    first?.focus();
-                    e.preventDefault();
+            // Toast simple
+            let toastTimeout = null;
+            function showToast(msg) {
+                let t = document.getElementById('mmToast');
+                if (!t) {
+                    t = document.createElement('div'); t.id = 'mmToast'; t.className = 'mm-toast'; document.body.appendChild(t);
                 }
-            });
+                t.textContent = msg;
+                t.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => t.classList.remove('show'), 1800);
+            }
+
+            // Interacciones: apertura, cierre, accesibilidad y acordeón móvil
+            function initInteractions() {
+                const toggle = document.getElementById('menuOpcionesToggle');
+                const panel = document.getElementById('menuOpciones');
+
+                function setPanel(open) {
+                    if (!panel || !toggle) return;
+                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                    if (open) {
+                        panel.hidden = false; panel.setAttribute('aria-hidden','false'); toggle.closest('.fj-menu-item')?.classList.add('is-open');
+                        // focus al primer enlace
+                        const first = panel.querySelector('.mm-item.enabled'); if (first) first.focus();
+                    } else {
+                        panel.hidden = true; panel.setAttribute('aria-hidden','true'); toggle.closest('.fj-menu-item')?.classList.remove('is-open');
+                        // cerrar acordeón móvil
+                        document.querySelectorAll('.mm-col.is-open').forEach(c=>{ c.classList.remove('is-open'); c.querySelector('.mm-col-title')?.setAttribute('aria-expanded','false'); });
+                    }
+                }
+
+                toggle?.addEventListener('click', () => setPanel(toggle.getAttribute('aria-expanded') !== 'true'));
+
+                // ESC cierra
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setPanel(false); toggle?.focus(); } });
+
+                // click fuera cierra
+                document.addEventListener('click', (e) => { if (!panel || !toggle) return; if (!panel.contains(e.target) && !toggle.contains(e.target)) setPanel(false); });
+
+                // acordeón en mobile: toggles
+                document.addEventListener('click', (e) => {
+                    const t = e.target.closest('.mm-col-title');
+                    if (!t) return;
+                    const col = t.closest('.mm-col');
+                    if (!col) return;
+                    const open = col.classList.toggle('is-open');
+                    t.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+
+                // keyboard: abrir con ArrowDown desde toggle
+                toggle?.addEventListener('keydown', function (e) {
+                    if (e.key === 'ArrowDown') { e.preventDefault(); setPanel(true); }
+                });
+            }
+
+            // Inicialización al cargar DOM
+            document.addEventListener('DOMContentLoaded', function () { renderMenu(); initInteractions(); });
         })();
     </script>
     @await RenderSectionAsync("Scripts", required: false)
