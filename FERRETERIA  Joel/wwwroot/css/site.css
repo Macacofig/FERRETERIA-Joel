@@ -105,12 +105,184 @@ a {
     border-bottom: 0.0625rem solid var(--borde-suave);
 }
 
-    .fj-header::before {
-        content: "";
-        display: block;
+/* Ajustes específicos para la barra superior solicitados */
+.fj-header {
+    height: 4rem; /* altura fija */
+    background: #fff; /* fondo blanco limpio */
+    border-bottom: 0.0625rem solid var(--borde-suave);
+    z-index: 1100; /* por encima del contenido */
+}
+
+    .fj-header::before { /* línea amarilla fina superior (mantener) */
         height: 0.125rem;
-        background: linear-gradient(90deg, var(--amarillo), rgba(255, 200, 36, 0.15), transparent);
     }
+
+.fj-header-inner {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1.5rem; /* padding lateral */
+    height: 4rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* izquierda / centro / derecha */
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Logo a la izquierda */
+.fj-brand {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fj-brand-mark {
+    width: 2.25rem;
+    height: 2.25rem;
+}
+
+/* Centro: menú principal centrado */
+.fj-menu {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fj-menu-item {
+    position: relative;
+}
+
+.fj-menu-link {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 1rem;
+    color: var(--texto-sec);
+}
+
+    .fj-menu-link:hover {
+        background: transparent;
+        color: var(--texto);
+    }
+
+/* Ítem activo: subrayado pegado al borde inferior del header */
+.fj-menu-item.is-active > a.fj-menu-link {
+    color: var(--amarillo-texto);
+    font-weight: 600;
+}
+
+    .fj-menu-item.is-active > a.fj-menu-link::after {
+        content: "";
+        position: absolute;
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 0;
+        height: 0.1875rem;
+        background: var(--amarillo);
+        border-radius: 0.125rem;
+    }
+
+/* Chevron del menú de opciones: apunta abajo cuando cerrado, rota 180º cuando abierto */
+.mm-toggle .mm-toggle-chevron {
+    transition: transform 180ms ease;
+    transform: rotate(0deg);
+}
+
+.mm-toggle[aria-expanded="true"] .mm-toggle-chevron {
+    transform: rotate(180deg);
+}
+
+/* Zona derecha: iconos y userchip */
+.fj-nav-side {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.fj-icon-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background: transparent;
+    border: 0;
+}
+
+    .fj-icon-btn:hover {
+        background: rgba(0,0,0,0.04);
+    }
+
+    .fj-icon-btn svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+/* Chip Admin compacto */
+.fj-userchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem 0.25rem 0.5rem;
+    border: 0.0625rem solid var(--borde-suave);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    color: var(--texto);
+}
+
+.fj-userchip-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fondo-panel);
+}
+
+.fj-userchip-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* Responsive: bajo 900px (56.25rem) central menu se oculta y aparece burger; chip muestra solo avatar */
+@media (max-width:56.25rem) {
+    .fj-menu {
+        display: none;
+    }
+
+    .fj-burger {
+        display: inline-flex;
+    }
+
+    .fj-userchip-name {
+        display: none;
+    }
+}
+
+/* Por defecto ocultar burger en escritorio */
+.fj-burger {
+    display: none;
+}
+
+/* Evitar que el panel del menú tape la barra y asegurar separacion del contenido */
+.mm-panel {
+    top: calc(100% + 0.5rem) !important;
+}
+
+.fj-main {
+    margin-top: 4rem;
+}
+
+.fj-header::before {
+    content: "";
+    display: block;
+    height: 0.125rem;
+    background: linear-gradient(90deg, var(--amarillo), rgba(255, 200, 36, 0.15), transparent);
+}
 
 .fj-header-inner {
     max-width: 85rem;
@@ -247,31 +419,6 @@ a.fj-menu-link:hover {
     justify-self: end;
 }
 
-.fj-icon-btn {
-    position: relative;
-    width: 2.375rem;
-    height: 2.375rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0.0625rem solid transparent;
-    border-radius: 50%;
-    background: transparent;
-    color: var(--texto-sec);
-    cursor: pointer;
-    transition: background 0.16s ease, color 0.16s ease;
-}
-
-    .fj-icon-btn:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: var(--texto);
-    }
-
-    .fj-icon-btn svg {
-        width: 1.1875rem;
-        height: 1.1875rem;
-    }
-
 .fj-dot {
     position: absolute;
     top: 0.5rem;
@@ -311,10 +458,343 @@ a.fj-menu-link:hover {
     color: var(--amarillo-texto);
 }
 
-    .fj-userchip-avatar svg {
-        width: 0.9375rem;
-        height: 0.9375rem;
+/* ============================================================
+   Menú de opciones — estilos específicos (mega menú)
+   Movido desde _Layout.cshtml para centralizar estilos en site.css
+   ============================================================ */
+
+:root {
+    --accent: #f59e0b; /* naranja/dorado */
+    --muted: #6b7280;
+    --muted-light: #9ca3af; /* para próximas */
+    --bg: #ffffff;
+    --panel-radius: 0.75rem;
+    --panel-padding: 2rem;
+    --shadow: 0 0.5rem 1.5rem rgba(15,23,42,0.08);
+    --gap: 2rem;
+    --title-size: 0.75rem;
+    --link-size: 0.875rem;
+    --panel-max: 80rem;
+}
+
+/* Panel principal del mega-menú: centrado y no desbordar */
+.mm-panel {
+    position: absolute; /* se posiciona respecto al header sticky */
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(100% + 0.5rem);
+    width: min(var(--panel-max), calc(100vw - 3rem));
+    background: var(--bg);
+    border-radius: var(--panel-radius);
+    box-shadow: var(--shadow);
+    padding: var(--panel-padding);
+    z-index: 1002; /* encima del contenido, por debajo de la propia barra */
+    animation: mmEnter 200ms ease both;
+}
+
+@keyframes mmEnter {
+    from {
+        opacity: 0;
+        transform: translateY(-0.375rem) translateX(-50%);
     }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+}
+
+/* Grid con columnas flexibles y gap */
+.mm-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0,1fr));
+    gap: var(--gap);
+    align-items: start;
+}
+
+.mm-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Título columna: una sola línea, icono 1rem */
+.mm-col-title {
+    font-size: var(--title-size);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+    .mm-col-title svg {
+        width: 1rem;
+        height: 1rem;
+        flex: 0 0 1rem;
+        color: var(--accent);
+    }
+
+.mm-col hr {
+    border: 0;
+    border-bottom: 0.0625rem solid #e6e6e6;
+    margin: 0.5rem 0 0.75rem;
+}
+
+/* Lista de opciones: reset de botones para apariencia de texto plano */
+.mm-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mm-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--muted);
+    font-size: var(--link-size);
+    padding: 0;
+    height: 2.25rem;
+    min-height: 2.25rem;
+    text-decoration: none;
+    transition: color 150ms, transform 150ms;
+    white-space: nowrap;
+}
+
+    .mm-item a, .mm-item button {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        background: none;
+        border: 0;
+        padding: 0.375rem 0;
+        font: inherit;
+        text-align: left;
+        width: 100%;
+        color: inherit;
+    }
+
+.mm-item-icon {
+    width: 1rem;
+    height: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    flex: 0 0 1rem;
+}
+
+/* Reservar espacio del punto a la izquierda para alinear texto */
+.mm-item::before {
+    content: '';
+    display: inline-block;
+    width: 0.625rem;
+    height: 0.5rem;
+    margin-right: 0.5rem;
+    flex: 0 0 0.625rem;
+}
+
+.mm-item.enabled::before {
+    background: var(--accent);
+    border-radius: 50%;
+}
+
+.mm-item.disabled::before {
+    background: transparent;
+}
+
+/* estados */
+.mm-item.enabled {
+    color: #111827;
+}
+
+    .mm-item.enabled:hover {
+        color: var(--accent);
+        transform: translateX(0.125rem);
+    }
+
+.mm-item.disabled {
+    color: var(--muted-light);
+    cursor: not-allowed;
+}
+
+/* Items con acciones (acordeón) */
+.mm-item.has-actions {
+    justify-content: space-between;
+}
+
+.mm-item-chev {
+    margin-left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.mm-item.is-open .mm-item-chev svg {
+    transform: rotate(180deg);
+}
+
+/* Sublista indentada */
+.mm-sublist {
+    list-style: none;
+    margin: 0.375rem 0 0 0;
+    padding: 0.375rem 0 0.375rem 1.625rem;
+    border-left: 0.0625rem solid #eef0f2;
+}
+
+.mm-subitem {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--muted);
+    padding: 0.375rem 0.5rem;
+    text-decoration: none;
+}
+
+    .mm-subitem:hover {
+        color: var(--accent);
+    }
+
+.mm-subitem-icon {
+    width: 1rem;
+    height: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 1rem;
+}
+
+.mm-subitem-label {
+    font-size: 0.8125rem;
+}
+
+.mm-subitem[href$="/Delete"]:hover {
+    color: #dc2626;
+}
+
+/* Toggle chevron: focus-visible muestra outline, no borde permanente */
+.mm-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 0;
+    padding: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+    .mm-toggle:focus-visible {
+        outline: 0.125rem solid rgba(245,158,11,0.16);
+        border-radius: 0.375rem;
+    }
+
+    .mm-toggle .mm-toggle-chevron {
+        width: 1.125rem;
+        height: 1.125rem;
+        transition: transform 180ms;
+    }
+
+    .mm-toggle[aria-expanded="true"] .mm-toggle-chevron {
+        transform: rotate(90deg);
+    }
+
+/* Responsive: 1100px = 68.75rem · 760px = 47.5rem */
+@media (max-width:68.75rem) {
+    .mm-grid {
+        grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+}
+
+@media (max-width:47.5rem) {
+    .mm-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mm-panel {
+        width: calc(100vw - 2rem);
+        padding: 1.25rem;
+    }
+
+    .mm-col .mm-list {
+        display: none;
+    }
+
+    .mm-col.is-open .mm-list {
+        display: block;
+    }
+
+    .mm-col-title {
+        cursor: pointer;
+    }
+}
+
+/* focus visible para items */
+.mm-item a:focus-visible, .mm-item button:focus-visible {
+    outline: 0.125rem solid rgba(245,158,11,0.16);
+    border-radius: 0.375rem;
+}
+
+/* Toast pequeño */
+.mm-toast {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    background: #111827;
+    color: white;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.375rem 1.125rem rgba(0,0,0,0.2);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity 160ms, transform 160ms;
+}
+
+    .mm-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+/* Leyenda final pequeña */
+.mm-legend {
+    margin-top: 1.125rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    display: flex;
+    gap: 1.125rem;
+    align-items: center;
+}
+
+    .mm-legend .dot {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+        .mm-legend .dot .marker {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+    .mm-legend .marker.available {
+        background: var(--accent);
+    }
+
+    .mm-legend .marker.soon {
+        border: 0.0625rem solid var(--muted-light);
+        background: transparent;
+    }
+
+.fj-userchip-avatar svg {
+    width: 0.9375rem;
+    height: 0.9375rem;
+}
 
 .fj-userchip-name {
     font-size: 0.8rem;
@@ -361,7 +841,8 @@ a.fj-menu-link:hover {
     position: relative;
     width: 100vw;
     margin-left: calc(-50vw + 50%);
-    min-height: calc(100vh - 4.25rem);
+    /* Ajustar altura para que empiece justo bajo el header (4rem) */
+    min-height: calc(100vh - 4rem);
     display: flex;
     align-items: center;
     background-color: transparent;
@@ -369,14 +850,15 @@ a.fj-menu-link:hover {
     background-size: cover;
     background-position: center center;
     color: #ffffff;
-    padding: 2.5rem 0;
+    padding: 0; /* quitar padding superior para que la imagen toque el navbar */
     box-sizing: border-box;
+    margin-top: 0; /* asegurar que no haya separación extra */
 }
 
 .hero-content {
     color: #ffffff;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-top: 0.75rem; /* reducir espacio interno superior para acercar contenido al borde */
+    padding-bottom: 1.5rem;
     padding-left: clamp(1rem, 6vw, 4rem);
 }
 
@@ -745,17 +1227,17 @@ a.fj-mega-card:hover {
     gap: 0.35rem;
 }
 
-.fj-option-list li a {
-    display: inline-block;
-    padding: 0.25rem 0.25rem;
-    color: var(--texto-sec);
-    border-radius: 0.375rem;
-}
+    .fj-option-list li a {
+        display: inline-block;
+        padding: 0.25rem 0.25rem;
+        color: var(--texto-sec);
+        border-radius: 0.375rem;
+    }
 
-.fj-option-list li a:hover {
-    color: var(--texto);
-    background: rgba(0,0,0,0.04);
-}
+        .fj-option-list li a:hover {
+            color: var(--texto);
+            background: rgba(0,0,0,0.04);
+        }
 
 /* cuando esté abierto */
 .fj-option-chevron {
@@ -776,10 +1258,12 @@ a.fj-mega-card:hover {
     display: flex;
 }
 
-@media (max-width: 720px) {
+/* 720px = 45rem */
+@media (max-width: 45rem) {
     .fj-mega-grid {
         grid-template-columns: 1fr;
     }
+
     .fj-mega {
         left: 50%;
         width: calc(100vw - 2rem);
@@ -794,21 +1278,21 @@ a.fj-mega-card:hover {
 
 /* Variables específicas del mega menú (ajústalas si hace falta) */
 :root {
-    --mm-accent: var(--amarillo);         /* color de acento (usa variable global) */
-    --mm-text: var(--texto);              /* color texto oscuro */
-    --mm-muted: #6b7280;                  /* color links inactivo (gris medio) */
-    --mm-gap: 3rem;                       /* gap entre columnas ~48px */
-    --mm-radius: 12px;                    /* radio panel */
-    --mm-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    --mm-padding: 32px;                   /* padding panel */
-    --mm-transition: 200ms ease;          /* animación entrada */
+    --mm-accent: var(--amarillo); /* color de acento (usa variable global) */
+    --mm-text: var(--texto); /* color texto oscuro */
+    --mm-muted: #6b7280; /* color links inactivo (gris medio) */
+    --mm-gap: 3rem; /* gap entre columnas */
+    --mm-radius: 0.75rem; /* radio panel */
+    --mm-shadow: 0 0.625rem 1.875rem rgba(0,0,0,0.08);
+    --mm-padding: 2rem; /* padding panel */
+    --mm-transition: 200ms ease; /* animación entrada */
 }
 
 .mm-panel {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    min-width: 720px;
+    min-width: 45rem;
     max-width: calc(100vw - 2rem);
     background: #fff;
     border-radius: var(--mm-radius);
@@ -819,16 +1303,16 @@ a.fj-mega-card:hover {
     pointer-events: none;
     transform-origin: top center;
     transition: opacity var(--mm-transition), transform var(--mm-transition);
-    transform: translateX(-50%) translateY(-6px);
+    transform: translateX(-50%) translateY(-0.375rem);
 }
 
-/* Cuando se abra: fade in + slide down */
-.mm-panel[aria-hidden="false"],
-.mm-panel[aria-hidden="true"][hidden="false"] {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-}
+    /* Cuando se abra: fade in + slide down */
+    .mm-panel[aria-hidden="false"],
+    .mm-panel[aria-hidden="true"][hidden="false"] {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+    }
 
 .mm-grid {
     display: grid;
@@ -844,20 +1328,20 @@ a.fj-mega-card:hover {
 }
 
 .mm-title {
-    font-size: 13px;
+    font-size: 0.8125rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
     color: var(--mm-text);
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
     outline: none;
 }
 
 .mm-sep {
     border: none;
-    height: 1px;
+    height: 0.0625rem;
     background: rgba(0,0,0,0.06);
-    margin: 8px 0 16px 0;
+    margin: 0.5rem 0 1rem 0;
 }
 
 .mm-list {
@@ -866,26 +1350,26 @@ a.fj-mega-card:hover {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
 }
 
 .mm-link {
     color: var(--mm-muted);
-    font-size: 14px;
+    font-size: 0.875rem;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
     transition: color 150ms ease, transform 150ms ease;
     transform: translateX(0);
 }
 
 .mm-ico {
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 1;
     color: inherit;
     display: inline-flex;
-    width: 18px;
+    width: 1.125rem;
     justify-content: center;
     opacity: 0.95;
 }
@@ -893,7 +1377,7 @@ a.fj-mega-card:hover {
 .mm-link:hover,
 .mm-link:focus {
     color: var(--mm-accent);
-    transform: translateX(2px);
+    transform: translateX(0.125rem);
     outline: none;
 }
 
@@ -907,28 +1391,43 @@ a.fj-mega-card:hover {
     font-weight: 700;
     position: relative;
 }
-.fj-menu-item.is-active > a.fj-menu-link::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -8px;
-    height: 3px;
-    border-radius: 3px;
-    background: var(--mm-accent);
-}
 
-@media (max-width: 720px) {
+    .fj-menu-item.is-active > a.fj-menu-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -0.5rem;
+        height: 0.1875rem;
+        border-radius: 0.1875rem;
+        background: var(--mm-accent);
+    }
+
+@media (max-width: 45rem) {
     .mm-panel {
         left: 50%;
         transform: translateX(-50%) translateY(0);
         width: calc(100vw - 2rem);
-        padding: 20px;
+        padding: 1.25rem;
     }
-    .mm-grid { grid-template-columns: 1fr; gap: 16px; }
-    .mm-title { cursor: pointer; padding: 8px 0; }
-    .mm-list { display: none; }
-    .mm-col.is-open .mm-list { display: flex; }
+
+    .mm-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .mm-title {
+        cursor: pointer;
+        padding: 0.5rem 0;
+    }
+
+    .mm-list {
+        display: none;
+    }
+
+    .mm-col.is-open .mm-list {
+        display: flex;
+    }
 }
 
 /* Estilos para el toggle del menú (sin borde extraño) */
@@ -943,15 +1442,15 @@ a.fj-mega-card:hover {
     color: inherit;
 }
 
-.mm-toggle:focus {
-    outline: none;
-}
+    .mm-toggle:focus {
+        outline: none;
+    }
 
-.mm-toggle:focus-visible {
-    outline: 0.125rem solid var(--amarillo);
-    outline-offset: 0.125rem;
-    border-radius: 0.25rem;
-}
+    .mm-toggle:focus-visible {
+        outline: 0.125rem solid var(--amarillo);
+        outline-offset: 0.125rem;
+        border-radius: 0.25rem;
+    }
 
 .mm-toggle-label {
     font-weight: 600;
@@ -1237,6 +1736,27 @@ a.fj-mega-card:hover {
     margin: 0 auto;
     padding: 3.25rem 2rem 4.75rem;
 }
+
+/* ============================================================
+   Ajustes para que el contenido comience inmediatamente bajo el header
+   ============================================================ */
+/* Asegurar que el main no tenga margen superior que empuje la página hacia abajo */
+header.fj-header + main.fj-main {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Reducir el padding-top del contenedor para acercar contenido (ajustable) */
+.fj-container {
+    padding-top: 1.5rem; /* antes 3.25rem */
+}
+
+/* Si hay secciones que usan width:100vw con margin-left negativo (hero),
+   asegurarse que no añadan separación extra */
+.hero-section {
+    margin-top: 0 !important;
+}
+
 
 /* ============================================================
    Eyebrow (etiqueta de sección)
@@ -1573,9 +2093,9 @@ body.fj-modal-open {
     justify-content: center;
 }
 
-.fj-modal.is-open {
-    display: flex;
-}
+    .fj-modal.is-open {
+        display: flex;
+    }
 
 .fj-modal-backdrop {
     position: absolute;
@@ -1651,11 +2171,133 @@ body.fj-modal-open {
     }
 
 @keyframes fj-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fj-slide-in {
-    from { opacity: 0; transform: translateY(0.75rem) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Placeholder: end of file - no-op for future appends */
+/* ============================================================
+   MENÚ DE OPCIONES · override final (pegar al FINAL de site.css)
+   ============================================================ */
+
+/* 1. Quitar el "cuadro" de botones y enlaces */
+.mm-panel button.mm-item,
+.mm-panel a.mm-item {
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: 0;
+    border-radius: 0.375rem;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    font-size: var(--link-size);
+    line-height: 1;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+}
+
+.mm-panel .mm-item.disabled {
+    cursor: not-allowed;
+}
+
+/* 2. Filas: una sola línea, sin huecos raros entre ellas */
+.mm-panel .mm-list {
+    gap: 0;
+}
+
+.mm-panel .mm-item.has-actions {
+    justify-content: flex-start;
+}
+/* antes: space-between */
+
+/* 3. Tamaño fijo de iconos (evita iconos recortados) */
+.mm-panel .mm-item-icon svg,
+.mm-panel .mm-subitem-icon svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* 4. Flecha de las opciones con acciones: ">" cerrado, "v" abierto */
+.mm-panel .mm-item-chev {
+    margin-left: auto; /* pegada al borde derecho de la columna */
+    display: inline-flex;
+    align-items: center;
+    width: 1rem;
+    height: 1rem;
+    color: var(--muted-light);
+}
+
+    .mm-panel .mm-item-chev svg {
+        width: 0.875rem;
+        height: 0.875rem;
+        transform: rotate(0deg);
+        transition: transform 180ms ease;
+    }
+
+.mm-panel .mm-item[aria-expanded="true"] .mm-item-chev {
+    color: var(--accent);
+}
+
+    .mm-panel .mm-item[aria-expanded="true"] .mm-item-chev svg {
+        transform: rotate(90deg);
+    }
+
+/* 5. Panel ajustado al contenido + una columna por cada grupo del menú */
+.mm-panel {
+    width: max-content; /* el panel mide lo que mide su contenido */
+    min-width: 0; /* anula el min-width de bloques anteriores */
+    max-width: calc(100vw - 3rem); /* nunca se sale de la pantalla */
+}
+
+    .mm-panel .mm-grid {
+        display: grid;
+        grid-template-columns: none; /* anula el repeat(5, 1fr) de bloques anteriores */
+        grid-auto-flow: column; /* una columna por grupo */
+        grid-auto-columns: minmax(12.5rem, max-content);
+        gap: var(--gap);
+        align-items: start;
+        width: auto;
+        max-width: none;
+        margin: 0;
+    }
+
+/* Tablet: 3 columnas, el resto baja a otra fila (1100px = 68.75rem) */
+@media (max-width: 68.75rem) {
+    .mm-panel .mm-grid {
+        grid-auto-flow: row;
+        grid-template-columns: repeat(3, minmax(12.5rem, max-content));
+    }
+}
+
+/* Móvil: una columna, panel casi a todo el ancho (760px = 47.5rem) */
+@media (max-width: 47.5rem) {
+    .mm-panel {
+        width: calc(100vw - 2rem);
+    }
+
+        .mm-panel .mm-grid {
+            grid-auto-flow: row;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
 }
