@@ -2301,3 +2301,131 @@ body.fj-modal-open {
             gap: 1rem;
         }
 }
+
+/* ============================================================
+   NUEVO MENÚ PRINCIPAL
+   Home | Gestión de Productos | Gestión de Inventarios |
+   Ventas y Caja | Administración
+   ============================================================ */
+.fj-dropdown {
+    position: relative;
+}
+
+/* Botón de cada categoría */
+.fj-dropdown-toggle {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Flecha debajo del nombre */
+.fj-dropdown-chevron {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: transform 180ms ease;
+}
+
+/* Cuando está abierto, la flecha apunta hacia arriba */
+.fj-dropdown-toggle[aria-expanded="true"] .fj-dropdown-chevron {
+    transform: rotate(180deg);
+}
+
+/* Menú desplegable */
+.fj-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(-0.5rem);
+    min-width: 13rem;
+    padding: 0.5rem;
+    background: #ffffff;
+    border: 0.0625rem solid var(--borde-suave);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.10);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+    z-index: 1200;
+}
+
+/* Mostrar menú */
+.fj-dropdown.is-open .fj-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Elementos del menú */
+.fj-dropdown-menu a,
+.fj-dropdown-menu .disabled {
+    display: block;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.84rem;
+    white-space: nowrap;
+}
+
+/* Opciones que YA están disponibles */
+.fj-dropdown-menu a {
+    color: #111827;
+    font-weight: 500;
+}
+
+    /* Hover de opciones disponibles */
+    .fj-dropdown-menu a:hover {
+        color: var(--amarillo-texto);
+        background: var(--amarillo-bg);
+    }
+
+/* Opciones que TODAVÍA no están disponibles */
+.fj-dropdown-menu .disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Pequeño indicador debajo de la categoría abierta */
+.fj-dropdown.is-open > .fj-dropdown-toggle {
+    color: var(--amarillo-texto);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 64rem) {
+
+    .fj-dropdown-menu {
+        position: static;
+        transform: none;
+        width: 100%;
+        min-width: 0;
+        margin-top: 0.25rem;
+        box-shadow: none;
+        border: none;
+        border-radius: 0.5rem;
+        display: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .fj-dropdown.is-open .fj-dropdown-menu {
+        display: block;
+        transform: none;
+    }
+
+    .fj-dropdown-menu a,
+    .fj-dropdown-menu .disabled {
+        padding-left: 1.25rem;
+    }
+
+    .fj-dropdown-chevron {
+        margin-left: auto;
+    }
+}
+
