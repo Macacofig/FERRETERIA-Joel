@@ -331,11 +331,10 @@ namespace FERRETERIA__Joel.Repositories
         public string ObtenerSiguienteCodigo()
         {
             const string query = @"
-                SELECT CONCAT('PRO-', LPAD(
-                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 5) AS UNSIGNED)), 0) + 1,
-                    3, '0'))
+                SELECT CONCAT('PROD-',
+                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 6) AS UNSIGNED)), 0) + 1)
                 FROM producto
-                WHERE Codigo LIKE 'PRO-%'";
+                WHERE Codigo LIKE 'PROD-%'";
 
             using MySqlConnection connection =
                 new MySqlConnection(_connectionString);
@@ -345,7 +344,7 @@ namespace FERRETERIA__Joel.Repositories
 
             connection.Open();
 
-            return command.ExecuteScalar()?.ToString() ?? "PRO-001";
+            return command.ExecuteScalar()?.ToString() ?? "PROD-1";
         }
         private Producto MapearProducto(MySqlDataReader reader)
         {

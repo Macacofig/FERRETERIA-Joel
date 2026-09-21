@@ -4,6 +4,8 @@ using FERRETERIA__Joel.Validaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
 {
@@ -51,12 +53,8 @@ namespace FERRETERIA__Joel.Pages
 
         public IActionResult OnPost()
         {
-            if (string.IsNullOrWhiteSpace(Producto.Codigo))
-            {
-                Producto.Codigo =
-                    _productoRepository.ObtenerSiguienteCodigo();
-            }
-
+            Producto.Codigo = _productoRepository.ObtenerSiguienteCodigo();
+            NormalizarPrecio();
             NormalizarDatos();
             Validar();
 
@@ -100,23 +98,42 @@ namespace FERRETERIA__Joel.Pages
         private void NormalizarDatos()
         {
             Producto.Codigo =
-                Producto.Codigo?.Trim().ToUpper() ?? "";
+                NormalizarTexto(Producto.Codigo).ToUpper();
 
             Producto.Nombre =
-                Producto.Nombre?.Trim() ?? "";
+                NormalizarTexto(Producto.Nombre);
 
             Producto.Descripcion =
                 string.IsNullOrWhiteSpace(Producto.Descripcion)
                     ? null
-                    : Producto.Descripcion.Trim();
+                    : NormalizarTexto(Producto.Descripcion);
 
             Producto.Marca =
                 string.IsNullOrWhiteSpace(Producto.Marca)
                     ? null
-                    : Producto.Marca.Trim();
+                    : NormalizarTexto(Producto.Marca);
 
             Producto.UnidadMedida =
-                Producto.UnidadMedida?.Trim() ?? "";
+                NormalizarTexto(Producto.UnidadMedida);
+        }
+
+        private static string NormalizarTexto(string? texto)
+        {
+            return Regex.Replace(texto?.Trim() ?? "", @"\s+", " ");
+        }
+
+        private void NormalizarPrecio()
+        {
+            string precioTexto = Request.Form["Producto.PrecioVenta"].ToString();
+            if (decimal.TryParse(
+                precioTexto.Replace(',', '.'),
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out decimal precio))
+            {
+                Producto.PrecioVenta = precio;
+                ModelState.Remove("Producto.PrecioVenta");
+            }
         }
 
         private void Validar()

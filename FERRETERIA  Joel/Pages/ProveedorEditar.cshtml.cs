@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
 {
@@ -97,29 +98,34 @@ namespace FERRETERIA__Joel.Pages
         private void NormalizarDatos()
         {
             Proveedor.RazonSocial =
-                Proveedor.RazonSocial?.Trim() ?? "";
+                NormalizarTexto(Proveedor.RazonSocial);
 
             Proveedor.NombreComercial =
-                Proveedor.NombreComercial?.Trim() ?? "";
+                NormalizarTexto(Proveedor.NombreComercial);
 
             Proveedor.Nit =
-                Proveedor.Nit?.Trim() ?? "";
+                NormalizarTexto(Proveedor.Nit);
 
             Proveedor.NombreContacto =
-                Proveedor.NombreContacto?.Trim() ?? "";
+                NormalizarTexto(Proveedor.NombreContacto);
 
             Proveedor.Telefono =
-                Proveedor.Telefono?.Trim() ?? "";
+                NormalizarTexto(Proveedor.Telefono);
 
             Proveedor.CorreoElectronico =
                 string.IsNullOrWhiteSpace(Proveedor.CorreoElectronico)
                     ? null
-                    : Proveedor.CorreoElectronico.Trim();
+                    : NormalizarTexto(Proveedor.CorreoElectronico);
 
             Proveedor.Direccion =
                 string.IsNullOrWhiteSpace(Proveedor.Direccion)
                     ? null
-                    : Proveedor.Direccion.Trim();
+                    : NormalizarTexto(Proveedor.Direccion);
+        }
+
+        private static string NormalizarTexto(string? texto)
+        {
+            return Regex.Replace(texto?.Trim() ?? "", @"\s+", " ");
         }
 
         private void Validar()

@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
+using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
 {
@@ -47,6 +48,14 @@ namespace FERRETERIA__Joel.Pages
 
         public IActionResult OnPost()
         {
+            Categoria? categoriaActual = _repositorio.ObtenerPorId(CategoriaEdit.IdCategoria);
+            if (categoriaActual is null)
+            {
+                TempData["MensajeError"] = "La categoría solicitada no existe.";
+                return RedirectToPage("Categorias");
+            }
+
+            CategoriaEdit.Codigo = categoriaActual.Codigo;
             NormalizarDatos();
             Validar();
 
@@ -81,15 +90,20 @@ namespace FERRETERIA__Joel.Pages
         private void NormalizarDatos()
         {
             CategoriaEdit.Codigo =
-                CategoriaEdit.Codigo?.Trim().ToUpper() ?? "";
+                NormalizarTexto(CategoriaEdit.Codigo).ToUpper();
 
             CategoriaEdit.Nombre =
-                CategoriaEdit.Nombre?.Trim() ?? "";
+                NormalizarTexto(CategoriaEdit.Nombre);
 
             CategoriaEdit.Descripcion =
                 string.IsNullOrWhiteSpace(CategoriaEdit.Descripcion)
                     ? null
-                    : CategoriaEdit.Descripcion.Trim();
+                    : NormalizarTexto(CategoriaEdit.Descripcion);
+        }
+
+        private static string NormalizarTexto(string? texto)
+        {
+            return Regex.Replace(texto?.Trim() ?? "", @"\s+", " ");
         }
 
         private void Validar()

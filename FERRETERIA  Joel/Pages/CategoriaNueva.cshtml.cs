@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
+using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
 {
@@ -40,6 +41,7 @@ namespace FERRETERIA__Joel.Pages
 
         public IActionResult OnPost()
         {
+            NuevaCategoria.Codigo = _repositorio.ObtenerSiguienteCodigo();
             NormalizarDatos();
             Validar();
 
@@ -83,15 +85,20 @@ namespace FERRETERIA__Joel.Pages
         private void NormalizarDatos()
         {
             NuevaCategoria.Codigo =
-                NuevaCategoria.Codigo?.Trim().ToUpper() ?? "";
+                NormalizarTexto(NuevaCategoria.Codigo).ToUpper();
 
             NuevaCategoria.Nombre =
-                NuevaCategoria.Nombre?.Trim() ?? "";
+                NormalizarTexto(NuevaCategoria.Nombre);
 
             NuevaCategoria.Descripcion =
                 string.IsNullOrWhiteSpace(NuevaCategoria.Descripcion)
                     ? null
-                    : NuevaCategoria.Descripcion.Trim();
+                    : NormalizarTexto(NuevaCategoria.Descripcion);
+        }
+
+        private static string NormalizarTexto(string? texto)
+        {
+            return Regex.Replace(texto?.Trim() ?? "", @"\s+", " ");
         }
 
         private void Validar()

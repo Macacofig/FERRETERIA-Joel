@@ -179,9 +179,8 @@ namespace FERRETERIA__Joel.Repositories
         public string ObtenerSiguienteCodigo()
         {
             const string query = @"
-                SELECT CONCAT('CAT-', LPAD(
-                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 5) AS UNSIGNED)), 0) + 1,
-                    3, '0'))
+                SELECT CONCAT('CAT-',
+                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 5) AS UNSIGNED)), 0) + 1)
                 FROM categoria
                 WHERE Codigo LIKE 'CAT-%'";
 
@@ -193,7 +192,7 @@ namespace FERRETERIA__Joel.Repositories
 
             connection.Open();
 
-            return command.ExecuteScalar()?.ToString() ?? "CAT-001";
+            return command.ExecuteScalar()?.ToString() ?? "CAT-1";
         }
 
         public bool ExisteCodigo(string codigo, short? idCategoriaExcluir = null)

@@ -130,7 +130,12 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', function () {
             form.querySelectorAll('input[type="text"], input[type="tel"], input[type="number"], input:not([type]), textarea').forEach(function (campo) {
                 if (campo.readOnly) return;
-                if (campo.value) campo.value = campo.value.trim();
+                if (campo.value) {
+                    campo.value = campo.value.trim().replace(/\s+/g, ' ');
+                    if (campo.type === 'number') {
+                        campo.value = campo.value.replace(/,/g, '.');
+                    }
+                }
             });
         });
     });

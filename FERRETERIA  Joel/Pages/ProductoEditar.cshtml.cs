@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
 {
@@ -43,9 +45,9 @@ namespace FERRETERIA__Joel.Pages
         {
             CargarCatalogos();
 
-            Producto = _productoRepository.ObtenerPorId(id);
+            Producto? producto = _productoRepository.ObtenerPorId(id);
 
-            if (Producto is null)
+            if (producto is null)
             {
                 TempData["MensajeError"] =
                     "El producto solicitado no existe.";
@@ -53,11 +55,21 @@ namespace FERRETERIA__Joel.Pages
                 return RedirectToPage("Productos");
             }
 
+            Producto = producto;
             return Page();
         }
 
         public IActionResult OnPost()
         {
+            Producto? productoActual = _productoRepository.ObtenerPorId(Producto.IdProducto);
+            if (productoActual is null)
+            {
+                TempData["MensajeError"] = "El producto solicitado no existe.";
+                return RedirectToPage("Productos");
+            }
+
+            Producto.Codigo = productoActual.Codigo;
+            NormalizarPrecio();
             Validar();
 
             if (Errores.Any())
@@ -101,23 +113,23 @@ namespace FERRETERIA__Joel.Pages
         private void Validar()
         {
             Producto.Codigo =
-                Producto.Codigo?.Trim().ToUpper() ?? "";
+                NormalizarTexto(Producto.Codigo).ToUpper();
 
             Producto.Nombre =
-                Producto.Nombre?.Trim() ?? "";
+                NormalizarTexto(Producto.Nombre);
 
             Producto.Descripcion =
                 string.IsNullOrWhiteSpace(Producto.Descripcion)
                     ? null
-                    : Producto.Descripcion.Trim();
+                    : NormalizarTexto(Producto.Descripcion);
 
             Producto.Marca =
                 string.IsNullOrWhiteSpace(Producto.Marca)
                     ? null
-                    : Producto.Marca.Trim();
+                    : NormalizarTexto(Producto.Marca);
 
             Producto.UnidadMedida =
-                Producto.UnidadMedida?.Trim() ?? "";
+                NormalizarTexto(Producto.UnidadMedida);
 
             if (!_validacion.EsCodigoValido(Producto.Codigo))
             {
@@ -179,6 +191,25 @@ namespace FERRETERIA__Joel.Pages
             {
                 Errores.Add(
                     "Debe seleccionar un empleado responsable.");
+            }
+        }
+
+        private static string NormalizarTexto(string? texto)
+        {
+            return Regex.Replace(texto?.Trim() ?? "", @"\s+", " ");
+        }
+
+        private void NormalizarPrecio()
+        {
+            string precioTexto = Request.Form["Producto.PrecioVenta"].ToString();
+            if (decimal.TryParse(
+                precioTexto.Replace(',', '.'),
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out decimal precio))
+            {
+                Producto.PrecioVenta = precio;
+                ModelState.Remove("Producto.PrecioVenta");
             }
         }
 
