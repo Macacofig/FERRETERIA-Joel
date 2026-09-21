@@ -42,6 +42,7 @@ namespace FERRETERIA__Joel.Pages
         public IActionResult OnPost()
         {
             NuevaCategoria.Codigo = _repositorio.ObtenerSiguienteCodigo();
+            NuevaCategoria.PorcentajeGanancia = 0;
             NormalizarDatos();
             Validar();
 

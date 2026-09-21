@@ -1,5 +1,4 @@
-﻿using System.Net.Mail;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using FERRETERIA__Joel.ConfiguracionValidacion;
 
 namespace FERRETERIA__Joel.Validaciones
@@ -7,7 +6,11 @@ namespace FERRETERIA__Joel.Validaciones
     public class ProveedorValidaciones
     {
         private static readonly Regex FormatoTelefono =
-            new(@"^\+?[0-9][0-9 ()-]{5,}[0-9]$", RegexOptions.Compiled);
+            new(@"^[67][0-9]{7}$", RegexOptions.Compiled);
+        private static readonly Regex FormatoNit =
+            new(@"^[0-9]{5,10}0[124][0-9]$", RegexOptions.Compiled);
+        private static readonly Regex FormatoCorreo =
+            new(@"^(?=.{6,}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@[A-Za-z]+(?:\.[A-Za-z]+)+$", RegexOptions.Compiled);
         public bool EsRazonSocialValida(string? razonSocial)
         {
             return !string.IsNullOrWhiteSpace(razonSocial)
@@ -23,7 +26,7 @@ namespace FERRETERIA__Joel.Validaciones
         public bool EsNitValido(string? nit)
         {
             return !string.IsNullOrWhiteSpace(nit)
-                && nit.Trim().Length <= ConfiguracionProveedor.NitMaxLength;
+                && FormatoNit.IsMatch(nit.Trim());
         }
 
         public bool EsNombreContactoValido(string? nombreContacto)
@@ -41,8 +44,7 @@ namespace FERRETERIA__Joel.Validaciones
 
             string limpio = telefono.Trim();
 
-            return limpio.Length <= ConfiguracionProveedor.TelefonoMaxLength
-                && FormatoTelefono.IsMatch(limpio);
+            return FormatoTelefono.IsMatch(limpio);
         }
 
         public bool EsCorreoValido(string? correoElectronico)
@@ -52,16 +54,7 @@ namespace FERRETERIA__Joel.Validaciones
                 return true;
             }
 
-            try
-            {
-                var correo = new MailAddress(correoElectronico);
-
-                return correo.Address == correoElectronico;
-            }
-            catch
-            {
-                return false;
-            }
+            return FormatoCorreo.IsMatch(correoElectronico.Trim());
         }
 
         public bool EsDireccionValida(string? direccion)

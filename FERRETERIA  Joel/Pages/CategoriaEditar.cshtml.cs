@@ -56,6 +56,7 @@ namespace FERRETERIA__Joel.Pages
             }
 
             CategoriaEdit.Codigo = categoriaActual.Codigo;
+            CategoriaEdit.PorcentajeGanancia = 0;
             NormalizarDatos();
             Validar();
 
