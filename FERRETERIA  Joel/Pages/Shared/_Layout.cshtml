@@ -41,19 +41,90 @@
                         </li>
                     }
 
-                    <li class="fj-menu-item">
-                        <!-- Toggle del menú de opciones -->
-                        <button id="menuOpcionesToggle" class="fj-menu-link mm-toggle" aria-haspopup="true" aria-expanded="false" type="button">
-                            <span class="mm-toggle-label">Menú de opciones</span>
-                            <svg class="mm-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18" /></svg>
+                    <!-- Gestión de Productos -->
+                    <li class="fj-menu-item fj-dropdown">
+                        <button class="fj-menu-link fj-dropdown-toggle" type="button"
+                                aria-expanded="false">
+                            <span>Gestión de Productos</span>
+                            <svg class="fj-dropdown-chevron" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
                         </button>
 
-                        <!-- Panel: el contenido se genera por JS a partir de menuData -->
-                        <section id="menuOpciones" class="mm-panel" role="dialog" aria-label="Menú de opciones" aria-hidden="true" hidden>
-                            <div class="mm-panel-inner">
-                                <div id="mmGrid" class="mm-grid" role="menu" aria-orientation="vertical" tabindex="-1"></div>
-                            </div>
-                        </section>
+                        <div class="fj-dropdown-menu">
+                            <a asp-page="/Productos">Productos</a>
+                            <a asp-page="/Categorias">Categorías</a>
+                            <span class="disabled">Imágenes de productos</span>
+                            <span class="disabled">Unidades de venta</span>
+                            <span class="disabled">Precios y ofertas</span>
+                        </div>
+                    </li>
+
+                    <!-- Gestión de Inventarios -->
+                    <li class="fj-menu-item fj-dropdown">
+                        <button class="fj-menu-link fj-dropdown-toggle" type="button"
+                                aria-expanded="false">
+                            <span>Gestión de Inventarios</span>
+                            <svg class="fj-dropdown-chevron" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+
+                        <div class="fj-dropdown-menu">
+                            <a asp-page="/Proveedores">Proveedores</a>
+                            <span class="disabled">Inventario</span>
+                            <span class="disabled">Compras</span>
+                            <span class="disabled">Historial de compras</span>
+                        </div>
+                    </li>
+
+                    <!-- Ventas y Caja -->
+                    <li class="fj-menu-item fj-dropdown">
+                        <button class="fj-menu-link fj-dropdown-toggle" type="button"
+                                aria-expanded="false">
+                            <span>Ventas y Caja</span>
+                            <svg class="fj-dropdown-chevron" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+
+                        <div class="fj-dropdown-menu">
+                            <span class="disabled">Nueva venta</span>
+                            <span class="disabled">Historial de ventas</span>
+                            <span class="disabled">Recibos</span>
+                            <span class="disabled">Descuentos mayoristas</span>
+                            <span class="disabled">Cierre de caja</span>
+                        </div>
+                    </li>
+
+                    <!-- Administración -->
+                    <li class="fj-menu-item fj-dropdown">
+                        <button class="fj-menu-link fj-dropdown-toggle" type="button"
+                                aria-expanded="false">
+                            <span>Administración</span>
+                            <svg class="fj-dropdown-chevron" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+
+                        <div class="fj-dropdown-menu">
+                            <span class="disabled">Reportes y estadísticas</span>
+                            <span class="disabled">Clientes</span>
+                            <span class="disabled">Empleados y roles</span>
+                            <span class="disabled">Configuración</span>
+                        </div>
                     </li>
                 </ul>
 
@@ -150,214 +221,78 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
-        /* Generador del menú a partir de un array de datos (Razor Pages + Vanilla JS)
-           Tecnología: Razor Pages (HTML/CSS) + JavaScript simple
-           Requisitos: el array menuData contiene grupos y opciones con { label, icon, route, enabled }
-        */
-        (function () {
-            // Datos del menú (grupo > opciones). Cambiar enabled a true cuando el módulo esté listo.
-            const menuData = [
-                {
-                    title: 'GESTIÓN DE PRODUCTOS', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 7h18v13H3z"/></svg>',
-                    items: [
-                        { label: 'Productos', route: '/Productos', enabled: true },
-                        { label: 'Categorías', route: '/Categorias', enabled: true },
-                        { label: 'Imágenes de productos', route: '#', enabled: false },
-                        { label: 'Unidades de venta', route: '#', enabled: false },
-                        { label: 'Precios y ofertas', route: '#', enabled: false }
-                    ]
-                },
-                {
-                    title: 'GESTIÓN DE INVENTARIO', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 7h18v10H3z"/></svg>',
-                    items: [
-                        { label: 'Proveedores', route: '/Proveedores', enabled: true },
-                        { label: 'Inventario', route: '#', enabled: false },
-                        { label: 'Compras', route: '#', enabled: false },
-                        { label: 'Historial de compras', route: '#', enabled: false }
-                    
-                    ]
-                },
-                {
-                    title: 'VENTAS Y CAJA', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 6h18M6 6v12"/></svg>',
-                    items: [
-                        { label: 'Nueva venta', route: '#', enabled: false },
-                        { label: 'Historial de ventas', route: '#', enabled: false },
-                        { label: 'Recibos', route: '#', enabled: false },
-                        { label: 'Descuentos mayoristas', route: '#', enabled: false },
-                        { label: 'Cierre de caja', route: '#', enabled: false }
-                    ]
-                },
-                {
-                    title: 'ADMINISTRACIÓN', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/></svg>',
-                    items: [
-                        { label: 'Reportes y estadísticas', route: '#', enabled: false },
-                        { label: 'Clientes', route: '#', enabled: false },
-                        { label: 'Empleados y roles', route: '#', enabled: false },
-                        { label: 'Configuración', route: '#', enabled: false }
-                    ]
-                }
-            ];
+            document.addEventListener('DOMContentLoaded', function () {
 
-            // Renderizar menú a partir de menuData
-            function renderMenu() {
-                const grid = document.getElementById('mmGrid');
-                if (!grid) return;
-                grid.innerHTML = '';
+                const dropdowns = document.querySelectorAll('.fj-dropdown');
 
-                menuData.forEach(group => {
-                    const col = document.createElement('div');
-                    col.className = 'mm-col';
+                dropdowns.forEach(function (dropdown) {
 
-                    const title = document.createElement('div');
-                    title.className = 'mm-col-title';
-                    title.setAttribute('tabindex', '0');
-                    title.setAttribute('aria-expanded', 'false');
-                    title.innerHTML = (group.icon || '') + '<span>' + group.title + '</span>';
-                    col.appendChild(title);
+                    const button = dropdown.querySelector('.fj-dropdown-toggle');
 
-                    const hr = document.createElement('hr'); hr.setAttribute('aria-hidden','true'); col.appendChild(hr);
+                    button.addEventListener('click', function (e) {
 
-                    const ul = document.createElement('ul'); ul.className = 'mm-list'; ul.setAttribute('role','menu');
+                        e.stopPropagation();
 
-                    group.items.forEach(item => {
-                        const li = document.createElement('li'); li.setAttribute('role','none');
+                        const estabaAbierto = dropdown.classList.contains('is-open');
 
-                        // Si la opción tiene acciones, renderizamos un botón toggle y un sublist
-                        if (item.acciones && Array.isArray(item.acciones)) {
-                            const btn = document.createElement('button');
-                            btn.className = 'mm-item has-actions ' + (item.enabled ? 'enabled' : 'disabled');
-                            btn.setAttribute('type','button');
-                            btn.setAttribute('aria-expanded','false');
-                            btn.setAttribute('role','menuitem');
-                            if (!item.enabled) btn.setAttribute('aria-disabled','true');
+                        // Cerrar todos los menús
+                        dropdowns.forEach(function (item) {
+                            item.classList.remove('is-open');
 
-                            // icon + label
-                            const ico = document.createElement('span'); ico.className = 'mm-item-icon'; ico.innerHTML = item.icon || '';
-                            btn.appendChild(ico);
-                            const lbl = document.createElement('span'); lbl.textContent = item.label; btn.appendChild(lbl);
+                            const btn = item.querySelector('.fj-dropdown-toggle');
 
-                            // small chevron
-                            const chev = document.createElement('span'); chev.className = 'mm-item-chev'; chev.setAttribute('aria-hidden','true'); chev.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>';
-                             btn.appendChild(chev);
-                            // crear sublista oculta
-                            const sub = document.createElement('ul'); sub.className = 'mm-sublist'; sub.setAttribute('role','menu'); sub.hidden = true;
-
-                            item.acciones.forEach(action => {
-                                const sli = document.createElement('li'); sli.setAttribute('role','none');
-                                const sa = document.createElement('a'); sa.className = 'mm-subitem'; sa.setAttribute('role','menuitem'); sa.setAttribute('href', action.route); sa.style.fontSize = '13px';
-                                sa.innerHTML = '<span class="mm-subitem-icon">' + (action.icon || '') + '</span><span class="mm-subitem-label">' + action.label + '</span>';
-                                sli.appendChild(sa);
-                                sub.appendChild(sli);
-                            });
-
-                            // eventos: abrir/cerrar (solo una abierto a la vez)
-                            btn.addEventListener('click', function (e) {
-                                e.preventDefault();
-                                const open = btn.getAttribute('aria-expanded') === 'true';
-                                // cerrar todos
-                                document.querySelectorAll('.mm-item.has-actions[aria-expanded="true"]').forEach(function(t){ t.setAttribute('aria-expanded','false'); t.classList.remove('is-open'); const s=t.nextElementSibling; if(s && s.classList.contains('mm-sublist')) s.hidden=true; });
-                                if (!open) { btn.setAttribute('aria-expanded','true'); btn.classList.add('is-open'); sub.hidden = false; }
-                            });
-                            // keyboard: Enter/Space toggle
-                            btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
-
-                            ul.appendChild(li); li.appendChild(btn); li.appendChild(sub);
-                        }
-                        else {
-                            const a = document.createElement(item.enabled ? 'a' : 'button');
-                            a.className = 'mm-item ' + (item.enabled ? 'enabled' : 'disabled');
-                            a.setAttribute('role','menuitem');
-                            if (item.enabled) { a.setAttribute('href', item.route); }
-                            else { a.setAttribute('aria-disabled','true'); a.setAttribute('type','button'); }
-
-                            const ico = document.createElement('span'); ico.className = 'mm-item-icon'; ico.innerHTML = item.icon || '';
-                            a.appendChild(ico);
-                            const label = document.createElement('span'); label.textContent = item.label; a.appendChild(label);
-
-                            if (!item.enabled) {
-                                a.addEventListener('click', (e) => { e.preventDefault(); showToast('Módulo en desarrollo'); });
+                            if (btn) {
+                                btn.setAttribute('aria-expanded', 'false');
                             }
+                        });
 
-                            ul.appendChild(li); li.appendChild(a);
+                        // Abrir el seleccionado
+                        if (!estabaAbierto) {
+                            dropdown.classList.add('is-open');
+                            button.setAttribute('aria-expanded', 'true');
+                        }
+                    });
+                });
+
+                // Cerrar cuando se hace clic fuera del menú
+                document.addEventListener('click', function () {
+
+                    dropdowns.forEach(function (dropdown) {
+
+                        dropdown.classList.remove('is-open');
+
+                        const button = dropdown.querySelector('.fj-dropdown-toggle');
+
+                        if (button) {
+                            button.setAttribute('aria-expanded', 'false');
                         }
                     });
 
-                    col.appendChild(ul);
-                    grid.appendChild(col);
                 });
 
-                // leyenda final: disponible / próximamente
-                const panelInner = grid.parentElement;
-                if (panelInner) {
-                    // eliminar leyenda previa si existe
-                    const prev = panelInner.querySelector('.mm-legend'); if (prev) prev.remove();
-                    const legend = document.createElement('div'); legend.className = 'mm-legend';
-                    legend.innerHTML = '<span class="dot"><span class="marker available"></span> Disponible</span><span class="dot"><span class="marker soon"></span> Próximamente</span>';
-                    panelInner.appendChild(legend);
-                }
-            }
+                // Cerrar con ESC
+                document.addEventListener('keydown', function (e) {
 
-            // Toast simple
-            let toastTimeout = null;
-            function showToast(msg) {
-                let t = document.getElementById('mmToast');
-                if (!t) {
-                    t = document.createElement('div'); t.id = 'mmToast'; t.className = 'mm-toast'; document.body.appendChild(t);
-                }
-                t.textContent = msg;
-                t.classList.add('show');
-                clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => t.classList.remove('show'), 1800);
-            }
+                    if (e.key === 'Escape') {
 
-            // Interacciones: apertura, cierre, accesibilidad y acordeón móvil
-            function initInteractions() {
-                const toggle = document.getElementById('menuOpcionesToggle');
-                const panel = document.getElementById('menuOpciones');
+                        dropdowns.forEach(function (dropdown) {
 
-                function setPanel(open) {
-                    if (!panel || !toggle) return;
-                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-                    if (open) {
-                        panel.hidden = false; panel.setAttribute('aria-hidden','false'); toggle.closest('.fj-menu-item')?.classList.add('is-open');
-                        // focus al primer enlace
-                        const first = panel.querySelector('.mm-item.enabled'); if (first) first.focus();
-                    } else {
-                        panel.hidden = true; panel.setAttribute('aria-hidden','true'); toggle.closest('.fj-menu-item')?.classList.remove('is-open');
-                        // cerrar acordeón móvil
-                        document.querySelectorAll('.mm-col.is-open').forEach(c=>{ c.classList.remove('is-open'); c.querySelector('.mm-col-title')?.setAttribute('aria-expanded','false'); });
+                            dropdown.classList.remove('is-open');
+
+                            const button = dropdown.querySelector('.fj-dropdown-toggle');
+
+                            if (button) {
+                                button.setAttribute('aria-expanded', 'false');
+                            }
+                        });
                     }
-                }
-
-                toggle?.addEventListener('click', () => setPanel(toggle.getAttribute('aria-expanded') !== 'true'));
-
-                // ESC cierra
-                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setPanel(false); toggle?.focus(); } });
-
-                // click fuera cierra
-                document.addEventListener('click', (e) => { if (!panel || !toggle) return; if (!panel.contains(e.target) && !toggle.contains(e.target)) setPanel(false); });
-
-                // acordeón en mobile: toggles
-                document.addEventListener('click', (e) => {
-                    const t = e.target.closest('.mm-col-title');
-                    if (!t) return;
-                    const col = t.closest('.mm-col');
-                    if (!col) return;
-                    const open = col.classList.toggle('is-open');
-                    t.setAttribute('aria-expanded', open ? 'true' : 'false');
                 });
 
-                // keyboard: abrir con ArrowDown desde toggle
-                toggle?.addEventListener('keydown', function (e) {
-                    if (e.key === 'ArrowDown') { e.preventDefault(); setPanel(true); }
-                });
-            }
-
-            // Inicialización al cargar DOM
-            document.addEventListener('DOMContentLoaded', function () { renderMenu(); initInteractions(); });
-        })();
+            });
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
