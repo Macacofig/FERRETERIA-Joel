@@ -39,12 +39,12 @@ namespace FERRETERIA__Joel.Validaciones
             return precioVenta > ConfiguracionProducto.PrecioVentaMinimo;
         }
 
-        public bool EsCategoriaValida(short idCategoria)
+        public bool EsCategoriaValida(int idCategoria)
         {
             return idCategoria >= ConfiguracionProducto.CategoriaMinima;
         }
 
-        public bool EsEmpleadoValido(short idEmpleadoResponsable)
+        public bool EsEmpleadoValido(int idEmpleadoResponsable)
         {
             return idEmpleadoResponsable >= ConfiguracionProducto.EmpleadoMinimo;
         }

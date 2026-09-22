@@ -20,7 +20,7 @@
 
         public DateTime? FechaActualizacion { get; set; }
 
-        public short IdEmpleadoResponsable { get; set; }
+        public int IdEmpleadoResponsable { get; set; }
         public string? NombreProducto { get; set; }
 
         public string? NombreEmpleadoResponsable { get; set; }

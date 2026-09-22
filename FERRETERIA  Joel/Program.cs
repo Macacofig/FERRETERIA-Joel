@@ -1,4 +1,6 @@
 using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Models;
+using FERRETERIA__Joel.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,10 +8,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 // Patrones de diseño (SOLID):
-// - Factory Method: centraliza la creación de conexiones y repositorios.
-// - Singleton: una única instancia de cada factory, administrada por DI.
+// - IDbConnectionFactory: Factory Method para crear conexiones MySQL.
+// - RepositoryCreator<T>: Factory Method para crear los repositorios (Concrete Products).
+// - Singleton: una única instancia del factory de conexiones, administrada por DI.
 builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
-builder.Services.AddSingleton<IRepositoryFactory, RepositoryFactory>();
+
+// Concrete Creators del Factory Method de repositorios.
+builder.Services.AddScoped<RepositoryCreator<Producto>, ProductoRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<Categoria>, CategoriaRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<Proveedor>, ProveedorRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<Empleado>, EmpleadoRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<HistoricoPrecio>, HistoricoPrecioRepositoryCreator>();
+
+// Funcionalidades específicas de cada entidad, separadas del CRUD genérico (ICRUD<T>).
+builder.Services.AddScoped<IProductoRepositoryFunctions, MySqlProductoRepository>();
+builder.Services.AddScoped<ICategoriaRepositoryFunctions, MySqlCategoriaRepository>();
+builder.Services.AddScoped<IProveedorRepositoryFunctions, MySqlProveedorRepository>();
+builder.Services.AddScoped<IHistoricoPrecioRepositoryFunctions, MySqlHistoricoPrecioRepository>();
 
 var app = builder.Build();
 

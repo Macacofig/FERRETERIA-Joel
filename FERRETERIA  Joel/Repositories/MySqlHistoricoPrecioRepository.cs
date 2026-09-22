@@ -4,13 +4,227 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlHistoricoPrecioRepository : IHistoricoPrecioRepository
+    public class MySqlHistoricoPrecioRepository : ICRUD<HistoricoPrecio>, IHistoricoPrecioRepositoryFunctions
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
         public MySqlHistoricoPrecioRepository(IDbConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
+        }
+
+        public List<HistoricoPrecio> ObtenerTodos()
+        {
+            List<HistoricoPrecio> historicos = new();
+
+            const string query = @"
+                SELECT
+                    h.IdHistoricoPrecio,
+                    h.IdProducto,
+                    p.Nombre AS NombreProducto,
+                    h.Precio,
+                    h.FechaInicioVigencia,
+                    h.FechaFinVigencia,
+                    h.MotivoCambio,
+                    h.Estado,
+                    h.FechaRegistro,
+                    h.FechaActualizacion,
+                    h.IdEmpleadoResponsable,
+                    e.Nombre AS NombreEmpleadoResponsable
+                FROM historico_precio h
+                INNER JOIN producto p
+                    ON p.IdProducto = h.IdProducto
+                INNER JOIN empleado e
+                    ON e.IdEmpleado = h.IdEmpleadoResponsable
+                ORDER BY h.FechaInicioVigencia DESC";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            using MySqlDataReader reader =
+                command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                historicos.Add(MapearHistoricoPrecio(reader));
+            }
+
+            return historicos;
+        }
+
+        public HistoricoPrecio? ObtenerPorId(int id)
+        {
+            const string query = @"
+                SELECT
+                    h.IdHistoricoPrecio,
+                    h.IdProducto,
+                    p.Nombre AS NombreProducto,
+                    h.Precio,
+                    h.FechaInicioVigencia,
+                    h.FechaFinVigencia,
+                    h.MotivoCambio,
+                    h.Estado,
+                    h.FechaRegistro,
+                    h.FechaActualizacion,
+                    h.IdEmpleadoResponsable,
+                    e.Nombre AS NombreEmpleadoResponsable
+                FROM historico_precio h
+                INNER JOIN producto p
+                    ON p.IdProducto = h.IdProducto
+                INNER JOIN empleado e
+                    ON e.IdEmpleado = h.IdEmpleadoResponsable
+                WHERE h.IdHistoricoPrecio = @id
+                LIMIT 1";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
+
+            connection.Open();
+
+            using MySqlDataReader reader =
+                command.ExecuteReader();
+
+            return reader.Read()
+                ? MapearHistoricoPrecio(reader)
+                : null;
+        }
+
+        public int Insertar(HistoricoPrecio historicoPrecio)
+        {
+            const string query = @"
+        INSERT INTO historico_precio
+        (
+            IdProducto,
+            Precio,
+            FechaInicioVigencia,
+            FechaFinVigencia,
+            MotivoCambio,
+            Estado,
+            IdEmpleadoResponsable
+        )
+        VALUES
+        (
+            @idProducto,
+            @precio,
+            CURRENT_TIMESTAMP,
+            NULL,
+            @motivoCambio,
+            1,
+            @idEmpleadoResponsable
+        )";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue(
+                "@idProducto",
+                historicoPrecio.IdProducto);
+
+            command.Parameters.AddWithValue(
+                "@precio",
+                historicoPrecio.Precio);
+
+            command.Parameters.AddWithValue(
+                "@motivoCambio",
+                historicoPrecio.MotivoCambio);
+
+            command.Parameters.AddWithValue(
+                "@idEmpleadoResponsable",
+                historicoPrecio.IdEmpleadoResponsable);
+
+            connection.Open();
+
+            command.ExecuteNonQuery();
+
+            return Convert.ToInt32(command.LastInsertedId);
+        }
+
+        public void Actualizar(HistoricoPrecio historicoPrecio)
+        {
+            const string query = @"
+        UPDATE historico_precio
+        SET
+            Precio = @precio,
+            FechaFinVigencia = @fechaFin,
+            MotivoCambio = @motivoCambio,
+            Estado = @estado,
+            IdEmpleadoResponsable = @idEmpleadoResponsable,
+            FechaActualizacion = CURRENT_TIMESTAMP
+        WHERE IdHistoricoPrecio = @idHistoricoPrecio";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue(
+                "@idHistoricoPrecio",
+                historicoPrecio.IdHistoricoPrecio);
+
+            command.Parameters.AddWithValue(
+                "@precio",
+                historicoPrecio.Precio);
+
+            command.Parameters.AddWithValue(
+                "@fechaFin",
+                historicoPrecio.FechaFinVigencia.HasValue
+                    ? historicoPrecio.FechaFinVigencia.Value
+                    : DBNull.Value);
+
+            command.Parameters.AddWithValue(
+                "@motivoCambio",
+                historicoPrecio.MotivoCambio);
+
+            command.Parameters.AddWithValue(
+                "@estado",
+                historicoPrecio.Estado);
+
+            command.Parameters.AddWithValue(
+                "@idEmpleadoResponsable",
+                historicoPrecio.IdEmpleadoResponsable);
+
+            connection.Open();
+
+            command.ExecuteNonQuery();
+        }
+
+        public void CambiarEstado(int id)
+        {
+            const string query = @"
+        UPDATE historico_precio
+        SET
+            Estado = CASE
+                WHEN Estado = 1 THEN 0
+                ELSE 1
+            END,
+            FechaActualizacion = CURRENT_TIMESTAMP
+        WHERE IdHistoricoPrecio = @id";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
+
+            connection.Open();
+
+            command.ExecuteNonQuery();
         }
 
         public List<HistoricoPrecio> ObtenerPorProducto(int idProducto)
@@ -124,7 +338,7 @@ namespace FERRETERIA__Joel.Repositories
                         ? null
                         : reader.GetDateTime("FechaActualizacion"),
                 IdEmpleadoResponsable =
-                    reader.GetInt16("IdEmpleadoResponsable")
+                    reader.GetInt32("IdEmpleadoResponsable")
             };
         }
         public void CerrarPrecioVigente(int idProducto)
@@ -191,62 +405,11 @@ namespace FERRETERIA__Joel.Repositories
                         : reader.GetDateTime("FechaActualizacion"),
 
                 IdEmpleadoResponsable =
-                    reader.GetInt16("IdEmpleadoResponsable"),
+                    reader.GetInt32("IdEmpleadoResponsable"),
 
                 NombreEmpleadoResponsable =
                     reader["NombreEmpleadoResponsable"].ToString()
             };
-        }
-
-        public void Insertar(HistoricoPrecio historicoPrecio)
-        {
-            const string query = @"
-        INSERT INTO historico_precio
-        (
-            IdProducto,
-            Precio,
-            FechaInicioVigencia,
-            FechaFinVigencia,
-            MotivoCambio,
-            Estado,
-            IdEmpleadoResponsable
-        )
-        VALUES
-        (
-            @idProducto,
-            @precio,
-            CURRENT_TIMESTAMP,
-            NULL,
-            @motivoCambio,
-            1,
-            @idEmpleadoResponsable
-        )";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            command.Parameters.AddWithValue(
-                "@idProducto",
-                historicoPrecio.IdProducto);
-
-            command.Parameters.AddWithValue(
-                "@precio",
-                historicoPrecio.Precio);
-
-            command.Parameters.AddWithValue(
-                "@motivoCambio",
-                historicoPrecio.MotivoCambio);
-
-            command.Parameters.AddWithValue(
-                "@idEmpleadoResponsable",
-                historicoPrecio.IdEmpleadoResponsable);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
         }
     }
 }

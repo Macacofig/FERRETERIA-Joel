@@ -8,6 +8,6 @@ namespace FERRETERIA__Joel.ConfiguracionValidacion
         public const int NombreContactoMaxLength = 150;
         public const int TelefonoMaxLength = 8;
         public const int DireccionMaxLength = 255;
-        public const short EmpleadoMinimo = 1;
+        public const int EmpleadoMinimo = 1;
     }
 }

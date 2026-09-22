@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProductoRepository : IProductoRepository
+    public class MySqlProductoRepository : ICRUD<Producto>, IProductoRepositoryFunctions
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -302,7 +302,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public bool ExisteCategoriaActiva(short idCategoria)
+        public bool ExisteCategoriaActiva(int idCategoria)
         {
             const string query = @"
                 SELECT COUNT(*)
@@ -352,7 +352,7 @@ namespace FERRETERIA__Joel.Repositories
                     reader.GetInt32("IdProducto"),
 
                 IdCategoria =
-                    reader.GetInt16("IdCategoria"),
+                    reader.GetInt32("IdCategoria"),
 
                 Codigo =
                     reader["Codigo"].ToString() ?? "",
@@ -388,7 +388,7 @@ namespace FERRETERIA__Joel.Repositories
                     : reader.GetDateTime("FechaActualizacion"),
 
                 IdEmpleadoResponsable =
-                    reader.GetInt16("IdEmpleadoResponsable")
+                    reader.GetInt32("IdEmpleadoResponsable")
             };
         }
     }

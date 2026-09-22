@@ -4,7 +4,7 @@ using FERRETERIA__Joel.Models;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlCategoriaRepository : ICategoriaRepository
+    public class MySqlCategoriaRepository : ICRUD<Categoria>, ICategoriaRepositoryFunctions
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -13,7 +13,7 @@ namespace FERRETERIA__Joel.Repositories
             _connectionFactory = connectionFactory;
         }
 
-        public List<Categoria> ObtenerTodas()
+        public List<Categoria> ObtenerTodos()
         {
             List<Categoria> categorias = new();
 
@@ -88,7 +88,7 @@ namespace FERRETERIA__Joel.Repositories
             return categorias;
         }
 
-        public Categoria? ObtenerPorId(short id)
+        public Categoria? ObtenerPorId(int id)
         {
             const string query = @"
                 SELECT
@@ -125,7 +125,7 @@ namespace FERRETERIA__Joel.Repositories
                 : null;
         }
 
-        public void Insertar(Categoria categoria)
+        public int Insertar(Categoria categoria)
         {
             const string query = @"INSERT INTO categoria 
                                   (Codigo, Nombre, Descripcion, PorcentajeGanancia, Estado, IdEmpleadoResponsable) 
@@ -147,6 +147,8 @@ namespace FERRETERIA__Joel.Repositories
 
             connection.Open();
             command.ExecuteNonQuery();
+
+            return Convert.ToInt32(command.LastInsertedId);
         }
 
         public void Actualizar(Categoria categoria)
@@ -177,6 +179,28 @@ namespace FERRETERIA__Joel.Repositories
             command.ExecuteNonQuery();
         }
 
+        public void CambiarEstado(int id)
+        {
+            const string query = @"UPDATE categoria 
+                                  SET Estado = CASE
+                                      WHEN Estado = 1 THEN 0
+                                      ELSE 1
+                                  END,
+                                  FechaActualizacion = CURRENT_TIMESTAMP 
+                                  WHERE IdCategoria = @IdCategoria;";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@IdCategoria", id);
+
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+
         public string ObtenerSiguienteCodigo()
         {
             const string query = @"
@@ -196,7 +220,7 @@ namespace FERRETERIA__Joel.Repositories
             return command.ExecuteScalar()?.ToString() ?? "CAT-1";
         }
 
-        public bool ExisteCodigo(string codigo, short? idCategoriaExcluir = null)
+        public bool ExisteCodigo(string codigo, int? idCategoriaExcluir = null)
         {
             const string query = @"
                 SELECT COUNT(*)
@@ -224,7 +248,7 @@ namespace FERRETERIA__Joel.Repositories
                 command.ExecuteScalar()) > 0;
         }
 
-        public void Desactivar(short id)
+        public void Desactivar(int id)
         {
             const string query = @"UPDATE categoria 
                                   SET Estado = 0, FechaActualizacion = CURRENT_TIMESTAMP 
@@ -246,7 +270,7 @@ namespace FERRETERIA__Joel.Repositories
         {
             return new Categoria
             {
-                IdCategoria = reader.GetInt16("IdCategoria"),
+                IdCategoria = reader.GetInt32("IdCategoria"),
                 Codigo = reader["Codigo"].ToString() ?? "",
                 Nombre = reader["Nombre"].ToString() ?? "",
                 Descripcion = reader["Descripcion"] == DBNull.Value
@@ -258,7 +282,7 @@ namespace FERRETERIA__Joel.Repositories
                 FechaActualizacion = reader["FechaActualizacion"] == DBNull.Value
                     ? null
                     : reader.GetDateTime("FechaActualizacion"),
-                IdEmpleadoResponsable = reader.GetInt16("IdEmpleadoResponsable")
+                IdEmpleadoResponsable = reader.GetInt32("IdEmpleadoResponsable")
             };
         }
     }

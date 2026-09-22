@@ -7,6 +7,6 @@ namespace FERRETERIA__Joel.ConfiguracionValidacion
         public const int DescripcionMaxLength = 255;
         public const decimal PorcentajeGananciaMinimo = 0m;
         public const decimal PorcentajeGananciaMaximo = 100m;
-        public const short EmpleadoMinimo = 1;
+        public const int EmpleadoMinimo = 1;
     }
 }

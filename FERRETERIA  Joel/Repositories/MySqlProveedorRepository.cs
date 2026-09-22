@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProveedorRepository : IProveedorRepository
+    public class MySqlProveedorRepository : ICRUD<Proveedor>, IProveedorRepositoryFunctions
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -55,7 +55,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public Proveedor? ObtenerPorId(short idProveedor)
+        public Proveedor? ObtenerPorId(int idProveedor)
         {
             const string query = @"
                 SELECT
@@ -98,7 +98,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public void Insertar(Proveedor proveedor)
+        public int Insertar(Proveedor proveedor)
         {
             const string query = @"
                 INSERT INTO proveedor
@@ -171,6 +171,8 @@ namespace FERRETERIA__Joel.Repositories
             connection.Open();
 
             command.ExecuteNonQuery();
+
+            return Convert.ToInt32(command.LastInsertedId);
         }
 
 
@@ -245,7 +247,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public void CambiarEstado(short idProveedor)
+        public void CambiarEstado(int idProveedor)
         {
             const string query = @"
                 UPDATE proveedor
@@ -275,7 +277,7 @@ namespace FERRETERIA__Joel.Repositories
 
         public bool ExisteNit(
             string nit,
-            short? idProveedorExcluir = null)
+            int? idProveedorExcluir = null)
         {
             const string query = @"
                 SELECT COUNT(*)
@@ -314,7 +316,7 @@ namespace FERRETERIA__Joel.Repositories
             return new Proveedor
             {
                 IdProveedor =
-                    reader.GetInt16("IdProveedor"),
+                    reader.GetInt32("IdProveedor"),
 
                 RazonSocial =
                     reader["RazonSocial"].ToString() ?? "",
@@ -353,7 +355,7 @@ namespace FERRETERIA__Joel.Repositories
                         : reader.GetDateTime("FechaActualizacion"),
 
                 IdEmpleadoResponsable =
-                    reader.GetInt16("IdEmpleadoResponsable")
+                    reader.GetInt32("IdEmpleadoResponsable")
             };
         }
     }
