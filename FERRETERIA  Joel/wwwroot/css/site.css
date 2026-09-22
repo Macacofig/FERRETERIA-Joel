@@ -1709,6 +1709,50 @@ a.fj-mega-card:hover {
     border-top: 0.0625rem solid var(--borde-suave);
 }
 
+/* ============================================================
+   Errores de validación por campo
+   ============================================================ */
+
+.fj-form-field-error .fj-form-label {
+    color: var(--danger);
+}
+
+.fj-form-field-error .fj-input {
+    border-color: var(--danger);
+}
+
+    .fj-form-field-error .fj-input:focus {
+        border-color: var(--danger);
+        box-shadow: 0 0 0 0.1875rem rgba(216, 58, 44, 0.14);
+    }
+
+.fj-form-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4375rem;
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: var(--danger);
+}
+
+    .fj-form-error::before {
+        content: "!";
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 0.875rem;
+        height: 0.875rem;
+        margin-top: 0.0625rem;
+        border-radius: 50%;
+        background: var(--danger);
+        color: #fff;
+        font-size: 0.625rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
 .fj-inline-form {
     display: inline-flex;
     margin: 0;

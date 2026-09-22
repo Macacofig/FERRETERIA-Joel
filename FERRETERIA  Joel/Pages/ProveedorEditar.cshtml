@@ -21,7 +21,7 @@
         <div class="fj-alert" role="alert">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
             <div>
-                <strong>Verifica los siguientes datos:</strong>
+                <strong>No se pudo actualizar:</strong>
                 <ul class="fj-alert-lista">
                     @foreach (var error in Model.Errores)
                     {
@@ -32,41 +32,65 @@
         </div>
     }
 
-    <form method="post" class="fj-card fj-form">
+    <form method="post" class="fj-card fj-form" novalidate>
         <input type="hidden" asp-for="Proveedor.IdProveedor" />
 
         <div class="fj-form-grid">
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("RazonSocial") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.RazonSocial">Razón Social</label>
                 <input class="fj-input" asp-for="Proveedor.RazonSocial" required maxlength="150" />
+                @if (Model.ErroresCampo.TryGetValue("RazonSocial", out var errorRazonSocial))
+                {
+                    <p class="fj-form-error" role="alert">@errorRazonSocial</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("NombreComercial") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.NombreComercial">Nombre Comercial</label>
                 <input class="fj-input" asp-for="Proveedor.NombreComercial" required maxlength="150" />
+                @if (Model.ErroresCampo.TryGetValue("NombreComercial", out var errorNombreComercial))
+                {
+                    <p class="fj-form-error" role="alert">@errorNombreComercial</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("Nit") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.Nit">NIT</label>
                 <input class="fj-input" asp-for="Proveedor.Nit" required maxlength="13" pattern="[0-9]{6,11}[0124][0-9]" inputmode="numeric" />
+                @if (Model.ErroresCampo.TryGetValue("Nit", out var errorNit))
+                {
+                    <p class="fj-form-error" role="alert">@errorNit</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("NombreContacto") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.NombreContacto">Nombre Contacto</label>
                 <input class="fj-input" asp-for="Proveedor.NombreContacto" required maxlength="150" />
+                @if (Model.ErroresCampo.TryGetValue("NombreContacto", out var errorNombreContacto))
+                {
+                    <p class="fj-form-error" role="alert">@errorNombreContacto</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("Telefono") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.Telefono">Teléfono</label>
                 <input class="fj-input" asp-for="Proveedor.Telefono" type="tel" required maxlength="8" pattern="[67][0-9]{7}" />
+                @if (Model.ErroresCampo.TryGetValue("Telefono", out var errorTelefono))
+                {
+                    <p class="fj-form-error" role="alert">@errorTelefono</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("CorreoElectronico") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.CorreoElectronico">Correo Electrónico</label>
                 <input class="fj-input" asp-for="Proveedor.CorreoElectronico" type="email" maxlength="150" pattern="[A-Za-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(\.[A-Za-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*@@[A-Za-z]+(\.[A-Za-z]+)+" />
+                @if (Model.ErroresCampo.TryGetValue("CorreoElectronico", out var errorCorreo))
+                {
+                    <p class="fj-form-error" role="alert">@errorCorreo</p>
+                }
             </div>
 
-            <div class="fj-form-field fj-form-field--full">
+            <div class="fj-form-field fj-form-field--full @(Model.ErroresCampo.ContainsKey("IdEmpleadoResponsable") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.IdEmpleadoResponsable">Empleado responsable</label>
                 <select class="fj-input fj-select" asp-for="Proveedor.IdEmpleadoResponsable" required>
                     <option value="">-- Seleccione --</option>
@@ -75,6 +99,10 @@
                         <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
                     }
                 </select>
+                @if (Model.ErroresCampo.TryGetValue("IdEmpleadoResponsable", out var errorEmpleado))
+                {
+                    <p class="fj-form-error" role="alert">@errorEmpleado</p>
+                }
             </div>
 
             <div class="fj-form-field fj-form-field--full">

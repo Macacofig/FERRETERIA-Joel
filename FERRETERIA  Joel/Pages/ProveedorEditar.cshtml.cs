@@ -22,6 +22,7 @@ namespace FERRETERIA__Joel.Pages
 
         public List<Empleado> Empleados { get; set; } = new();
         public List<string> Errores { get; set; } = new();
+        public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorEditarModel(
             IProveedorRepository proveedorRepository,
@@ -57,7 +58,7 @@ namespace FERRETERIA__Joel.Pages
             NormalizarDatos();
             Validar();
 
-            if (Errores.Any())
+            if (Errores.Any() || ErroresCampo.Any())
             {
                 CargarEmpleados();
                 return Page();
@@ -69,7 +70,8 @@ namespace FERRETERIA__Joel.Pages
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.Nit),
                     "Ya existe otro proveedor con ese NIT.");
 
                 CargarEmpleados();
@@ -132,53 +134,66 @@ namespace FERRETERIA__Joel.Pages
         {
             if (!_validacion.EsRazonSocialValida(Proveedor.RazonSocial))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.RazonSocial),
                     "La razón social es obligatoria y debe tener máximo 150 caracteres.");
             }
 
             if (!_validacion.EsNombreComercialValido(Proveedor.NombreComercial))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.NombreComercial),
                     "El nombre comercial es obligatorio y debe tener máximo 150 caracteres.");
             }
 
             if (!_validacion.EsNitValido(Proveedor.Nit))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.Nit),
                     "El NIT es obligatorio y debe tener máximo 30 caracteres.");
             }
             else if (_proveedorRepository.ExisteNit(
                 Proveedor.Nit,
                 Proveedor.IdProveedor))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.Nit),
                     "Ya existe otro proveedor con ese NIT.");
             }
 
             if (!_validacion.EsNombreContactoValido(Proveedor.NombreContacto))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.NombreContacto),
                     "El nombre del contacto es obligatorio y debe tener máximo 150 caracteres.");
             }
 
             if (!_validacion.EsTelefonoValido(Proveedor.Telefono))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.Telefono),
                     "El teléfono es obligatorio, debe tener máximo 30 caracteres y contener solo números, espacios, guiones o paréntesis.");
             }
 
             if (!_validacion.EsCorreoValido(Proveedor.CorreoElectronico))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.CorreoElectronico),
                     "El correo electrónico no es válido.");
             }
 
             if (!_validacion.EsEmpleadoValido(
                 Proveedor.IdEmpleadoResponsable))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.IdEmpleadoResponsable),
                     "Debe seleccionar un empleado responsable.");
             }
+        }
+
+        private void AgregarErrorCampo(string campo, string mensaje)
+        {
+            ErroresCampo[campo] = mensaje;
         }
 
         private void CargarEmpleados()
