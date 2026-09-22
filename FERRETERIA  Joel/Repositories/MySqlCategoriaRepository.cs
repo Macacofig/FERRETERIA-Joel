@@ -1,15 +1,16 @@
 using MySql.Data.MySqlClient;
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 
 namespace FERRETERIA__Joel.Repositories
 {
     public class MySqlCategoriaRepository : ICategoriaRepository
     {
-        private readonly string _connectionString;
+        private readonly IDbConnectionFactory _connectionFactory;
 
-        public MySqlCategoriaRepository(IConfiguration configuration)
+        public MySqlCategoriaRepository(IDbConnectionFactory connectionFactory)
         {
-            _connectionString = configuration.GetConnectionString("MySqlConnection")!;
+            _connectionFactory = connectionFactory;
         }
 
         public List<Categoria> ObtenerTodas()
@@ -31,7 +32,7 @@ namespace FERRETERIA__Joel.Repositories
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -69,7 +70,7 @@ namespace FERRETERIA__Joel.Repositories
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -105,7 +106,7 @@ namespace FERRETERIA__Joel.Repositories
                 LIMIT 1";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -132,7 +133,7 @@ namespace FERRETERIA__Joel.Repositories
                                   (@Codigo, @Nombre, @Descripcion, @PorcentajeGanancia, @Estado, @IdEmpleadoResponsable);";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -160,7 +161,7 @@ namespace FERRETERIA__Joel.Repositories
                                   WHERE IdCategoria = @IdCategoria;";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -185,7 +186,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE Codigo LIKE 'CAT-%'";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -205,7 +206,7 @@ namespace FERRETERIA__Joel.Repositories
                     OR IdCategoria <> @idCategoriaExcluir)";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -230,7 +231,7 @@ namespace FERRETERIA__Joel.Repositories
                                   WHERE IdCategoria = @IdCategoria;";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);

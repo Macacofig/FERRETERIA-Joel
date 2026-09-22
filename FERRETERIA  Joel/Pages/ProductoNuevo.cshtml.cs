@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -31,16 +32,13 @@ namespace FERRETERIA__Joel.Pages
             { "Caja", "Kilogramo", "Litro", "Metro", "Par", "Unidad" };
 
         public ProductoNuevoModel(
-        IProductoRepository productoRepository,
-        ICategoriaRepository categoriaRepository,
-        IEmpleadoRepository empleadoRepository,
-        IHistoricoPrecioRepository historicoPrecioRepository,
+        IRepositoryFactory repositoryFactory,
         ILogger<ProductoNuevoModel> logger)
         {
-            _productoRepository = productoRepository;
-            _categoriaRepository = categoriaRepository;
-            _empleadoRepository = empleadoRepository;
-            _historicoPrecioRepository = historicoPrecioRepository;
+            _productoRepository = repositoryFactory.CreateProductoRepository();
+            _categoriaRepository = repositoryFactory.CreateCategoriaRepository();
+            _empleadoRepository = repositoryFactory.CreateEmpleadoRepository();
+            _historicoPrecioRepository = repositoryFactory.CreateHistoricoPrecioRepository();
             _logger = logger;
         }
 

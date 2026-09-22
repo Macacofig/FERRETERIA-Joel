@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -23,12 +24,11 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaEditarModel(
-        ICategoriaRepository repositorio,
-        IEmpleadoRepository empleadoRepository,
+        IRepositoryFactory repositoryFactory,
         ILogger<CategoriaEditarModel> logger)
         {
-            _repositorio = repositorio;
-            _empleadoRepository = empleadoRepository;
+            _repositorio = repositoryFactory.CreateCategoriaRepository();
+            _empleadoRepository = repositoryFactory.CreateEmpleadoRepository();
             _logger = logger;
         }
 

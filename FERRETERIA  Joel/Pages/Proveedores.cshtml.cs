@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,10 @@ namespace FERRETERIA__Joel.Pages
         public List<Proveedor> ListProveedores { get; set; } = new();
 
         public ProveedoresModel(
-            IProveedorRepository proveedorRepository,
+            IRepositoryFactory repositoryFactory,
             ILogger<ProveedoresModel> logger)
         {
-            _proveedorRepository = proveedorRepository;
+            _proveedorRepository = repositoryFactory.CreateProveedorRepository();
             _logger = logger;
         }
 

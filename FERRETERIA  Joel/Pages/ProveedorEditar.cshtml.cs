@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -25,12 +26,11 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorEditarModel(
-            IProveedorRepository proveedorRepository,
-            IEmpleadoRepository empleadoRepository,
+            IRepositoryFactory repositoryFactory,
             ILogger<ProveedorEditarModel> logger)
         {
-            _proveedorRepository = proveedorRepository;
-            _empleadoRepository = empleadoRepository;
+            _proveedorRepository = repositoryFactory.CreateProveedorRepository();
+            _empleadoRepository = repositoryFactory.CreateEmpleadoRepository();
             _logger = logger;
         }
 

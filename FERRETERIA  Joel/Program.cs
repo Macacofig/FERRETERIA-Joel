@@ -1,16 +1,15 @@
-using FERRETERIA__Joel.Repositories;
+using FERRETERIA__Joel.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-// Inyección de dependencias para Categoría (SOLID - Inversión de dependencias)
-builder.Services.AddScoped<ICategoriaRepository, MySqlCategoriaRepository>();
-builder.Services.AddScoped<IProductoRepository, MySqlProductoRepository>();
-builder.Services.AddScoped<IProveedorRepository, MySqlProveedorRepository>();
-builder.Services.AddScoped<IEmpleadoRepository, MySqlEmpleadoRepository>();
-builder.Services.AddScoped<IHistoricoPrecioRepository, MySqlHistoricoPrecioRepository>();
+// Patrones de diseño (SOLID):
+// - Factory Method: centraliza la creación de conexiones y repositorios.
+// - Singleton: una única instancia de cada factory, administrada por DI.
+builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
+builder.Services.AddSingleton<IRepositoryFactory, RepositoryFactory>();
 
 var app = builder.Build();
 

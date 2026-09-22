@@ -1,18 +1,16 @@
-﻿using FERRETERIA__Joel.Models;
+﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
     public class MySqlProveedorRepository : IProveedorRepository
     {
-        private readonly string _connectionString;
+        private readonly IDbConnectionFactory _connectionFactory;
 
-        public MySqlProveedorRepository(IConfiguration configuration)
+        public MySqlProveedorRepository(IDbConnectionFactory connectionFactory)
         {
-            _connectionString =
-                configuration.GetConnectionString("MySqlConnection")
-                ?? throw new InvalidOperationException(
-                    "No se encontró la cadena de conexión MySqlConnection.");
+            _connectionFactory = connectionFactory;
         }
 
 
@@ -38,7 +36,7 @@ namespace FERRETERIA__Joel.Repositories
                 ORDER BY NombreComercial ASC";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -77,7 +75,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProveedor = @idProveedor";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -131,7 +129,7 @@ namespace FERRETERIA__Joel.Repositories
                 )";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -194,7 +192,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProveedor = @idProveedor";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -260,7 +258,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProveedor = @idProveedor";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -289,7 +287,7 @@ namespace FERRETERIA__Joel.Repositories
                 )";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);

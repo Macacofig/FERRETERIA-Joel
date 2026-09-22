@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,11 @@ namespace FERRETERIA__Joel.Pages
         public List<Categoria> Categorias { get; set; } = new();
 
         public ProductosModel(
-            IProductoRepository productoRepository,
-            ICategoriaRepository categoriaRepository,
+            IRepositoryFactory repositoryFactory,
             ILogger<ProductosModel> logger)
         {
-            _productoRepository = productoRepository;
-            _categoriaRepository = categoriaRepository;
+            _productoRepository = repositoryFactory.CreateProductoRepository();
+            _categoriaRepository = repositoryFactory.CreateCategoriaRepository();
             _logger = logger;
         }
 

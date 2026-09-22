@@ -1,18 +1,16 @@
-﻿using FERRETERIA__Joel.Models;
+﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
     public class MySqlEmpleadoRepository : IEmpleadoRepository
     {
-        private readonly string _connectionString;
+        private readonly IDbConnectionFactory _connectionFactory;
 
-        public MySqlEmpleadoRepository(IConfiguration configuration)
+        public MySqlEmpleadoRepository(IDbConnectionFactory connectionFactory)
         {
-            _connectionString =
-                configuration.GetConnectionString("MySqlConnection")
-                ?? throw new InvalidOperationException(
-                    "No se encontró la cadena de conexión MySqlConnection.");
+            _connectionFactory = connectionFactory;
         }
 
         public List<Empleado> ObtenerActivos()
@@ -27,7 +25,7 @@ namespace FERRETERIA__Joel.Repositories
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);

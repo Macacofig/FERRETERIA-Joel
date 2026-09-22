@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 
@@ -13,9 +14,9 @@ namespace FERRETERIA__Joel.Pages
         public string Mensaje { get; set; } = "";
         public List<Categoria> ListCategorias { get; set; } = new();
 
-        public CategoriasModel(ICategoriaRepository repositorio, ILogger<CategoriasModel> logger)
+        public CategoriasModel(IRepositoryFactory repositoryFactory, ILogger<CategoriasModel> logger)
         {
-            _repositorio = repositorio;
+            _repositorio = repositoryFactory.CreateCategoriaRepository();
             _logger = logger;
         }
 
