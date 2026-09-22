@@ -24,8 +24,8 @@ namespace FERRETERIA__Joel.Validaciones
 
         public bool EsMarcaValida(string? marca)
         {
-            return string.IsNullOrWhiteSpace(marca)
-                || marca.Trim().Length <= ConfiguracionProducto.MarcaMaxLength;
+            return !string.IsNullOrWhiteSpace(marca)
+                && marca.Trim().Length <= ConfiguracionProducto.MarcaMaxLength;
         }
 
         public bool EsUnidadMedidaValida(string? unidadMedida)

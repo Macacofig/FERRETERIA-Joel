@@ -21,7 +21,7 @@
         <div class="fj-alert" role="alert">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
             <div>
-                <strong>Verifica los siguientes datos:</strong>
+                <strong>No se pudo guardar:</strong>
                 <ul class="fj-alert-lista">
                     @foreach (var error in Model.Errores)
                     {
@@ -32,7 +32,7 @@
         </div>
     }
 
-    <form method="post" class="fj-card fj-form">
+    <form method="post" class="fj-card fj-form" novalidate>
         <div class="fj-form-grid">
             <div class="fj-form-field">
                 <label class="fj-form-label" asp-for="Producto.Codigo">Código</label>
@@ -40,17 +40,25 @@
                 <span class="fj-form-hint">Generado automáticamente por el sistema.</span>
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("Nombre") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Producto.Nombre">Nombre</label>
                 <input class="fj-input" asp-for="Producto.Nombre" placeholder="Nombre del producto" required maxlength="150" />
+                @if (Model.ErroresCampo.TryGetValue("Nombre", out var errorNombre))
+                {
+                    <p class="fj-form-error" role="alert">@errorNombre</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("Marca") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Producto.Marca">Marca</label>
-                <input class="fj-input" asp-for="Producto.Marca" placeholder="Marca" maxlength="100" />
+                <input class="fj-input" asp-for="Producto.Marca" placeholder="Marca" maxlength="100" required />
+                @if (Model.ErroresCampo.TryGetValue("Marca", out var errorMarca))
+                {
+                    <p class="fj-form-error" role="alert">@errorMarca</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("IdCategoria") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Producto.IdCategoria">Categoría</label>
                 <select class="fj-input fj-select" asp-for="Producto.IdCategoria" required>
                     <option value="">-- Seleccione --</option>
@@ -59,9 +67,13 @@
                         <option value="@categoria.IdCategoria">@categoria.Nombre</option>
                     }
                 </select>
+                @if (Model.ErroresCampo.TryGetValue("IdCategoria", out var errorCategoria))
+                {
+                    <p class="fj-form-error" role="alert">@errorCategoria</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("UnidadMedida") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Producto.UnidadMedida">Unidad de medida</label>
                 <select class="fj-input fj-select" asp-for="Producto.UnidadMedida" required>
                     <option value="">-- Seleccione --</option>
@@ -70,14 +82,22 @@
                         <option value="@unidad">@unidad</option>
                     }
                 </select>
+                @if (Model.ErroresCampo.TryGetValue("UnidadMedida", out var errorUnidad))
+                {
+                    <p class="fj-form-error" role="alert">@errorUnidad</p>
+                }
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("PrecioVenta") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Producto.PrecioVenta">Precio de venta (Bs)</label>
                 <input class="fj-input" asp-for="Producto.PrecioVenta" type="number" step="0.01" min="0.01" placeholder="0.00" required />
+                @if (Model.ErroresCampo.TryGetValue("PrecioVenta", out var errorPrecio))
+                {
+                    <p class="fj-form-error" role="alert">@errorPrecio</p>
+                }
             </div>
 
-            <div class="fj-form-field fj-form-field--full">
+            <div class="fj-form-field fj-form-field--full @(Model.ErroresCampo.ContainsKey("IdEmpleadoResponsable") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Producto.IdEmpleadoResponsable">Empleado responsable</label>
                 <select class="fj-input fj-select" asp-for="Producto.IdEmpleadoResponsable" required>
                     <option value="">-- Seleccione --</option>
@@ -86,11 +106,19 @@
                         <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
                     }
                 </select>
+                @if (Model.ErroresCampo.TryGetValue("IdEmpleadoResponsable", out var errorEmpleado))
+                {
+                    <p class="fj-form-error" role="alert">@errorEmpleado</p>
+                }
             </div>
 
-            <div class="fj-form-field fj-form-field--full">
+            <div class="fj-form-field fj-form-field--full @(Model.ErroresCampo.ContainsKey("Descripcion") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Producto.Descripcion">Descripción</label>
                 <textarea class="fj-input fj-input-area" asp-for="Producto.Descripcion" rows="3" maxlength="500" placeholder="Descripción del producto"></textarea>
+                @if (Model.ErroresCampo.TryGetValue("Descripcion", out var errorDescripcion))
+                {
+                    <p class="fj-form-error" role="alert">@errorDescripcion</p>
+                }
             </div>
         </div>
 

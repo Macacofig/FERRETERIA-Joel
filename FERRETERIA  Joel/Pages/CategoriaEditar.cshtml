@@ -21,7 +21,7 @@
         <div class="fj-alert" role="alert">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
             <div>
-                <strong>Verifica los siguientes datos:</strong>
+                <strong>No se pudo actualizar:</strong>
                 <ul class="fj-alert-lista">
                     @foreach (var error in Model.Errores)
                     {
@@ -32,7 +32,7 @@
         </div>
     }
 
-    <form method="post" class="fj-card fj-form">
+    <form method="post" class="fj-card fj-form" novalidate>
         <input type="hidden" asp-for="CategoriaEdit.IdCategoria" />
 
         <div class="fj-form-grid">
@@ -42,14 +42,22 @@
                 <span class="fj-form-hint">Generado automáticamente por el sistema.</span>
             </div>
 
-            <div class="fj-form-field">
+            <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("Nombre") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="CategoriaEdit.Nombre">Nombre</label>
                 <input class="fj-input" asp-for="CategoriaEdit.Nombre" maxlength="100" required />
+                @if (Model.ErroresCampo.TryGetValue("Nombre", out var errorNombre))
+                {
+                    <p class="fj-form-error" role="alert">@errorNombre</p>
+                }
             </div>
 
-            <div class="fj-form-field fj-form-field--full">
+            <div class="fj-form-field fj-form-field--full @(Model.ErroresCampo.ContainsKey("Descripcion") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="CategoriaEdit.Descripcion">Descripción</label>
                 <textarea class="fj-input fj-input-area" asp-for="CategoriaEdit.Descripcion" rows="3" maxlength="255"></textarea>
+                @if (Model.ErroresCampo.TryGetValue("Descripcion", out var errorDescripcion))
+                {
+                    <p class="fj-form-error" role="alert">@errorDescripcion</p>
+                }
             </div>
 
             <div class="fj-form-field">
@@ -57,7 +65,7 @@
                 <input class="fj-input" value="0" readonly />
             </div>
 
-            <div class="fj-form-field fj-form-field--full">
+            <div class="fj-form-field fj-form-field--full @(Model.ErroresCampo.ContainsKey("IdEmpleadoResponsable") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="CategoriaEdit.IdEmpleadoResponsable">Empleado responsable</label>
                 <select class="fj-input fj-select" asp-for="CategoriaEdit.IdEmpleadoResponsable" required>
                     <option value="">-- Seleccione --</option>
@@ -66,6 +74,10 @@
                         <option value="@empleado.IdEmpleado">@empleado.Nombre</option>
                     }
                 </select>
+                @if (Model.ErroresCampo.TryGetValue("IdEmpleadoResponsable", out var errorEmpleado))
+                {
+                    <p class="fj-form-error" role="alert">@errorEmpleado</p>
+                }
             </div>
 
             <div class="fj-form-field fj-form-field--full">
