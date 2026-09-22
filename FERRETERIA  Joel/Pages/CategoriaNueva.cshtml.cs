@@ -21,6 +21,7 @@ namespace FERRETERIA__Joel.Pages
 
         public List<Empleado> Empleados { get; set; } = new();
         public List<string> Errores { get; set; } = new();
+        public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaNuevaModel(
             ICategoriaRepository repositorio,
@@ -46,7 +47,7 @@ namespace FERRETERIA__Joel.Pages
             NormalizarDatos();
             Validar();
 
-            if (Errores.Any())
+            if (Errores.Any() || ErroresCampo.Any())
             {
                 CargarEmpleados();
                 return Page();
@@ -63,7 +64,8 @@ namespace FERRETERIA__Joel.Pages
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Categoria.Codigo),
                     $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.");
 
                 CargarEmpleados();
@@ -106,40 +108,51 @@ namespace FERRETERIA__Joel.Pages
         {
             if (!_validador.EsCodigoValido(NuevaCategoria.Codigo))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Categoria.Codigo),
                     "El código es obligatorio y debe tener máximo 20 caracteres.");
             }
             else if (_repositorio.ExisteCodigo(NuevaCategoria.Codigo))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Categoria.Codigo),
                     $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.");
             }
 
             if (!_validador.EsNombreValido(NuevaCategoria.Nombre))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Categoria.Nombre),
                     "El nombre es obligatorio y debe tener máximo 100 caracteres.");
             }
 
             if (!_validador.EsDescripcionValida(NuevaCategoria.Descripcion))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Categoria.Descripcion),
                     "La descripción no debe superar los 255 caracteres.");
             }
 
             if (!_validador.EsPorcentajeGananciaValido(
                 NuevaCategoria.PorcentajeGanancia))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Categoria.PorcentajeGanancia),
                     "El porcentaje de ganancia debe estar entre 0 y 100.");
             }
 
             if (!_validador.EsEmpleadoValido(
                 NuevaCategoria.IdEmpleadoResponsable))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Categoria.IdEmpleadoResponsable),
                     "Debe seleccionar un empleado responsable.");
             }
+        }
+
+        private void AgregarErrorCampo(string campo, string mensaje)
+        {
+            ErroresCampo[campo] = mensaje;
         }
 
         private void CargarEmpleados()

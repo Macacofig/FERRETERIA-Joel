@@ -21,6 +21,7 @@ namespace FERRETERIA__Joel.Pages
 
         public List<Empleado> Empleados { get; set; } = new();
         public List<string> Errores { get; set; } = new();
+        public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorNuevoModel(
             IProveedorRepository proveedorRepository,
@@ -40,7 +41,7 @@ namespace FERRETERIA__Joel.Pages
             NormalizarDatos();
             Validar();
 
-            if (Errores.Any())
+            if (Errores.Any() || ErroresCampo.Any())
             {
                 CargarEmpleados();
                 return Page();
@@ -52,7 +53,10 @@ namespace FERRETERIA__Joel.Pages
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                Errores.Add("Ya existe un proveedor con ese NIT.");
+                AgregarErrorCampo(
+                    nameof(Proveedor.Nit),
+                    "Ya existe un proveedor con ese NIT.");
+
                 CargarEmpleados();
                 return Page();
             }
@@ -109,50 +113,63 @@ namespace FERRETERIA__Joel.Pages
         {
             if (!_validacion.EsRazonSocialValida(Proveedor.RazonSocial))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.RazonSocial),
                     "La razón social es obligatoria y debe tener máximo 150 caracteres.");
             }
 
             if (!_validacion.EsNombreComercialValido(Proveedor.NombreComercial))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.NombreComercial),
                     "El nombre comercial es obligatorio y debe tener máximo 150 caracteres.");
             }
 
             if (!_validacion.EsNitValido(Proveedor.Nit))
             {
-                Errores.Add(
-                    "El NIT es obligatorio y debe tener máximo 30 caracteres.");
+                AgregarErrorCampo(
+                    nameof(Proveedor.Nit),
+                    "El NIT debe tener entre 8 y 13 dígitos. El antepenúltimo dígito debe ser 0 y el penúltimo debe ser 1, 2 o 4.");
             }
             else if (_proveedorRepository.ExisteNit(Proveedor.Nit))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.Nit),
                     "Ya existe un proveedor con ese NIT.");
             }
 
             if (!_validacion.EsNombreContactoValido(Proveedor.NombreContacto))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.NombreContacto),
                     "El nombre del contacto es obligatorio y debe tener máximo 150 caracteres.");
             }
 
             if (!_validacion.EsTelefonoValido(Proveedor.Telefono))
             {
-                Errores.Add(
-                    "El teléfono es obligatorio, debe tener máximo 30 caracteres y contener solo números, espacios, guiones o paréntesis.");
+                AgregarErrorCampo(
+                    nameof(Proveedor.Telefono),
+                    "El teléfono debe tener 8 dígitos y comenzar con 6 o 7.");
             }
 
             if (!_validacion.EsCorreoValido(Proveedor.CorreoElectronico))
             {
-                Errores.Add(
-                    "El correo electrónico no es válido.");
+                AgregarErrorCampo(
+                    nameof(Proveedor.CorreoElectronico),
+                    "El correo debe tener un formato válido: mínimo 6 caracteres antes de la @ y un dominio como correo@ejemplo.com.");
             }
 
             if (!_validacion.EsEmpleadoValido(Proveedor.IdEmpleadoResponsable))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Proveedor.IdEmpleadoResponsable),
                     "Debe seleccionar un empleado responsable.");
             }
+        }
+
+        private void AgregarErrorCampo(string campo, string mensaje)
+        {
+            ErroresCampo[campo] = mensaje;
         }
         private void CargarEmpleados()
         {

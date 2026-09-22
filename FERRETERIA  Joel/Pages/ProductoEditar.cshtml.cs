@@ -26,6 +26,7 @@ namespace FERRETERIA__Joel.Pages
         public List<Categoria> Categorias { get; set; } = new();
         public List<Empleado> Empleados { get; set; } = new();
         public List<string> Errores { get; set; } = new();
+        public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProductoEditarModel(
             IProductoRepository productoRepository,
@@ -72,7 +73,7 @@ namespace FERRETERIA__Joel.Pages
             NormalizarPrecio();
             Validar();
 
-            if (Errores.Any())
+            if (Errores.Any() || ErroresCampo.Any())
             {
                 CargarCatalogos();
                 return Page();
@@ -84,7 +85,8 @@ namespace FERRETERIA__Joel.Pages
             }
             catch (MySqlException ex) when (ex.Number == 1062)
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.Codigo),
                     "Ya existe otro producto con ese código.");
 
                 CargarCatalogos();
@@ -133,65 +135,80 @@ namespace FERRETERIA__Joel.Pages
 
             if (!_validacion.EsCodigoValido(Producto.Codigo))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.Codigo),
                     "El código es obligatorio y debe tener máximo 30 caracteres.");
             }
             else if (_productoRepository.ExisteCodigo(
                 Producto.Codigo,
                 Producto.IdProducto))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.Codigo),
                     "Ya existe otro producto con ese código.");
             }
 
             if (!_validacion.EsNombreValido(Producto.Nombre))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.Nombre),
                     "El nombre es obligatorio y debe tener máximo 150 caracteres.");
             }
 
             if (!_validacion.EsMarcaValida(Producto.Marca))
             {
-                Errores.Add(
-                    "La marca no debe superar los 100 caracteres.");
+                AgregarErrorCampo(
+                    nameof(Producto.Marca),
+                    "La marca es obligatoria y debe tener máximo 100 caracteres.");
             }
 
             if (!_validacion.EsDescripcionValida(Producto.Descripcion))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.Descripcion),
                     "La descripción no debe superar los 500 caracteres.");
             }
 
             if (!_validacion.EsUnidadMedidaValida(Producto.UnidadMedida))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.UnidadMedida),
                     "Debe indicar la unidad de medida.");
             }
 
             if (!_validacion.EsPrecioValido(Producto.PrecioVenta))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.PrecioVenta),
                     "El precio debe ser mayor a 0.");
             }
 
             if (!_validacion.EsCategoriaValida(Producto.IdCategoria))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.IdCategoria),
                     "Debe seleccionar una categoría.");
             }
             else if (!_productoRepository.ExisteCategoriaActiva(
                 Producto.IdCategoria))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.IdCategoria),
                     "La categoría seleccionada no existe o está inactiva.");
             }
 
             if (!_validacion.EsEmpleadoValido(
                 Producto.IdEmpleadoResponsable))
             {
-                Errores.Add(
+                AgregarErrorCampo(
+                    nameof(Producto.IdEmpleadoResponsable),
                     "Debe seleccionar un empleado responsable.");
             }
+        }
+
+        private void AgregarErrorCampo(string campo, string mensaje)
+        {
+            ErroresCampo[campo] = mensaje;
         }
 
         private static string NormalizarTexto(string? texto)
