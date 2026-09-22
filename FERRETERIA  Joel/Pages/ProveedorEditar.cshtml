@@ -83,7 +83,7 @@
 
             <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("CorreoElectronico") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.CorreoElectronico">Correo Electrónico</label>
-                <input class="fj-input" asp-for="Proveedor.CorreoElectronico" type="email" maxlength="150" pattern="[A-Za-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(\.[A-Za-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*@@[A-Za-z]+(\.[A-Za-z]+)+" />
+                <input class="fj-input" asp-for="Proveedor.CorreoElectronico" type="email" maxlength="254" pattern="(?=.{6,64}@@)[A-Za-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(\.[A-Za-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*@@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,24}" />
                 @if (Model.ErroresCampo.TryGetValue("CorreoElectronico", out var errorCorreo))
                 {
                     <p class="fj-form-error" role="alert">@errorCorreo</p>

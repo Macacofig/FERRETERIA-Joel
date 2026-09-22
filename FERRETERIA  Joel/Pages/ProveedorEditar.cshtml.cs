@@ -179,7 +179,7 @@ namespace FERRETERIA__Joel.Pages
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.CorreoElectronico),
-                    "El correo electrónico no es válido.");
+                    "El correo debe tener un formato válido: mínimo 6 caracteres antes de la @ y un dominio como correo@ejemplo.com.");
             }
 
             if (!_validacion.EsEmpleadoValido(

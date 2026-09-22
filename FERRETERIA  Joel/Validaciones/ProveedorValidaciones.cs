@@ -10,7 +10,7 @@ namespace FERRETERIA__Joel.Validaciones
         private static readonly Regex FormatoNit =
             new(@"^(?=.{8,13}$)[0-9]+0[124][0-9]$", RegexOptions.Compiled);
         private static readonly Regex FormatoCorreo =
-            new(@"^(?=.{6,}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@[A-Za-z]+(?:\.[A-Za-z]+)+$", RegexOptions.Compiled);
+            new(@"^(?=.{1,254}$)(?=.{6,64}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,24}$", RegexOptions.Compiled);
         public bool EsRazonSocialValida(string? razonSocial)
         {
             return !string.IsNullOrWhiteSpace(razonSocial)
