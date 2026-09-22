@@ -129,7 +129,7 @@ namespace FERRETERIA__Joel.Pages
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.Nit),
-                    "El NIT es obligatorio y debe tener máximo 30 caracteres.");
+                    "El NIT debe tener entre 8 y 13 dígitos. El antepenúltimo dígito debe ser 0 y el penúltimo debe ser 1, 2 o 4.");
             }
             else if (_proveedorRepository.ExisteNit(Proveedor.Nit))
             {

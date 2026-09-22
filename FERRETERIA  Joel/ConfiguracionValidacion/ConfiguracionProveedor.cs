@@ -4,7 +4,7 @@ namespace FERRETERIA__Joel.ConfiguracionValidacion
     {
         public const int RazonSocialMaxLength = 150;
         public const int NombreComercialMaxLength = 150;
-        public const int NitMaxLength = 30;
+        public const int NitMaxLength = 13;
         public const int NombreContactoMaxLength = 150;
         public const int TelefonoMaxLength = 30;
         public const int DireccionMaxLength = 255;
