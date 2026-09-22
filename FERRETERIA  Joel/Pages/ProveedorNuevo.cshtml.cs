@@ -149,7 +149,7 @@ namespace FERRETERIA__Joel.Pages
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.Telefono),
-                    "El teléfono es obligatorio, debe tener máximo 30 caracteres y contener solo números, espacios, guiones o paréntesis.");
+                    "El teléfono debe tener 8 dígitos y comenzar con 6 o 7.");
             }
 
             if (!_validacion.EsCorreoValido(Proveedor.CorreoElectronico))
