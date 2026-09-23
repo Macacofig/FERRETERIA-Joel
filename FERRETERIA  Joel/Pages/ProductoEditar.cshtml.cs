@@ -32,11 +32,11 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProductoEditarModel(
-            ProductoRepositoryCreator productoRepositoryCreator,
+            RepositoryCreator<Producto> productoRepositoryCreator,
             IProductoRepositoryFunctions productoRepositoryFunctions,
             ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
-            EmpleadoRepositoryCreator empleadoRepositoryCreator,
-            HistoricoPrecioRepositoryCreator historicoPrecioRepositoryCreator,
+            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
             IHistoricoPrecioRepositoryFunctions historicoPrecioRepositoryFunctions,
             ILogger<ProductoEditarModel> logger)
         {

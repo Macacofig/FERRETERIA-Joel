@@ -16,7 +16,7 @@ namespace FERRETERIA__Joel.Pages
         public List<Categoria> ListCategorias { get; set; } = new();
 
         public CategoriasModel(
-            CategoriaRepositoryCreator categoriaRepositoryCreator,
+            RepositoryCreator<Categoria> categoriaRepositoryCreator,
             ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
             ILogger<CategoriasModel> logger)
         {
