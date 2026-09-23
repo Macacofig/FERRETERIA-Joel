@@ -1,18 +1,16 @@
-﻿using FERRETERIA__Joel.Models;
+﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProveedorRepository : IProveedorRepository
+    public class MySqlProveedorRepository : ICRUD<Proveedor>, IProveedorRepositoryFunctions
     {
-        private readonly string _connectionString;
+        private readonly IDbConnectionFactory _connectionFactory;
 
-        public MySqlProveedorRepository(IConfiguration configuration)
+        public MySqlProveedorRepository(IDbConnectionFactory connectionFactory)
         {
-            _connectionString =
-                configuration.GetConnectionString("MySqlConnection")
-                ?? throw new InvalidOperationException(
-                    "No se encontró la cadena de conexión MySqlConnection.");
+            _connectionFactory = connectionFactory;
         }
 
 
@@ -38,7 +36,7 @@ namespace FERRETERIA__Joel.Repositories
                 ORDER BY NombreComercial ASC";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -57,7 +55,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public Proveedor? ObtenerPorId(short idProveedor)
+        public Proveedor? ObtenerPorId(int idProveedor)
         {
             const string query = @"
                 SELECT
@@ -77,7 +75,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProveedor = @idProveedor";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -100,7 +98,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public void Insertar(Proveedor proveedor)
+        public int Insertar(Proveedor proveedor)
         {
             const string query = @"
                 INSERT INTO proveedor
@@ -131,7 +129,7 @@ namespace FERRETERIA__Joel.Repositories
                 )";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -173,6 +171,8 @@ namespace FERRETERIA__Joel.Repositories
             connection.Open();
 
             command.ExecuteNonQuery();
+
+            return Convert.ToInt32(command.LastInsertedId);
         }
 
 
@@ -194,7 +194,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProveedor = @idProveedor";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -247,7 +247,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public void CambiarEstado(short idProveedor)
+        public void CambiarEstado(int idProveedor)
         {
             const string query = @"
                 UPDATE proveedor
@@ -260,7 +260,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProveedor = @idProveedor";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -277,7 +277,7 @@ namespace FERRETERIA__Joel.Repositories
 
         public bool ExisteNit(
             string nit,
-            short? idProveedorExcluir = null)
+            int? idProveedorExcluir = null)
         {
             const string query = @"
                 SELECT COUNT(*)
@@ -289,7 +289,7 @@ namespace FERRETERIA__Joel.Repositories
                 )";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -316,7 +316,7 @@ namespace FERRETERIA__Joel.Repositories
             return new Proveedor
             {
                 IdProveedor =
-                    reader.GetInt16("IdProveedor"),
+                    reader.GetInt32("IdProveedor"),
 
                 RazonSocial =
                     reader["RazonSocial"].ToString() ?? "",
@@ -355,7 +355,7 @@ namespace FERRETERIA__Joel.Repositories
                         : reader.GetDateTime("FechaActualizacion"),
 
                 IdEmpleadoResponsable =
-                    reader.GetInt16("IdEmpleadoResponsable")
+                    reader.GetInt32("IdEmpleadoResponsable")
             };
         }
     }

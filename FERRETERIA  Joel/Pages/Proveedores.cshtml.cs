@@ -1,24 +1,23 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySql.Data.MySqlClient;
-using System.Data;
 
 namespace FERRETERIA__Joel.Pages
 {
     public class ProveedoresModel : PageModel
     {
-        private readonly IProveedorRepository _proveedorRepository;
+        private readonly ICRUD<Proveedor> _proveedorRepository;
         private readonly ILogger<ProveedoresModel> _logger;
 
         public List<Proveedor> ListProveedores { get; set; } = new();
 
         public ProveedoresModel(
-            IProveedorRepository proveedorRepository,
+            ProveedorRepositoryCreator proveedorRepositoryCreator,
             ILogger<ProveedoresModel> logger)
         {
-            _proveedorRepository = proveedorRepository;
+            _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
@@ -39,7 +38,7 @@ namespace FERRETERIA__Joel.Pages
             }
         }
 
-        public IActionResult OnPostEliminar(short idProveedor)
+        public IActionResult OnPostEliminar(int idProveedor)
         {
             try
             {

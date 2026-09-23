@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -10,8 +11,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorNuevoModel : PageModel
     {
-        private readonly IProveedorRepository _proveedorRepository;
-        private readonly IEmpleadoRepository _empleadoRepository;
+        private readonly ICRUD<Proveedor> _proveedorRepository;
+        private readonly IProveedorRepositoryFunctions _proveedorRepositoryFunciones;
+        private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorNuevoModel> _logger;
 
         private readonly ProveedorValidaciones _validacion = new();
@@ -24,12 +26,14 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorNuevoModel(
-            IProveedorRepository proveedorRepository,
-            IEmpleadoRepository empleadoRepository,
+            ProveedorRepositoryCreator proveedorRepositoryCreator,
+            IProveedorRepositoryFunctions proveedorRepositoryFunctions,
+            EmpleadoRepositoryCreator empleadoRepositoryCreator,
             ILogger<ProveedorNuevoModel> logger)
         {
-            _proveedorRepository = proveedorRepository;
-            _empleadoRepository = empleadoRepository;
+            _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
+            _proveedorRepositoryFunciones = proveedorRepositoryFunctions;
+            _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
         public void OnGet()
@@ -131,7 +135,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Proveedor.Nit),
                     "El NIT debe tener entre 8 y 13 dígitos. El antepenúltimo dígito debe ser 0 y el penúltimo debe ser 1, 2 o 4.");
             }
-            else if (_proveedorRepository.ExisteNit(Proveedor.Nit))
+            else if (_proveedorRepositoryFunciones.ExisteNit(Proveedor.Nit))
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.Nit),
@@ -173,7 +177,7 @@ namespace FERRETERIA__Joel.Pages
         }
         private void CargarEmpleados()
         {
-            Empleados = _empleadoRepository.ObtenerActivos();
+            Empleados = _empleadoRepository.ObtenerTodos();
         }
     }
 }

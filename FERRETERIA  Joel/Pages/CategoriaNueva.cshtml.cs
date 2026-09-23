@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -10,8 +11,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaNuevaModel : PageModel
     {
-        private readonly ICategoriaRepository _repositorio;
-        private readonly IEmpleadoRepository _empleadoRepository;
+        private readonly ICRUD<Categoria> _repositorio;
+        private readonly ICategoriaRepositoryFunctions _repositorioFunciones;
+        private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<CategoriaNuevaModel> _logger;
 
         private readonly CategoriaValidaciones _validador = new();
@@ -24,25 +26,27 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaNuevaModel(
-            ICategoriaRepository repositorio,
-            IEmpleadoRepository empleadoRepository,
+            CategoriaRepositoryCreator categoriaRepositoryCreator,
+            ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
+            EmpleadoRepositoryCreator empleadoRepositoryCreator,
             ILogger<CategoriaNuevaModel> logger)
         {
-            _repositorio = repositorio;
-            _empleadoRepository = empleadoRepository;
+            _repositorio = categoriaRepositoryCreator.CreateRepository();
+            _repositorioFunciones = categoriaRepositoryFunctions;
+            _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
         public void OnGet()
         {
             NuevaCategoria.Estado = 1;
-            NuevaCategoria.Codigo = _repositorio.ObtenerSiguienteCodigo();
+            NuevaCategoria.Codigo = _repositorioFunciones.ObtenerSiguienteCodigo();
             CargarEmpleados();
         }
 
         public IActionResult OnPost()
         {
-            NuevaCategoria.Codigo = _repositorio.ObtenerSiguienteCodigo();
+            NuevaCategoria.Codigo = _repositorioFunciones.ObtenerSiguienteCodigo();
             NuevaCategoria.PorcentajeGanancia = 0;
             NormalizarDatos();
             Validar();
@@ -112,7 +116,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Categoria.Codigo),
                     "El código es obligatorio y debe tener máximo 20 caracteres.");
             }
-            else if (_repositorio.ExisteCodigo(NuevaCategoria.Codigo))
+            else if (_repositorioFunciones.ExisteCodigo(NuevaCategoria.Codigo))
             {
                 AgregarErrorCampo(
                     nameof(Categoria.Codigo),
@@ -157,7 +161,7 @@ namespace FERRETERIA__Joel.Pages
 
         private void CargarEmpleados()
         {
-            Empleados = _empleadoRepository.ObtenerActivos();
+            Empleados = _empleadoRepository.ObtenerTodos();
         }
     }
 }

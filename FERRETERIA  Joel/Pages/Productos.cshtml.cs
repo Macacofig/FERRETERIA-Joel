@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -7,20 +8,20 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductosModel : PageModel
     {
-        private readonly IProductoRepository _productoRepository;
-        private readonly ICategoriaRepository _categoriaRepository;
+        private readonly ICRUD<Producto> _productoRepository;
+        private readonly ICRUD<Categoria> _categoriaRepository;
         private readonly ILogger<ProductosModel> _logger;
 
         public List<Producto> ListProductos { get; set; } = new();
         public List<Categoria> Categorias { get; set; } = new();
 
         public ProductosModel(
-            IProductoRepository productoRepository,
-            ICategoriaRepository categoriaRepository,
+            ProductoRepositoryCreator productoRepositoryCreator,
+            CategoriaRepositoryCreator categoriaRepositoryCreator,
             ILogger<ProductosModel> logger)
         {
-            _productoRepository = productoRepository;
-            _categoriaRepository = categoriaRepository;
+            _productoRepository = productoRepositoryCreator.CreateRepository();
+            _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
@@ -30,7 +31,7 @@ namespace FERRETERIA__Joel.Pages
                 _productoRepository.ObtenerTodos();
 
             Categorias =
-                _categoriaRepository.ObtenerTodas();
+                _categoriaRepository.ObtenerTodos();
         }
 
         public IActionResult OnPostEliminar(int idProducto)

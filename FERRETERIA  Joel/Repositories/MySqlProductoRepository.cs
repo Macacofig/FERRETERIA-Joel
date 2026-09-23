@@ -1,18 +1,16 @@
-﻿using FERRETERIA__Joel.Models;
+﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProductoRepository : IProductoRepository
+    public class MySqlProductoRepository : ICRUD<Producto>, IProductoRepositoryFunctions
     {
-        private readonly string _connectionString;
+        private readonly IDbConnectionFactory _connectionFactory;
 
-        public MySqlProductoRepository(IConfiguration configuration)
+        public MySqlProductoRepository(IDbConnectionFactory connectionFactory)
         {
-            _connectionString =
-                configuration.GetConnectionString("MySqlConnection")
-                ?? throw new InvalidOperationException(
-                    "No se encontró la cadena de conexión MySqlConnection.");
+            _connectionFactory = connectionFactory;
         }
 
 
@@ -38,7 +36,7 @@ namespace FERRETERIA__Joel.Repositories
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -77,7 +75,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProducto = @idProducto";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -129,7 +127,7 @@ namespace FERRETERIA__Joel.Repositories
                 )";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -191,7 +189,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProducto = @idProducto";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -255,7 +253,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE IdProducto = @idProducto";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -282,7 +280,7 @@ namespace FERRETERIA__Joel.Repositories
                     OR IdProducto <> @idProductoExcluir)";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -304,7 +302,7 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public bool ExisteCategoriaActiva(short idCategoria)
+        public bool ExisteCategoriaActiva(int idCategoria)
         {
             const string query = @"
                 SELECT COUNT(*)
@@ -313,7 +311,7 @@ namespace FERRETERIA__Joel.Repositories
                 AND Estado = 1";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -337,7 +335,7 @@ namespace FERRETERIA__Joel.Repositories
                 WHERE Codigo LIKE 'PROD-%'";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -354,7 +352,7 @@ namespace FERRETERIA__Joel.Repositories
                     reader.GetInt32("IdProducto"),
 
                 IdCategoria =
-                    reader.GetInt16("IdCategoria"),
+                    reader.GetInt32("IdCategoria"),
 
                 Codigo =
                     reader["Codigo"].ToString() ?? "",
@@ -390,7 +388,7 @@ namespace FERRETERIA__Joel.Repositories
                     : reader.GetDateTime("FechaActualizacion"),
 
                 IdEmpleadoResponsable =
-                    reader.GetInt16("IdEmpleadoResponsable")
+                    reader.GetInt32("IdEmpleadoResponsable")
             };
         }
     }

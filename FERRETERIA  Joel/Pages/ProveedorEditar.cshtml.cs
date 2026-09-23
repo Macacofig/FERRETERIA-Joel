@@ -1,18 +1,19 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using System.Data;
 using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorEditarModel : PageModel
     {
-        private readonly IProveedorRepository _proveedorRepository;
-        private readonly IEmpleadoRepository _empleadoRepository;
+        private readonly ICRUD<Proveedor> _proveedorRepository;
+        private readonly IProveedorRepositoryFunctions _proveedorRepositoryFunciones;
+        private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorEditarModel> _logger;
 
         private readonly ProveedorValidaciones _validacion = new();
@@ -25,12 +26,14 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorEditarModel(
-            IProveedorRepository proveedorRepository,
-            IEmpleadoRepository empleadoRepository,
+            ProveedorRepositoryCreator proveedorRepositoryCreator,
+            IProveedorRepositoryFunctions proveedorRepositoryFunctions,
+            EmpleadoRepositoryCreator empleadoRepositoryCreator,
             ILogger<ProveedorEditarModel> logger)
         {
-            _proveedorRepository = proveedorRepository;
-            _empleadoRepository = empleadoRepository;
+            _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
+            _proveedorRepositoryFunciones = proveedorRepositoryFunctions;
+            _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
@@ -38,7 +41,7 @@ namespace FERRETERIA__Joel.Pages
         {
             CargarEmpleados();
 
-            var proveedor = _proveedorRepository.ObtenerPorId((short)id);
+            var proveedor = _proveedorRepository.ObtenerPorId(id);
 
             if (proveedor == null)
             {
@@ -152,7 +155,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Proveedor.Nit),
                     "El NIT debe tener entre 8 y 13 dígitos. El antepenúltimo dígito debe ser 0 y el penúltimo debe ser 1, 2 o 4.");
             }
-            else if (_proveedorRepository.ExisteNit(
+            else if (_proveedorRepositoryFunciones.ExisteNit(
                 Proveedor.Nit,
                 Proveedor.IdProveedor))
             {
@@ -198,7 +201,7 @@ namespace FERRETERIA__Joel.Pages
 
         private void CargarEmpleados()
         {
-            Empleados = _empleadoRepository.ObtenerActivos();
+            Empleados = _empleadoRepository.ObtenerTodos();
         }
     }
 }

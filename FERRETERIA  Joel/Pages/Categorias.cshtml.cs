@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 
@@ -7,15 +8,20 @@ namespace FERRETERIA__Joel.Pages
 {
     public class CategoriasModel : PageModel
     {
-        private readonly ICategoriaRepository _repositorio;
+        private readonly ICRUD<Categoria> _repositorio;
+        private readonly ICategoriaRepositoryFunctions _repositorioFunciones;
         private readonly ILogger<CategoriasModel> _logger;
 
         public string Mensaje { get; set; } = "";
         public List<Categoria> ListCategorias { get; set; } = new();
 
-        public CategoriasModel(ICategoriaRepository repositorio, ILogger<CategoriasModel> logger)
+        public CategoriasModel(
+            CategoriaRepositoryCreator categoriaRepositoryCreator,
+            ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
+            ILogger<CategoriasModel> logger)
         {
-            _repositorio = repositorio;
+            _repositorio = categoriaRepositoryCreator.CreateRepository();
+            _repositorioFunciones = categoriaRepositoryFunctions;
             _logger = logger;
         }
 
@@ -23,7 +29,7 @@ namespace FERRETERIA__Joel.Pages
         {
             try
             {
-                ListCategorias = _repositorio.ObtenerTodas();
+                ListCategorias = _repositorio.ObtenerTodos();
             }
             catch (Exception ex)
             {
@@ -32,11 +38,11 @@ namespace FERRETERIA__Joel.Pages
             }
         }
 
-        public IActionResult OnPostEliminar(short id)
+        public IActionResult OnPostEliminar(int id)
         {
             try
             {
-                _repositorio.Desactivar(id);
+                _repositorioFunciones.Desactivar(id);
                 TempData["Mensaje"] = "Categoría desactivada correctamente.";
             }
             catch (Exception ex)

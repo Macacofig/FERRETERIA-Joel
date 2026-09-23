@@ -29,7 +29,7 @@ namespace FERRETERIA__Joel.Validaciones
                 && porcentajeGanancia <= ConfiguracionCategoria.PorcentajeGananciaMaximo;
         }
 
-        public bool EsEmpleadoValido(short idEmpleadoResponsable)
+        public bool EsEmpleadoValido(int idEmpleadoResponsable)
         {
             return idEmpleadoResponsable >= ConfiguracionCategoria.EmpleadoMinimo;
         }

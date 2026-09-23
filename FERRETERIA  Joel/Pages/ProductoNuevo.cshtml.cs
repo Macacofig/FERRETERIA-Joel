@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -11,10 +12,11 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoNuevoModel : PageModel
     {
-        private readonly IHistoricoPrecioRepository _historicoPrecioRepository;
-        private readonly IProductoRepository _productoRepository;
-        private readonly ICategoriaRepository _categoriaRepository;
-        private readonly IEmpleadoRepository _empleadoRepository;
+        private readonly ICRUD<Producto> _productoRepository;
+        private readonly IProductoRepositoryFunctions _productoRepositoryFunciones;
+        private readonly ICategoriaRepositoryFunctions _categoriaRepositoryFunciones;
+        private readonly ICRUD<Empleado> _empleadoRepository;
+        private readonly ICRUD<HistoricoPrecio> _historicoPrecioRepository;
         private readonly ILogger<ProductoNuevoModel> _logger;
 
         private readonly ProductoValidaciones _validacion = new();
@@ -31,30 +33,32 @@ namespace FERRETERIA__Joel.Pages
             { "Caja", "Kilogramo", "Litro", "Metro", "Par", "Unidad" };
 
         public ProductoNuevoModel(
-        IProductoRepository productoRepository,
-        ICategoriaRepository categoriaRepository,
-        IEmpleadoRepository empleadoRepository,
-        IHistoricoPrecioRepository historicoPrecioRepository,
+        ProductoRepositoryCreator productoRepositoryCreator,
+        IProductoRepositoryFunctions productoRepositoryFunctions,
+        ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
+        EmpleadoRepositoryCreator empleadoRepositoryCreator,
+        HistoricoPrecioRepositoryCreator historicoPrecioRepositoryCreator,
         ILogger<ProductoNuevoModel> logger)
         {
-            _productoRepository = productoRepository;
-            _categoriaRepository = categoriaRepository;
-            _empleadoRepository = empleadoRepository;
-            _historicoPrecioRepository = historicoPrecioRepository;
+            _productoRepository = productoRepositoryCreator.CreateRepository();
+            _productoRepositoryFunciones = productoRepositoryFunctions;
+            _categoriaRepositoryFunciones = categoriaRepositoryFunctions;
+            _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
+            _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
         public void OnGet()
         {
             Producto.Codigo =
-                _productoRepository.ObtenerSiguienteCodigo();
+                _productoRepositoryFunciones.ObtenerSiguienteCodigo();
 
             CargarCatalogos();
         }
 
         public IActionResult OnPost()
         {
-            Producto.Codigo = _productoRepository.ObtenerSiguienteCodigo();
+            Producto.Codigo = _productoRepositoryFunciones.ObtenerSiguienteCodigo();
             NormalizarPrecio();
             NormalizarDatos();
             Validar();
@@ -146,7 +150,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Producto.Codigo),
                     "El código es obligatorio y debe tener máximo 30 caracteres.");
             }
-            else if (_productoRepository.ExisteCodigo(Producto.Codigo))
+            else if (_productoRepositoryFunciones.ExisteCodigo(Producto.Codigo))
             {
                 AgregarErrorCampo(
                     nameof(Producto.Codigo),
@@ -194,7 +198,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Producto.IdCategoria),
                     "Debe seleccionar una categoría.");
             }
-            else if (!_productoRepository.ExisteCategoriaActiva(
+            else if (!_productoRepositoryFunciones.ExisteCategoriaActiva(
                 Producto.IdCategoria))
             {
                 AgregarErrorCampo(
@@ -219,10 +223,10 @@ namespace FERRETERIA__Joel.Pages
         private void CargarCatalogos()
         {
             Categorias =
-                _categoriaRepository.ObtenerActivas();
+                _categoriaRepositoryFunciones.ObtenerActivas();
 
             Empleados =
-                _empleadoRepository.ObtenerActivos();
+                _empleadoRepository.ObtenerTodos();
         }
 
         private void Insertar()

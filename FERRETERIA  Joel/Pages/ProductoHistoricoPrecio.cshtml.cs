@@ -2,13 +2,12 @@ using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Pages
 {
     public class ProductoHistoricoPrecioModel : PageModel
     {
-        private readonly IHistoricoPrecioRepository _historicoPrecioRepository;
+        private readonly IHistoricoPrecioRepositoryFunctions _historicoPrecioRepository;
         private readonly ILogger<ProductoHistoricoPrecioModel> _logger;
 
         public List<HistoricoPrecio> Historicos { get; set; } = new();
@@ -16,7 +15,7 @@ namespace FERRETERIA__Joel.Pages
         public string NombreProducto { get; set; } = string.Empty;
 
         public ProductoHistoricoPrecioModel(
-            IHistoricoPrecioRepository historicoPrecioRepository,
+            IHistoricoPrecioRepositoryFunctions historicoPrecioRepository,
             ILogger<ProductoHistoricoPrecioModel> logger)
         {
             _historicoPrecioRepository = historicoPrecioRepository;

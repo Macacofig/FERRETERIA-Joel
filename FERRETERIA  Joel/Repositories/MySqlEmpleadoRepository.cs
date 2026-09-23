@@ -1,21 +1,19 @@
-﻿using FERRETERIA__Joel.Models;
+﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlEmpleadoRepository : IEmpleadoRepository
+    public class MySqlEmpleadoRepository : ICRUD<Empleado>
     {
-        private readonly string _connectionString;
+        private readonly IDbConnectionFactory _connectionFactory;
 
-        public MySqlEmpleadoRepository(IConfiguration configuration)
+        public MySqlEmpleadoRepository(IDbConnectionFactory connectionFactory)
         {
-            _connectionString =
-                configuration.GetConnectionString("MySqlConnection")
-                ?? throw new InvalidOperationException(
-                    "No se encontró la cadena de conexión MySqlConnection.");
+            _connectionFactory = connectionFactory;
         }
 
-        public List<Empleado> ObtenerActivos()
+        public List<Empleado> ObtenerTodos()
         {
             List<Empleado> empleados = new();
 
@@ -27,7 +25,7 @@ namespace FERRETERIA__Joel.Repositories
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
-                new MySqlConnection(_connectionString);
+                _connectionFactory.CreateConnection();
 
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
@@ -39,14 +37,120 @@ namespace FERRETERIA__Joel.Repositories
 
             while (reader.Read())
             {
-                empleados.Add(new Empleado
-                {
-                    IdEmpleado = reader.GetInt16("IdEmpleado"),
-                    Nombre = reader["Nombre"].ToString() ?? ""
-                });
+                empleados.Add(MapearEmpleado(reader));
             }
 
             return empleados;
+        }
+
+        public Empleado? ObtenerPorId(int id)
+        {
+            const string query = @"
+                SELECT
+                    IdEmpleado,
+                    Nombre
+                FROM empleado
+                WHERE IdEmpleado = @id
+                LIMIT 1";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
+
+            connection.Open();
+
+            using MySqlDataReader reader =
+                command.ExecuteReader();
+
+            return reader.Read()
+                ? MapearEmpleado(reader)
+                : null;
+        }
+
+        public int Insertar(Empleado empleado)
+        {
+            const string query = @"
+                INSERT INTO empleado
+                (
+                    Nombre
+                )
+                VALUES
+                (
+                    @nombre
+                )";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@nombre", empleado.Nombre);
+
+            connection.Open();
+
+            command.ExecuteNonQuery();
+
+            return Convert.ToInt32(command.LastInsertedId);
+        }
+
+        public void Actualizar(Empleado empleado)
+        {
+            const string query = @"
+                UPDATE empleado
+                SET
+                    Nombre = @nombre
+                WHERE IdEmpleado = @id";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", empleado.IdEmpleado);
+            command.Parameters.AddWithValue("@nombre", empleado.Nombre);
+
+            connection.Open();
+
+            command.ExecuteNonQuery();
+        }
+
+        public void CambiarEstado(int id)
+        {
+            const string query = @"
+                UPDATE empleado
+                SET
+                    Estado = CASE
+                        WHEN Estado = 1 THEN 0
+                        ELSE 1
+                    END
+                WHERE IdEmpleado = @id";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
+
+            connection.Open();
+
+            command.ExecuteNonQuery();
+        }
+
+        private Empleado MapearEmpleado(MySqlDataReader reader)
+        {
+            return new Empleado
+            {
+                IdEmpleado = reader.GetInt32("IdEmpleado"),
+                Nombre = reader["Nombre"].ToString() ?? ""
+            };
         }
     }
 }

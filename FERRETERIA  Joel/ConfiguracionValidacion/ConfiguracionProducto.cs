@@ -8,7 +8,7 @@ namespace FERRETERIA__Joel.ConfiguracionValidacion
         public const int MarcaMaxLength = 100;
         public const int UnidadMedidaMaxLength = 30;
         public const decimal PrecioVentaMinimo = 0m;
-        public const short CategoriaMinima = 1;
-        public const short EmpleadoMinimo = 1;
+        public const int CategoriaMinima = 1;
+        public const int EmpleadoMinimo = 1;
     }
 }

@@ -63,7 +63,7 @@ namespace FERRETERIA__Joel.Validaciones
                 || direccion.Trim().Length <= ConfiguracionProveedor.DireccionMaxLength;
         }
 
-        public bool EsEmpleadoValido(short idEmpleadoResponsable)
+        public bool EsEmpleadoValido(int idEmpleadoResponsable)
         {
             return idEmpleadoResponsable >= ConfiguracionProveedor.EmpleadoMinimo;
         }
