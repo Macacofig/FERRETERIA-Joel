@@ -1,4 +1,6 @@
-﻿namespace FERRETERIA__Joel.Models
+﻿using FERRETERIA__Joel.Helpers;
+
+namespace FERRETERIA__Joel.Models
 {
     public class Proveedor
     {
@@ -14,5 +16,9 @@
         public DateTime FechaRegistro { get; set; }
         public DateTime? FechaActualizacion { get; set; }
         public int IdEmpleadoResponsable { get; set; }
+
+        public string Slug => SlugHelper.CrearSlug(RazonSocial);
+
+        public string UrlToken => UrlProtector.Cifrar(Slug);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace FERRETERIA__Joel.Models
+﻿using FERRETERIA__Joel.Helpers;
+
+namespace FERRETERIA__Joel.Models
 {
     public class Producto
     {
@@ -17,5 +19,9 @@
         public int IdEmpleadoResponsable { get; set; }
 
         public string? NombreCategoria { get; set; }
+
+        public string Slug => SlugHelper.CrearSlug(Nombre);
+
+        public string UrlToken => UrlProtector.Cifrar(Slug);
     }
 }

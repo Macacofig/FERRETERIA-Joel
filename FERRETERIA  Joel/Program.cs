@@ -1,4 +1,5 @@
 using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 
@@ -6,6 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+UrlProtector.Inicializar(
+    builder.Configuration["UrlProteccion:Clave"]
+        ?? throw new InvalidOperationException(
+            "Falta la clave 'UrlProteccion:Clave' en la configuración."));
 
 // Patrones de diseño (SOLID):
 // - IDbConnectionFactory: Factory Method para crear conexiones MySQL.

@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoHistoricoPrecioModel : PageModel
     {
+        private readonly IProductoRepositoryFunctions _productoRepository;
         private readonly IHistoricoPrecioRepositoryFunctions _historicoPrecioRepository;
         private readonly ILogger<ProductoHistoricoPrecioModel> _logger;
 
@@ -15,33 +17,53 @@ namespace FERRETERIA__Joel.Pages
         public string NombreProducto { get; set; } = string.Empty;
 
         public ProductoHistoricoPrecioModel(
+            IProductoRepositoryFunctions productoRepository,
             IHistoricoPrecioRepositoryFunctions historicoPrecioRepository,
             ILogger<ProductoHistoricoPrecioModel> logger)
         {
+            _productoRepository = productoRepository;
             _historicoPrecioRepository = historicoPrecioRepository;
             _logger = logger;
         }
 
-        public void OnGet(int id)
+        public IActionResult OnGet(string token)
         {
+            string? slug = UrlProtector.Descifrar(token);
+
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                TempData["MensajeError"] =
+                    "El producto solicitado no existe.";
+
+                return RedirectToPage("Productos");
+            }
+
+            var producto = _productoRepository.ObtenerPorSlug(slug);
+
+            if (producto is null)
+            {
+                TempData["MensajeError"] =
+                    "El producto solicitado no existe.";
+
+                return RedirectToPage("Productos");
+            }
+
+            NombreProducto = producto.Nombre;
+
             try
             {
                 Historicos =
-                    _historicoPrecioRepository.ObtenerPorProducto(id);
-
-                if (Historicos.Any())
-                {
-                    NombreProducto =
-                        Historicos[0].NombreProducto ?? "";
-                }
+                    _historicoPrecioRepository.ObtenerPorProducto(producto.IdProducto);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
                     ex,
                     "Error al obtener el histórico de precios del producto {IdProducto}.",
-                    id);
+                    producto.IdProducto);
             }
+
+            return Page();
         }
     }
 }
