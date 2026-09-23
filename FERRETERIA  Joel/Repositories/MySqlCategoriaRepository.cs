@@ -4,7 +4,7 @@ using FERRETERIA__Joel.Models;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlCategoriaRepository : ICRUD<Categoria>, ICategoriaRepositoryFunctions
+    public class MySqlCategoriaRepository : ICategoriaRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
 

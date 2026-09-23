@@ -8,16 +8,16 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductosModel : PageModel
     {
-        private readonly ICRUD<Producto> _productoRepository;
-        private readonly ICRUD<Categoria> _categoriaRepository;
+        private readonly IProductoRepository _productoRepository;
+        private readonly ICategoriaRepository _categoriaRepository;
         private readonly ILogger<ProductosModel> _logger;
 
         public List<Producto> ListProductos { get; set; } = new();
         public List<Categoria> Categorias { get; set; } = new();
 
         public ProductosModel(
-            ProductoRepositoryCreator productoRepositoryCreator,
-            CategoriaRepositoryCreator categoriaRepositoryCreator,
+            RepositoryCreator<IProductoRepository> productoRepositoryCreator,
+            RepositoryCreator<ICategoriaRepository> categoriaRepositoryCreator,
             ILogger<ProductosModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();

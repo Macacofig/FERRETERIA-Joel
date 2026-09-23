@@ -14,17 +14,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
 
 // Concrete Creators del Factory Method de repositorios.
-builder.Services.AddScoped<RepositoryCreator<Producto>, ProductoRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<Categoria>, CategoriaRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<Proveedor>, ProveedorRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<Empleado>, EmpleadoRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<HistoricoPrecio>, HistoricoPrecioRepositoryCreator>();
-
-// Funcionalidades específicas de cada entidad, separadas del CRUD genérico (ICRUD<T>).
-builder.Services.AddScoped<IProductoRepositoryFunctions, MySqlProductoRepository>();
-builder.Services.AddScoped<ICategoriaRepositoryFunctions, MySqlCategoriaRepository>();
-builder.Services.AddScoped<IProveedorRepositoryFunctions, MySqlProveedorRepository>();
-builder.Services.AddScoped<IHistoricoPrecioRepositoryFunctions, MySqlHistoricoPrecioRepository>();
+// El Producto de cada uno ya combina ICRUD<T> con las funciones especiales
+// de esa entidad, así que no hace falta registrar las funciones aparte.
+builder.Services.AddScoped<RepositoryCreator<IProductoRepository>, ProductoRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<ICategoriaRepository>, CategoriaRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<IProveedorRepository>, ProveedorRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<ICRUD<Empleado>>, EmpleadoRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<IHistoricoPrecioRepository>, HistoricoPrecioRepositoryCreator>();
 
 var app = builder.Build();
 

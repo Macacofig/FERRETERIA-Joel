@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlHistoricoPrecioRepository : ICRUD<HistoricoPrecio>, IHistoricoPrecioRepositoryFunctions
+    public class MySqlHistoricoPrecioRepository : IHistoricoPrecioRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
 

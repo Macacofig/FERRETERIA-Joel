@@ -11,8 +11,7 @@ namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaNuevaModel : PageModel
     {
-        private readonly ICRUD<Categoria> _repositorio;
-        private readonly ICategoriaRepositoryFunctions _repositorioFunciones;
+        private readonly ICategoriaRepository _repositorio;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<CategoriaNuevaModel> _logger;
 
@@ -26,13 +25,11 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaNuevaModel(
-            CategoriaRepositoryCreator categoriaRepositoryCreator,
-            ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
-            EmpleadoRepositoryCreator empleadoRepositoryCreator,
+            RepositoryCreator<ICategoriaRepository> categoriaRepositoryCreator,
+            RepositoryCreator<ICRUD<Empleado>> empleadoRepositoryCreator,
             ILogger<CategoriaNuevaModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
-            _repositorioFunciones = categoriaRepositoryFunctions;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -40,13 +37,13 @@ namespace FERRETERIA__Joel.Pages
         public void OnGet()
         {
             NuevaCategoria.Estado = 1;
-            NuevaCategoria.Codigo = _repositorioFunciones.ObtenerSiguienteCodigo();
+            NuevaCategoria.Codigo = _repositorio.ObtenerSiguienteCodigo();
             CargarEmpleados();
         }
 
         public IActionResult OnPost()
         {
-            NuevaCategoria.Codigo = _repositorioFunciones.ObtenerSiguienteCodigo();
+            NuevaCategoria.Codigo = _repositorio.ObtenerSiguienteCodigo();
             NuevaCategoria.PorcentajeGanancia = 0;
             NormalizarDatos();
             Validar();
@@ -116,7 +113,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Categoria.Codigo),
                     "El código es obligatorio y debe tener máximo 20 caracteres.");
             }
-            else if (_repositorioFunciones.ExisteCodigo(NuevaCategoria.Codigo))
+            else if (_repositorio.ExisteCodigo(NuevaCategoria.Codigo))
             {
                 AgregarErrorCampo(
                     nameof(Categoria.Codigo),

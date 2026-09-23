@@ -1,9 +1,8 @@
-using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 
 namespace FERRETERIA__Joel.Factories
 {
-    public class HistoricoPrecioRepositoryCreator : RepositoryCreator<HistoricoPrecio>
+    public class HistoricoPrecioRepositoryCreator : RepositoryCreator<IHistoricoPrecioRepository>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -12,7 +11,7 @@ namespace FERRETERIA__Joel.Factories
             _connectionFactory = connectionFactory;
         }
 
-        public override ICRUD<HistoricoPrecio> CreateRepository()
+        public override IHistoricoPrecioRepository CreateRepository()
         {
             return new MySqlHistoricoPrecioRepository(_connectionFactory);
         }

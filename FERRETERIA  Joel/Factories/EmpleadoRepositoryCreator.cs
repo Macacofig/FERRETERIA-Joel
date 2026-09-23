@@ -3,7 +3,9 @@ using FERRETERIA__Joel.Repositories;
 
 namespace FERRETERIA__Joel.Factories
 {
-    public class EmpleadoRepositoryCreator : RepositoryCreator<Empleado>
+    // Empleado no tiene funciones especiales, así que su Producto
+    // sigue siendo el ICRUD<Empleado> genérico (sin interfaz combinada).
+    public class EmpleadoRepositoryCreator : RepositoryCreator<ICRUD<Empleado>>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 

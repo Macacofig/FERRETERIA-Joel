@@ -8,13 +8,13 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedoresModel : PageModel
     {
-        private readonly ICRUD<Proveedor> _proveedorRepository;
+        private readonly IProveedorRepository _proveedorRepository;
         private readonly ILogger<ProveedoresModel> _logger;
 
         public List<Proveedor> ListProveedores { get; set; } = new();
 
         public ProveedoresModel(
-            ProveedorRepositoryCreator proveedorRepositoryCreator,
+            RepositoryCreator<IProveedorRepository> proveedorRepositoryCreator,
             ILogger<ProveedoresModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();

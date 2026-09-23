@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProveedorRepository : ICRUD<Proveedor>, IProveedorRepositoryFunctions
+    public class MySqlProveedorRepository : IProveedorRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
 

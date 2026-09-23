@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoHistoricoPrecioModel : PageModel
     {
-        private readonly IHistoricoPrecioRepositoryFunctions _historicoPrecioRepository;
+        private readonly IHistoricoPrecioRepository _historicoPrecioRepository;
         private readonly ILogger<ProductoHistoricoPrecioModel> _logger;
 
         public List<HistoricoPrecio> Historicos { get; set; } = new();
@@ -15,10 +16,10 @@ namespace FERRETERIA__Joel.Pages
         public string NombreProducto { get; set; } = string.Empty;
 
         public ProductoHistoricoPrecioModel(
-            IHistoricoPrecioRepositoryFunctions historicoPrecioRepository,
+            RepositoryCreator<IHistoricoPrecioRepository> historicoPrecioRepositoryCreator,
             ILogger<ProductoHistoricoPrecioModel> logger)
         {
-            _historicoPrecioRepository = historicoPrecioRepository;
+            _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 

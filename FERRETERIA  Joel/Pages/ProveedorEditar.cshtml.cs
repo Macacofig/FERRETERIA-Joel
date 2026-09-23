@@ -11,8 +11,7 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorEditarModel : PageModel
     {
-        private readonly ICRUD<Proveedor> _proveedorRepository;
-        private readonly IProveedorRepositoryFunctions _proveedorRepositoryFunciones;
+        private readonly IProveedorRepository _proveedorRepository;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorEditarModel> _logger;
 
@@ -26,13 +25,11 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorEditarModel(
-            ProveedorRepositoryCreator proveedorRepositoryCreator,
-            IProveedorRepositoryFunctions proveedorRepositoryFunctions,
-            EmpleadoRepositoryCreator empleadoRepositoryCreator,
+            RepositoryCreator<IProveedorRepository> proveedorRepositoryCreator,
+            RepositoryCreator<ICRUD<Empleado>> empleadoRepositoryCreator,
             ILogger<ProveedorEditarModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
-            _proveedorRepositoryFunciones = proveedorRepositoryFunctions;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -155,7 +152,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Proveedor.Nit),
                     "El NIT debe tener entre 8 y 13 dígitos. El antepenúltimo dígito debe ser 0 y el penúltimo debe ser 1, 2 o 4.");
             }
-            else if (_proveedorRepositoryFunciones.ExisteNit(
+            else if (_proveedorRepository.ExisteNit(
                 Proveedor.Nit,
                 Proveedor.IdProveedor))
             {

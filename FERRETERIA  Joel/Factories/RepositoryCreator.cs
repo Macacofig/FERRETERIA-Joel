@@ -1,9 +1,10 @@
-using FERRETERIA__Joel.Repositories;
-
 namespace FERRETERIA__Joel.Factories
 {
-    public abstract class RepositoryCreator<T>
+    // Creator del Factory Method. TRepository es el Producto: la interfaz
+    // combinada (ICRUD<T> + funciones especiales) que devuelve cada
+    // ConcreteCreator.
+    public abstract class RepositoryCreator<TRepository>
     {
-        public abstract ICRUD<T> CreateRepository();
+        public abstract TRepository CreateRepository();
     }
 }
