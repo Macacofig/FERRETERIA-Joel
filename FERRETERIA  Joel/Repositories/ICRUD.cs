@@ -4,6 +4,8 @@ namespace FERRETERIA__Joel.Repositories
     {
         List<T> ObtenerTodos();
 
+        List<T> ObtenerActivas();
+
         T? ObtenerPorId(int id);
 
         int Insertar(T entidad);
@@ -11,5 +13,7 @@ namespace FERRETERIA__Joel.Repositories
         void Actualizar(T entidad);
 
         void CambiarEstado(int id);
+
+        int Count();
     }
 }

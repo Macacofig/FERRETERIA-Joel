@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlHistoricoPrecioRepository : ICRUD<HistoricoPrecio>, IHistoricoPrecioRepositoryFunctions
+    public class MySqlHistoricoPrecioRepository : ICRUD<HistoricoPrecio>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -36,6 +36,51 @@ namespace FERRETERIA__Joel.Repositories
                     ON p.IdProducto = h.IdProducto
                 INNER JOIN empleado e
                     ON e.IdEmpleado = h.IdEmpleadoResponsable
+                ORDER BY h.FechaInicioVigencia DESC";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            using MySqlDataReader reader =
+                command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                historicos.Add(MapearHistoricoPrecio(reader));
+            }
+
+            return historicos;
+        }
+
+        public List<HistoricoPrecio> ObtenerActivas()
+        {
+            List<HistoricoPrecio> historicos = new();
+
+            const string query = @"
+                SELECT
+                    h.IdHistoricoPrecio,
+                    h.IdProducto,
+                    p.Nombre AS NombreProducto,
+                    h.Precio,
+                    h.FechaInicioVigencia,
+                    h.FechaFinVigencia,
+                    h.MotivoCambio,
+                    h.Estado,
+                    h.FechaRegistro,
+                    h.FechaActualizacion,
+                    h.IdEmpleadoResponsable,
+                    e.Nombre AS NombreEmpleadoResponsable
+                FROM historico_precio h
+                INNER JOIN producto p
+                    ON p.IdProducto = h.IdProducto
+                INNER JOIN empleado e
+                    ON e.IdEmpleado = h.IdEmpleadoResponsable
+                WHERE h.Estado = 1
                 ORDER BY h.FechaInicioVigencia DESC";
 
             using MySqlConnection connection =
@@ -225,6 +270,23 @@ namespace FERRETERIA__Joel.Repositories
             connection.Open();
 
             command.ExecuteNonQuery();
+        }
+
+        public int Count()
+        {
+            const string query = @"
+                SELECT COUNT(*)
+                FROM historico_precio";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            return Convert.ToInt32(command.ExecuteScalar());
         }
 
         public List<HistoricoPrecio> ObtenerPorProducto(int idProducto)

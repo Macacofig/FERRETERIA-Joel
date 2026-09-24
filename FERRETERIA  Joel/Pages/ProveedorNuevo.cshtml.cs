@@ -4,7 +4,6 @@ using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
@@ -12,7 +11,6 @@ namespace FERRETERIA__Joel.Pages
     public class ProveedorNuevoModel : PageModel
     {
         private readonly ICRUD<Proveedor> _proveedorRepository;
-        private readonly IProveedorRepositoryFunctions _proveedorRepositoryFunciones;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorNuevoModel> _logger;
 
@@ -27,12 +25,10 @@ namespace FERRETERIA__Joel.Pages
 
         public ProveedorNuevoModel(
             RepositoryCreator<Proveedor> proveedorRepositoryCreator,
-            IProveedorRepositoryFunctions proveedorRepositoryFunctions,
             RepositoryCreator<Empleado> empleadoRepositoryCreator,
             ILogger<ProveedorNuevoModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
-            _proveedorRepositoryFunciones = proveedorRepositoryFunctions;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -54,15 +50,6 @@ namespace FERRETERIA__Joel.Pages
             try
             {
                 _proveedorRepository.Insertar(Proveedor);
-            }
-            catch (MySqlException ex) when (ex.Number == 1062)
-            {
-                AgregarErrorCampo(
-                    nameof(Proveedor.Nit),
-                    "Ya existe un proveedor con ese NIT.");
-
-                CargarEmpleados();
-                return Page();
             }
             catch (Exception ex)
             {
@@ -88,9 +75,6 @@ namespace FERRETERIA__Joel.Pages
 
             Proveedor.NombreComercial =
                 NormalizarTexto(Proveedor.NombreComercial);
-
-            Proveedor.Nit =
-                NormalizarTexto(Proveedor.Nit);
 
             Proveedor.NombreContacto =
                 NormalizarTexto(Proveedor.NombreContacto);
@@ -127,19 +111,6 @@ namespace FERRETERIA__Joel.Pages
                 AgregarErrorCampo(
                     nameof(Proveedor.NombreComercial),
                     "El nombre comercial es obligatorio y debe tener máximo 150 caracteres.");
-            }
-
-            if (!_validacion.EsNitValido(Proveedor.Nit))
-            {
-                AgregarErrorCampo(
-                    nameof(Proveedor.Nit),
-                    "El NIT debe tener entre 8 y 13 dígitos. El antepenúltimo dígito debe ser 0 y el penúltimo debe ser 1, 2 o 4.");
-            }
-            else if (_proveedorRepositoryFunciones.ExisteNit(Proveedor.Nit))
-            {
-                AgregarErrorCampo(
-                    nameof(Proveedor.Nit),
-                    "Ya existe un proveedor con ese NIT.");
             }
 
             if (!_validacion.EsNombreContactoValido(Proveedor.NombreContacto))

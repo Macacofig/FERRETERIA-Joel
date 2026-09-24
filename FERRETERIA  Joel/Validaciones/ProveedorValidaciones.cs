@@ -7,8 +7,6 @@ namespace FERRETERIA__Joel.Validaciones
     {
         private static readonly Regex FormatoTelefono =
             new(@"^[67][0-9]{7}$", RegexOptions.Compiled);
-        private static readonly Regex FormatoNit =
-            new(@"^(?=.{8,13}$)[0-9]+0[124][0-9]$", RegexOptions.Compiled);
         private static readonly Regex FormatoCorreo =
             new(@"^(?=.{1,254}$)(?=.{6,64}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,24}$", RegexOptions.Compiled);
         public bool EsRazonSocialValida(string? razonSocial)
@@ -21,12 +19,6 @@ namespace FERRETERIA__Joel.Validaciones
         {
             return !string.IsNullOrWhiteSpace(nombreComercial)
                 && nombreComercial.Trim().Length <= ConfiguracionProveedor.NombreComercialMaxLength;
-        }
-
-        public bool EsNitValido(string? nit)
-        {
-            return !string.IsNullOrWhiteSpace(nit)
-                && FormatoNit.IsMatch(nit.Trim());
         }
 
         public bool EsNombreContactoValido(string? nombreContacto)

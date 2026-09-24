@@ -26,12 +26,6 @@ builder.Services.AddScoped<RepositoryCreator<Proveedor>, ProveedorRepositoryCrea
 builder.Services.AddScoped<RepositoryCreator<Empleado>, EmpleadoRepositoryCreator>();
 builder.Services.AddScoped<RepositoryCreator<HistoricoPrecio>, HistoricoPrecioRepositoryCreator>();
 
-// Funcionalidades específicas de cada entidad, separadas del CRUD genérico (ICRUD<T>).
-builder.Services.AddScoped<IProductoRepositoryFunctions, MySqlProductoRepository>();
-builder.Services.AddScoped<ICategoriaRepositoryFunctions, MySqlCategoriaRepository>();
-builder.Services.AddScoped<IProveedorRepositoryFunctions, MySqlProveedorRepository>();
-builder.Services.AddScoped<IHistoricoPrecioRepositoryFunctions, MySqlHistoricoPrecioRepository>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

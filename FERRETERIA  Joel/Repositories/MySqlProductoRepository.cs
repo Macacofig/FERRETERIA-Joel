@@ -1,11 +1,10 @@
 ﻿using FERRETERIA__Joel.Factories;
-using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProductoRepository : ICRUD<Producto>, IProductoRepositoryFunctions
+    public class MySqlProductoRepository : ICRUD<Producto>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -34,6 +33,47 @@ namespace FERRETERIA__Joel.Repositories
                     FechaActualizacion,
                     IdEmpleadoResponsable
                 FROM producto
+                ORDER BY Nombre ASC";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            using MySqlDataReader reader =
+                command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                productos.Add(MapearProducto(reader));
+            }
+
+            return productos;
+        }
+
+        public List<Producto> ObtenerActivas()
+        {
+            List<Producto> productos = new();
+
+            const string query = @"
+                SELECT
+                    IdProducto,
+                    IdCategoria,
+                    Codigo,
+                    Nombre,
+                    Descripcion,
+                    Marca,
+                    UnidadMedida,
+                    PrecioVenta,
+                    Estado,
+                    FechaRegistro,
+                    FechaActualizacion,
+                    IdEmpleadoResponsable
+                FROM producto
+                WHERE Estado = 1
                 ORDER BY Nombre ASC";
 
             using MySqlConnection connection =
@@ -96,16 +136,6 @@ namespace FERRETERIA__Joel.Repositories
             }
 
             return MapearProducto(reader);
-        }
-
-
-        public Producto? ObtenerPorSlug(string slug)
-        {
-            return ObtenerTodos()
-                .FirstOrDefault(p =>
-                    SlugHelper.CrearSlug(p.Nombre).Equals(
-                        slug,
-                        StringComparison.OrdinalIgnoreCase));
         }
 
 
@@ -279,71 +309,11 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public bool ExisteCodigo(
-            string codigo,
-            int? idProductoExcluir = null)
+        public int Count()
         {
             const string query = @"
                 SELECT COUNT(*)
-                FROM producto
-                WHERE Codigo = @codigo
-                AND (@idProductoExcluir IS NULL
-                    OR IdProducto <> @idProductoExcluir)";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            command.Parameters.AddWithValue(
-                "@codigo",
-                codigo);
-
-            command.Parameters.AddWithValue(
-                "@idProductoExcluir",
-                idProductoExcluir.HasValue
-                    ? idProductoExcluir.Value
-                    : DBNull.Value);
-
-            connection.Open();
-
-            return Convert.ToInt32(
-                command.ExecuteScalar()) > 0;
-        }
-
-
-        public bool ExisteCategoriaActiva(int idCategoria)
-        {
-            const string query = @"
-                SELECT COUNT(*)
-                FROM categoria
-                WHERE IdCategoria = @idCategoria
-                AND Estado = 1";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            command.Parameters.AddWithValue(
-                "@idCategoria",
-                idCategoria);
-
-            connection.Open();
-
-            return Convert.ToInt32(
-                command.ExecuteScalar()) > 0;
-        }
-
-        public string ObtenerSiguienteCodigo()
-        {
-            const string query = @"
-                SELECT CONCAT('PROD-',
-                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 6) AS UNSIGNED)), 0) + 1)
-                FROM producto
-                WHERE Codigo LIKE 'PROD-%'";
+                FROM producto";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -353,8 +323,9 @@ namespace FERRETERIA__Joel.Repositories
 
             connection.Open();
 
-            return command.ExecuteScalar()?.ToString() ?? "PROD-1";
+            return Convert.ToInt32(command.ExecuteScalar());
         }
+
         private Producto MapearProducto(MySqlDataReader reader)
         {
             return new Producto

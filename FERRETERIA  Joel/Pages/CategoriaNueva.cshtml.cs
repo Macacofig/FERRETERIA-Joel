@@ -12,7 +12,6 @@ namespace FERRETERIA__Joel.Pages
     public class CategoriaNuevaModel : PageModel
     {
         private readonly ICRUD<Categoria> _repositorio;
-        private readonly ICategoriaRepositoryFunctions _repositorioFunciones;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<CategoriaNuevaModel> _logger;
 
@@ -27,12 +26,10 @@ namespace FERRETERIA__Joel.Pages
 
         public CategoriaNuevaModel(
             RepositoryCreator<Categoria> categoriaRepositoryCreator,
-            ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
             RepositoryCreator<Empleado> empleadoRepositoryCreator,
             ILogger<CategoriaNuevaModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
-            _repositorioFunciones = categoriaRepositoryFunctions;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -40,13 +37,13 @@ namespace FERRETERIA__Joel.Pages
         public void OnGet()
         {
             NuevaCategoria.Estado = 1;
-            NuevaCategoria.Codigo = _repositorioFunciones.ObtenerSiguienteCodigo();
+            NuevaCategoria.Codigo = $"CAT-{_repositorio.Count() + 1:D3}";
             CargarEmpleados();
         }
 
         public IActionResult OnPost()
         {
-            NuevaCategoria.Codigo = _repositorioFunciones.ObtenerSiguienteCodigo();
+            NuevaCategoria.Codigo = $"CAT-{_repositorio.Count() + 1:D3}";
             NuevaCategoria.PorcentajeGanancia = 0;
             NormalizarDatos();
             Validar();
@@ -115,12 +112,6 @@ namespace FERRETERIA__Joel.Pages
                 AgregarErrorCampo(
                     nameof(Categoria.Codigo),
                     "El código es obligatorio y debe tener máximo 20 caracteres.");
-            }
-            else if (_repositorioFunciones.ExisteCodigo(NuevaCategoria.Codigo))
-            {
-                AgregarErrorCampo(
-                    nameof(Categoria.Codigo),
-                    $"El código '{NuevaCategoria.Codigo}' ya existe en el sistema.");
             }
 
             if (!_validador.EsNombreValido(NuevaCategoria.Nombre))

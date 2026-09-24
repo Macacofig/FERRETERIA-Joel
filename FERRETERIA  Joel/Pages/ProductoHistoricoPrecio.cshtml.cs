@@ -1,3 +1,4 @@
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
@@ -8,8 +9,8 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoHistoricoPrecioModel : PageModel
     {
-        private readonly IProductoRepositoryFunctions _productoRepository;
-        private readonly IHistoricoPrecioRepositoryFunctions _historicoPrecioRepository;
+        private readonly ICRUD<Producto> _productoRepository;
+        private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
         private readonly ILogger<ProductoHistoricoPrecioModel> _logger;
 
         public List<HistoricoPrecio> Historicos { get; set; } = new();
@@ -17,20 +18,22 @@ namespace FERRETERIA__Joel.Pages
         public string NombreProducto { get; set; } = string.Empty;
 
         public ProductoHistoricoPrecioModel(
-            IProductoRepositoryFunctions productoRepository,
-            IHistoricoPrecioRepositoryFunctions historicoPrecioRepository,
+            RepositoryCreator<Producto> productoRepositoryCreator,
+            RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
             ILogger<ProductoHistoricoPrecioModel> logger)
         {
-            _productoRepository = productoRepository;
-            _historicoPrecioRepository = historicoPrecioRepository;
+            _productoRepository = productoRepositoryCreator.CreateRepository();
+            _historicoPrecioRepository =
+                (MySqlHistoricoPrecioRepository)historicoPrecioRepositoryCreator
+                    .CreateRepository();
             _logger = logger;
         }
 
         public IActionResult OnGet(string token)
         {
-            string? slug = UrlProtector.Descifrar(token);
+            string? texto = UrlProtector.Descifrar(token);
 
-            if (string.IsNullOrWhiteSpace(slug))
+            if (!int.TryParse(texto, out int id))
             {
                 TempData["MensajeError"] =
                     "El producto solicitado no existe.";
@@ -38,7 +41,7 @@ namespace FERRETERIA__Joel.Pages
                 return RedirectToPage("Productos");
             }
 
-            var producto = _productoRepository.ObtenerPorSlug(slug);
+            var producto = _productoRepository.ObtenerPorId(id);
 
             if (producto is null)
             {

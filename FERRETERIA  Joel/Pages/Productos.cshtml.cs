@@ -15,6 +15,9 @@ namespace FERRETERIA__Joel.Pages
         public List<Producto> ListProductos { get; set; } = new();
         public List<Categoria> Categorias { get; set; } = new();
 
+        [BindProperty(SupportsGet = true)]
+        public bool SoloActivos { get; set; }
+
         public ProductosModel(
             RepositoryCreator<Producto> productoRepositoryCreator,
             RepositoryCreator<Categoria> categoriaRepositoryCreator,
@@ -25,10 +28,13 @@ namespace FERRETERIA__Joel.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(bool? soloActivos)
         {
-            ListProductos =
-                _productoRepository.ObtenerTodos();
+            SoloActivos = soloActivos ?? false;
+
+            ListProductos = SoloActivos
+                ? _productoRepository.ObtenerActivas()
+                : _productoRepository.ObtenerTodos();
 
             Categorias =
                 _categoriaRepository.ObtenerTodos();
@@ -54,7 +60,7 @@ namespace FERRETERIA__Joel.Pages
                     "No se pudo eliminar el producto. Inténtalo nuevamente.";
             }
 
-            return RedirectToPage();
+            return RedirectToPage(new { soloActivos = SoloActivos });
         }
     }
 }

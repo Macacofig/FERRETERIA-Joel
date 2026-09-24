@@ -20,8 +20,6 @@ namespace FERRETERIA__Joel.Models
 
         public string? NombreCategoria { get; set; }
 
-        public string Slug => SlugHelper.CrearSlug(Nombre);
-
-        public string UrlToken => UrlProtector.Cifrar(Slug);
+        public string UrlToken => UrlProtector.Cifrar(IdProducto.ToString());
     }
 }
