@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProveedorRepository : ICRUD<Proveedor>, IProveedorRepositoryFunctions
+    public class MySqlProveedorRepository : ICRUD<Proveedor>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -24,7 +24,6 @@ namespace FERRETERIA__Joel.Repositories
                     IdProveedor,
                     RazonSocial,
                     NombreComercial,
-                    Nit,
                     NombreContacto,
                     Telefono,
                     CorreoElectronico,
@@ -56,6 +55,47 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
+        public List<Proveedor> ObtenerActivas()
+        {
+            List<Proveedor> proveedores = new();
+
+            const string query = @"
+                SELECT
+                    IdProveedor,
+                    RazonSocial,
+                    NombreComercial,
+                    NombreContacto,
+                    Telefono,
+                    CorreoElectronico,
+                    Direccion,
+                    Estado,
+                    FechaRegistro,
+                    FechaActualizacion,
+                    IdEmpleadoResponsable
+                FROM proveedor
+                WHERE Estado = 1
+                ORDER BY NombreComercial ASC";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            using MySqlDataReader reader =
+                command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                proveedores.Add(MapearProveedor(reader));
+            }
+
+            return proveedores;
+        }
+
+
         public Proveedor? ObtenerPorId(int idProveedor)
         {
             const string query = @"
@@ -63,7 +103,6 @@ namespace FERRETERIA__Joel.Repositories
                     IdProveedor,
                     RazonSocial,
                     NombreComercial,
-                    Nit,
                     NombreContacto,
                     Telefono,
                     CorreoElectronico,
@@ -116,7 +155,6 @@ namespace FERRETERIA__Joel.Repositories
                 (
                     RazonSocial,
                     NombreComercial,
-                    Nit,
                     NombreContacto,
                     Telefono,
                     CorreoElectronico,
@@ -129,7 +167,6 @@ namespace FERRETERIA__Joel.Repositories
                 (
                     @razonSocial,
                     @nombreComercial,
-                    @nit,
                     @nombreContacto,
                     @telefono,
                     @correoElectronico,
@@ -152,10 +189,6 @@ namespace FERRETERIA__Joel.Repositories
             command.Parameters.AddWithValue(
                 "@nombreComercial",
                 proveedor.NombreComercial);
-
-            command.Parameters.AddWithValue(
-                "@nit",
-                proveedor.Nit);
 
             command.Parameters.AddWithValue(
                 "@nombreContacto",
@@ -194,7 +227,6 @@ namespace FERRETERIA__Joel.Repositories
                 SET
                     RazonSocial = @razonSocial,
                     NombreComercial = @nombreComercial,
-                    Nit = @nit,
                     NombreContacto = @nombreContacto,
                     Telefono = @telefono,
                     CorreoElectronico = @correoElectronico,
@@ -221,10 +253,6 @@ namespace FERRETERIA__Joel.Repositories
             command.Parameters.AddWithValue(
                 "@nombreComercial",
                 proveedor.NombreComercial);
-
-            command.Parameters.AddWithValue(
-                "@nit",
-                proveedor.Nit);
 
             command.Parameters.AddWithValue(
                 "@nombreContacto",
@@ -286,18 +314,11 @@ namespace FERRETERIA__Joel.Repositories
         }
 
 
-        public bool ExisteNit(
-            string nit,
-            int? idProveedorExcluir = null)
+        public int Count()
         {
             const string query = @"
                 SELECT COUNT(*)
-                FROM proveedor
-                WHERE Nit = @nit
-                AND (
-                    @idProveedorExcluir IS NULL
-                    OR IdProveedor <> @idProveedorExcluir
-                )";
+                FROM proveedor";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -305,20 +326,9 @@ namespace FERRETERIA__Joel.Repositories
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
 
-            command.Parameters.AddWithValue(
-                "@nit",
-                nit);
-
-            command.Parameters.AddWithValue(
-                "@idProveedorExcluir",
-                idProveedorExcluir.HasValue
-                    ? idProveedorExcluir.Value
-                    : DBNull.Value);
-
             connection.Open();
 
-            return Convert.ToInt32(
-                command.ExecuteScalar()) > 0;
+            return Convert.ToInt32(command.ExecuteScalar());
         }
 
 
@@ -334,9 +344,6 @@ namespace FERRETERIA__Joel.Repositories
 
                 NombreComercial =
                     reader["NombreComercial"].ToString() ?? "",
-
-                Nit =
-                    reader["Nit"].ToString() ?? "",
 
                 NombreContacto =
                     reader["NombreContacto"].ToString() ?? "",

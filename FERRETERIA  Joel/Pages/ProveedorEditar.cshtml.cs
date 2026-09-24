@@ -5,15 +5,13 @@ using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 
 namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorEditarModel : PageModel
     {
-        private readonly ICRUD<Proveedor> _proveedorRepository;
-        private readonly IProveedorRepositoryFunctions _proveedorRepositoryFunciones;
+        private readonly MySqlProveedorRepository _proveedorRepository;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorEditarModel> _logger;
 
@@ -27,13 +25,11 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorEditarModel(
-            RepositoryCreator<Proveedor> proveedorRepositoryCreator,
-            IProveedorRepositoryFunctions proveedorRepositoryFunctions,
-            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            ProveedorRepositoryCreator proveedorRepositoryCreator,
+            EmpleadoRepositoryCreator empleadoRepositoryCreator,
             ILogger<ProveedorEditarModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
-            _proveedorRepositoryFunciones = proveedorRepositoryFunctions;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -52,7 +48,7 @@ namespace FERRETERIA__Joel.Pages
                 return RedirectToPage("Proveedores");
             }
 
-            var proveedor = _proveedorRepositoryFunciones.ObtenerPorSlug(slug);
+            var proveedor = _proveedorRepository.ObtenerPorSlug(slug);
 
             if (proveedor == null)
             {
@@ -82,15 +78,6 @@ namespace FERRETERIA__Joel.Pages
             {
                 _proveedorRepository.Actualizar(Proveedor);
             }
-            catch (MySqlException ex) when (ex.Number == 1062)
-            {
-                AgregarErrorCampo(
-                    nameof(Proveedor.Nit),
-                    "Ya existe otro proveedor con ese NIT.");
-
-                CargarEmpleados();
-                return Page();
-            }
             catch (Exception ex)
             {
                 _logger.LogError(
@@ -118,9 +105,6 @@ namespace FERRETERIA__Joel.Pages
 
             Proveedor.NombreComercial =
                 NormalizarTexto(Proveedor.NombreComercial);
-
-            Proveedor.Nit =
-                NormalizarTexto(Proveedor.Nit);
 
             Proveedor.NombreContacto =
                 NormalizarTexto(Proveedor.NombreContacto);
@@ -158,21 +142,6 @@ namespace FERRETERIA__Joel.Pages
                 AgregarErrorCampo(
                     nameof(Proveedor.NombreComercial),
                     "El nombre comercial es obligatorio y debe tener máximo 150 caracteres.");
-            }
-
-            if (!_validacion.EsNitValido(Proveedor.Nit))
-            {
-                AgregarErrorCampo(
-                    nameof(Proveedor.Nit),
-                    "El NIT debe tener entre 8 y 13 dígitos. El antepenúltimo dígito debe ser 0 y el penúltimo debe ser 1, 2 o 4.");
-            }
-            else if (_proveedorRepositoryFunciones.ExisteNit(
-                Proveedor.Nit,
-                Proveedor.IdProveedor))
-            {
-                AgregarErrorCampo(
-                    nameof(Proveedor.Nit),
-                    "Ya existe otro proveedor con ese NIT.");
             }
 
             if (!_validacion.EsNombreContactoValido(Proveedor.NombreContacto))

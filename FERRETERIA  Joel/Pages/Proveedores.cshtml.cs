@@ -14,7 +14,7 @@ namespace FERRETERIA__Joel.Pages
         public List<Proveedor> ListProveedores { get; set; } = new();
 
         public ProveedoresModel(
-            RepositoryCreator<Proveedor> proveedorRepositoryCreator,
+            ProveedorRepositoryCreator proveedorRepositoryCreator,
             ILogger<ProveedoresModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();

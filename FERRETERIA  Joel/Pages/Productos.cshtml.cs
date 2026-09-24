@@ -16,8 +16,8 @@ namespace FERRETERIA__Joel.Pages
         public List<Categoria> Categorias { get; set; } = new();
 
         public ProductosModel(
-            RepositoryCreator<Producto> productoRepositoryCreator,
-            RepositoryCreator<Categoria> categoriaRepositoryCreator,
+            ProductoRepositoryCreator productoRepositoryCreator,
+            CategoriaRepositoryCreator categoriaRepositoryCreator,
             ILogger<ProductosModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();

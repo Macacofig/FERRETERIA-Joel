@@ -12,7 +12,7 @@ namespace FERRETERIA__Joel.Factories
             _connectionFactory = connectionFactory;
         }
 
-        public override ICRUD<HistoricoPrecio> CreateRepository()
+        public override MySqlHistoricoPrecioRepository CreateRepository()
         {
             return new MySqlHistoricoPrecioRepository(_connectionFactory);
         }

@@ -9,19 +9,16 @@ namespace FERRETERIA__Joel.Pages
     public class CategoriasModel : PageModel
     {
         private readonly ICRUD<Categoria> _repositorio;
-        private readonly ICategoriaRepositoryFunctions _repositorioFunciones;
         private readonly ILogger<CategoriasModel> _logger;
 
         public string Mensaje { get; set; } = "";
         public List<Categoria> ListCategorias { get; set; } = new();
 
         public CategoriasModel(
-            RepositoryCreator<Categoria> categoriaRepositoryCreator,
-            ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
+            CategoriaRepositoryCreator categoriaRepositoryCreator,
             ILogger<CategoriasModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
-            _repositorioFunciones = categoriaRepositoryFunctions;
             _logger = logger;
         }
 
@@ -42,7 +39,7 @@ namespace FERRETERIA__Joel.Pages
         {
             try
             {
-                _repositorioFunciones.Desactivar(id);
+                _repositorio.CambiarEstado(id);
                 TempData["Mensaje"] = "Categoría desactivada correctamente.";
             }
             catch (Exception ex)

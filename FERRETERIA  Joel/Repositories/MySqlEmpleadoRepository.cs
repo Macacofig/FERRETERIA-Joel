@@ -43,6 +43,37 @@ namespace FERRETERIA__Joel.Repositories
             return empleados;
         }
 
+        public List<Empleado> ObtenerActivas()
+        {
+            List<Empleado> empleados = new();
+
+            const string query = @"
+                SELECT
+                    IdEmpleado,
+                    Nombre
+                FROM empleado
+                WHERE Estado = 1
+                ORDER BY Nombre ASC";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            using MySqlDataReader reader =
+                command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                empleados.Add(MapearEmpleado(reader));
+            }
+
+            return empleados;
+        }
+
         public Empleado? ObtenerPorId(int id)
         {
             const string query = @"
@@ -142,6 +173,23 @@ namespace FERRETERIA__Joel.Repositories
             connection.Open();
 
             command.ExecuteNonQuery();
+        }
+
+        public int Count()
+        {
+            const string query = @"
+                SELECT COUNT(*)
+                FROM empleado";
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            using MySqlCommand command =
+                new MySqlCommand(query, connection);
+
+            connection.Open();
+
+            return Convert.ToInt32(command.ExecuteScalar());
         }
 
         private Empleado MapearEmpleado(MySqlDataReader reader)

@@ -12,7 +12,7 @@ namespace FERRETERIA__Joel.Factories
             _connectionFactory = connectionFactory;
         }
 
-        public override ICRUD<Producto> CreateRepository()
+        public override MySqlProductoRepository CreateRepository()
         {
             return new MySqlProductoRepository(_connectionFactory);
         }

@@ -7,7 +7,6 @@ namespace FERRETERIA__Joel.Models
         public int IdProveedor { get; set; }
         public string RazonSocial { get; set; } = string.Empty;
         public string NombreComercial { get; set; } = string.Empty;
-        public string Nit { get; set; } = string.Empty;
         public string NombreContacto { get; set; } = string.Empty;
         public string Telefono { get; set; } = string.Empty;
         public string? CorreoElectronico { get; set; }

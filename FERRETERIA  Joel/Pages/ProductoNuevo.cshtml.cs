@@ -13,8 +13,7 @@ namespace FERRETERIA__Joel.Pages
     public class ProductoNuevoModel : PageModel
     {
         private readonly ICRUD<Producto> _productoRepository;
-        private readonly IProductoRepositoryFunctions _productoRepositoryFunciones;
-        private readonly ICategoriaRepositoryFunctions _categoriaRepositoryFunciones;
+        private readonly ICRUD<Categoria> _categoriaRepository;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ICRUD<HistoricoPrecio> _historicoPrecioRepository;
         private readonly ILogger<ProductoNuevoModel> _logger;
@@ -33,16 +32,14 @@ namespace FERRETERIA__Joel.Pages
             { "Caja", "Kilogramo", "Litro", "Metro", "Par", "Unidad" };
 
         public ProductoNuevoModel(
-        RepositoryCreator<Producto> productoRepositoryCreator,
-        IProductoRepositoryFunctions productoRepositoryFunctions,
-        ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
-        RepositoryCreator<Empleado> empleadoRepositoryCreator,
-        RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
+        ProductoRepositoryCreator productoRepositoryCreator,
+        CategoriaRepositoryCreator categoriaRepositoryCreator,
+        EmpleadoRepositoryCreator empleadoRepositoryCreator,
+        HistoricoPrecioRepositoryCreator historicoPrecioRepositoryCreator,
         ILogger<ProductoNuevoModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();
-            _productoRepositoryFunciones = productoRepositoryFunctions;
-            _categoriaRepositoryFunciones = categoriaRepositoryFunctions;
+            _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
             _logger = logger;
@@ -51,14 +48,14 @@ namespace FERRETERIA__Joel.Pages
         public void OnGet()
         {
             Producto.Codigo =
-                _productoRepositoryFunciones.ObtenerSiguienteCodigo();
+                $"PROD-{_productoRepository.Count() + 1:D3}";
 
             CargarCatalogos();
         }
 
         public IActionResult OnPost()
         {
-            Producto.Codigo = _productoRepositoryFunciones.ObtenerSiguienteCodigo();
+            Producto.Codigo = $"PROD-{_productoRepository.Count() + 1:D3}";
             NormalizarPrecio();
             NormalizarDatos();
             Validar();
@@ -150,12 +147,6 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Producto.Codigo),
                     "El código es obligatorio y debe tener máximo 30 caracteres.");
             }
-            else if (_productoRepositoryFunciones.ExisteCodigo(Producto.Codigo))
-            {
-                AgregarErrorCampo(
-                    nameof(Producto.Codigo),
-                    "Ya existe un producto con ese código.");
-            }
 
             if (!_validacion.EsNombreValido(Producto.Nombre))
             {
@@ -198,8 +189,9 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Producto.IdCategoria),
                     "Debe seleccionar una categoría.");
             }
-            else if (!_productoRepositoryFunciones.ExisteCategoriaActiva(
-                Producto.IdCategoria))
+            else if (!_categoriaRepository
+                .ObtenerActivas()
+                .Any(c => c.IdCategoria == Producto.IdCategoria))
             {
                 AgregarErrorCampo(
                     nameof(Producto.IdCategoria),
@@ -223,7 +215,7 @@ namespace FERRETERIA__Joel.Pages
         private void CargarCatalogos()
         {
             Categorias =
-                _categoriaRepositoryFunciones.ObtenerActivas();
+                _categoriaRepository.ObtenerActivas();
 
             Empleados =
                 _empleadoRepository.ObtenerTodos();

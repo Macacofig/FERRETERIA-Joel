@@ -12,7 +12,6 @@ namespace FERRETERIA__Joel.Pages
     public class CategoriaEditarModel : PageModel
     {
         private readonly ICRUD<Categoria> _repositorio;
-        private readonly ICategoriaRepositoryFunctions _repositorioFunciones;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<CategoriaEditarModel> _logger;
         private readonly CategoriaValidaciones _validador = new();
@@ -25,13 +24,11 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaEditarModel(
-        RepositoryCreator<Categoria> categoriaRepositoryCreator,
-        ICategoriaRepositoryFunctions categoriaRepositoryFunctions,
-        RepositoryCreator<Empleado> empleadoRepositoryCreator,
+        CategoriaRepositoryCreator categoriaRepositoryCreator,
+        EmpleadoRepositoryCreator empleadoRepositoryCreator,
         ILogger<CategoriaEditarModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
-            _repositorioFunciones = categoriaRepositoryFunctions;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -120,14 +117,6 @@ namespace FERRETERIA__Joel.Pages
                 AgregarErrorCampo(
                     nameof(Categoria.Codigo),
                     "El código es obligatorio y debe tener máximo 20 caracteres.");
-            }
-            else if (_repositorioFunciones.ExisteCodigo(
-                CategoriaEdit.Codigo,
-                CategoriaEdit.IdCategoria))
-            {
-                AgregarErrorCampo(
-                    nameof(Categoria.Codigo),
-                    $"El código '{CategoriaEdit.Codigo}' ya pertenece a otra categoría.");
             }
 
             if (!_validador.EsNombreValido(CategoriaEdit.Nombre))

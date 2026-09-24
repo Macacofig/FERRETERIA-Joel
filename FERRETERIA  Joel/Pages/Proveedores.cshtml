@@ -52,7 +52,6 @@
                 <thead>
                     <tr>
                         <th scope="col">Razón Social</th>
-                        <th scope="col">NIT</th>
                         <th scope="col">Contacto</th>
                         <th scope="col">Teléfono</th>
                         <th scope="col">Correo</th>
@@ -65,7 +64,7 @@
                     @if (Model.ListProveedores.Count == 0 && TempData["MensajeError"] == null)
                     {
                         <tr>
-                            <td colspan="7" class="fj-table-vacio">
+                            <td colspan="6" class="fj-table-vacio">
                                 <div class="fj-empty">
                                     <span class="fj-empty-ico" aria-hidden="true">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
@@ -79,7 +78,7 @@
                     else if (Model.ListProveedores.Count == 0)
                     {
                         <tr>
-                            <td colspan="7" class="fj-table-vacio">
+                            <td colspan="6" class="fj-table-vacio">
                                 <div class="fj-empty">
                                     <span class="fj-empty-ico" aria-hidden="true">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
@@ -97,10 +96,6 @@
                             <td>
                                 <span class="fj-nombre">@item.RazonSocial</span>
                                 <span class="fj-nombre-sub">@item.NombreComercial</span>
-                            </td>
-
-                            <td class="fj-td-codigo">
-                                <span class="fj-codigo">@item.Nit</span>
                             </td>
 
                             <td class="fj-td-secundario">

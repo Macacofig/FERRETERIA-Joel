@@ -4,7 +4,7 @@ using FERRETERIA__Joel.Models;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlCategoriaRepository : ICRUD<Categoria>, ICategoriaRepositoryFunctions
+    public class MySqlCategoriaRepository : ICRUD<Categoria>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -201,33 +201,11 @@ namespace FERRETERIA__Joel.Repositories
             command.ExecuteNonQuery();
         }
 
-        public string ObtenerSiguienteCodigo()
-        {
-            const string query = @"
-                SELECT CONCAT('CAT-',
-                    COALESCE(MAX(CAST(SUBSTRING(Codigo, 5) AS UNSIGNED)), 0) + 1)
-                FROM categoria
-                WHERE Codigo LIKE 'CAT-%'";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            connection.Open();
-
-            return command.ExecuteScalar()?.ToString() ?? "CAT-1";
-        }
-
-        public bool ExisteCodigo(string codigo, int? idCategoriaExcluir = null)
+        public int Count()
         {
             const string query = @"
                 SELECT COUNT(*)
-                FROM categoria
-                WHERE Codigo = @codigo
-                AND (@idCategoriaExcluir IS NULL
-                    OR IdCategoria <> @idCategoriaExcluir)";
+                FROM categoria";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -235,35 +213,9 @@ namespace FERRETERIA__Joel.Repositories
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@codigo", codigo);
-            command.Parameters.AddWithValue(
-                "@idCategoriaExcluir",
-                idCategoriaExcluir.HasValue
-                    ? idCategoriaExcluir.Value
-                    : DBNull.Value);
-
             connection.Open();
 
-            return Convert.ToInt32(
-                command.ExecuteScalar()) > 0;
-        }
-
-        public void Desactivar(int id)
-        {
-            const string query = @"UPDATE categoria 
-                                  SET Estado = 0, FechaActualizacion = CURRENT_TIMESTAMP 
-                                  WHERE IdCategoria = @IdCategoria;";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@IdCategoria", id);
-
-            connection.Open();
-            command.ExecuteNonQuery();
+            return Convert.ToInt32(command.ExecuteScalar());
         }
 
         private Categoria MapearCategoria(MySqlDataReader reader)
