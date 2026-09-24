@@ -12,10 +12,11 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoNuevoModel : PageModel
     {
-        private readonly ICRUD<Producto> _productoRepository;
+        private readonly MySqlProductoRepository _productoRepository;
         private readonly ICRUD<Categoria> _categoriaRepository;
         private readonly ICRUD<Empleado> _empleadoRepository;
-        private readonly ICRUD<HistoricoPrecio> _historicoPrecioRepository;
+        private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
+        private readonly IDbConnectionFactory _connectionFactory;
         private readonly ILogger<ProductoNuevoModel> _logger;
 
         private readonly ProductoValidaciones _validacion = new();
@@ -36,12 +37,18 @@ namespace FERRETERIA__Joel.Pages
         RepositoryCreator<Categoria> categoriaRepositoryCreator,
         RepositoryCreator<Empleado> empleadoRepositoryCreator,
         RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
+        IDbConnectionFactory connectionFactory,
         ILogger<ProductoNuevoModel> logger)
         {
-            _productoRepository = productoRepositoryCreator.CreateRepository();
+            _productoRepository =
+                (MySqlProductoRepository)productoRepositoryCreator
+                    .CreateRepository();
             _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
-            _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
+            _historicoPrecioRepository =
+                (MySqlHistoricoPrecioRepository)historicoPrecioRepositoryCreator
+                    .CreateRepository();
+            _connectionFactory = connectionFactory;
             _logger = logger;
         }
 
@@ -223,18 +230,49 @@ namespace FERRETERIA__Joel.Pages
 
         private void Insertar()
         {
-            int idProducto =
-                _productoRepository.Insertar(Producto);
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
 
-            HistoricoPrecio historicoPrecio = new()
+            connection.Open();
+
+            using MySqlTransaction transaction =
+                connection.BeginTransaction();
+
+            try
             {
-                IdProducto = idProducto,
-                Precio = Producto.PrecioVenta,
-                MotivoCambio = "Precio inicial",
-                IdEmpleadoResponsable = Producto.IdEmpleadoResponsable
-            };
+                int idProducto =
+                    _productoRepository.Insertar(
+                        Producto, connection, transaction);
 
-            _historicoPrecioRepository.Insertar(historicoPrecio);
+                HistoricoPrecio historicoPrecio = new()
+                {
+                    IdProducto = idProducto,
+                    Precio = Producto.PrecioVenta,
+                    MotivoCambio = "Precio inicial",
+                    IdEmpleadoResponsable = Producto.IdEmpleadoResponsable
+                };
+
+                _historicoPrecioRepository.Insertar(
+                    historicoPrecio, connection, transaction);
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch
+                {
+                }
+
+                _logger.LogError(
+                    ex,
+                    "Error en la transacción al registrar el producto.");
+
+                throw;
+            }
         }
     }
 }

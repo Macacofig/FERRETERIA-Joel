@@ -14,10 +14,11 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoEditarModel : PageModel
     {
-        private readonly ICRUD<Producto> _productoRepository;
+        private readonly MySqlProductoRepository _productoRepository;
         private readonly ICRUD<Categoria> _categoriaRepository;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
+        private readonly IDbConnectionFactory _connectionFactory;
         private readonly ILogger<ProductoEditarModel> _logger;
 
         private readonly ProductoValidaciones _validacion = new();
@@ -35,14 +36,18 @@ namespace FERRETERIA__Joel.Pages
             RepositoryCreator<Categoria> categoriaRepositoryCreator,
             RepositoryCreator<Empleado> empleadoRepositoryCreator,
             RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
+            IDbConnectionFactory connectionFactory,
             ILogger<ProductoEditarModel> logger)
         {
-            _productoRepository = productoRepositoryCreator.CreateRepository();
+            _productoRepository =
+                (MySqlProductoRepository)productoRepositoryCreator
+                    .CreateRepository();
             _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _historicoPrecioRepository =
                 (MySqlHistoricoPrecioRepository)historicoPrecioRepositoryCreator
                     .CreateRepository();
+            _connectionFactory = connectionFactory;
             _logger = logger;
         }
 
@@ -252,31 +257,62 @@ namespace FERRETERIA__Joel.Pages
                 _historicoPrecioRepository.ObtenerPrecioVigente(
                     Producto.IdProducto);
 
-            _productoRepository.Actualizar(Producto);
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
 
-            bool cambioPrecio =
-                precioVigente is null ||
-                precioVigente.Precio != Producto.PrecioVenta;
+            connection.Open();
 
-            if (cambioPrecio)
+            using MySqlTransaction transaction =
+                connection.BeginTransaction();
+
+            try
             {
-                if (precioVigente is not null)
+                _productoRepository.Actualizar(
+                    Producto, connection, transaction);
+
+                bool cambioPrecio =
+                    precioVigente is null ||
+                    precioVigente.Precio != Producto.PrecioVenta;
+
+                if (cambioPrecio)
                 {
-                    _historicoPrecioRepository.CerrarPrecioVigente(
-                        Producto.IdProducto);
+                    if (precioVigente is not null)
+                    {
+                        _historicoPrecioRepository.CerrarPrecioVigente(
+                            Producto.IdProducto, connection, transaction);
+                    }
+
+                    HistoricoPrecio nuevoHistorico = new()
+                    {
+                        IdProducto = Producto.IdProducto,
+                        Precio = Producto.PrecioVenta,
+                        MotivoCambio = "Cambio de precio",
+                        IdEmpleadoResponsable =
+                            Producto.IdEmpleadoResponsable
+                    };
+
+                    _historicoPrecioRepository.Insertar(
+                        nuevoHistorico, connection, transaction);
                 }
 
-                HistoricoPrecio nuevoHistorico = new()
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                try
                 {
-                    IdProducto = Producto.IdProducto,
-                    Precio = Producto.PrecioVenta,
-                    MotivoCambio = "Cambio de precio",
-                    IdEmpleadoResponsable =
-                        Producto.IdEmpleadoResponsable
-                };
+                    transaction.Rollback();
+                }
+                catch
+                {
+                }
 
-                _historicoPrecioRepository.Insertar(
-                    nuevoHistorico);
+                _logger.LogError(
+                    ex,
+                    "Error en la transacción al actualizar el producto {IdProducto}.",
+                    Producto.IdProducto);
+
+                throw;
             }
         }
     }
