@@ -26,6 +26,10 @@ builder.Services.AddScoped<RepositoryCreator<Proveedor>, ProveedorRepositoryCrea
 builder.Services.AddScoped<RepositoryCreator<Empleado>, EmpleadoRepositoryCreator>();
 builder.Services.AddScoped<RepositoryCreator<HistoricoPrecio>, HistoricoPrecioRepositoryCreator>();
 
+// Repositorio transaccional de producto + historico de precio.
+builder.Services.AddScoped<MySqlHistoricoPrecioRepository>();
+builder.Services.AddScoped<IProductoPrecioRepository, MySqlProductoRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

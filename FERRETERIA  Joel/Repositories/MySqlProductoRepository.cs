@@ -4,13 +4,17 @@ using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProductoRepository : ICRUD<Producto>
+    public class MySqlProductoRepository : ICRUD<Producto>, IProductoPrecioRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
+        private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
 
-        public MySqlProductoRepository(IDbConnectionFactory connectionFactory)
+        public MySqlProductoRepository(
+            IDbConnectionFactory connectionFactory,
+            MySqlHistoricoPrecioRepository historicoPrecioRepository)
         {
             _connectionFactory = connectionFactory;
+            _historicoPrecioRepository = historicoPrecioRepository;
         }
 
 
@@ -392,6 +396,110 @@ namespace FERRETERIA__Joel.Repositories
                 IdEmpleadoResponsable =
                     reader.GetInt32("IdEmpleadoResponsable")
             };
+        }
+
+        public void ActualizarConHistorico(Producto producto)
+        {
+            HistoricoPrecio? precioVigente =
+                _historicoPrecioRepository.ObtenerPrecioVigente(
+                    producto.IdProducto);
+
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            connection.Open();
+
+            using MySqlTransaction transaction =
+                connection.BeginTransaction();
+
+            try
+            {
+                Actualizar(producto, connection, transaction);
+
+                bool cambioPrecio =
+                    precioVigente is null ||
+                    precioVigente.Precio != producto.PrecioVenta;
+
+                if (cambioPrecio)
+                {
+                    if (precioVigente is not null)
+                    {
+                        _historicoPrecioRepository.CerrarPrecioVigente(
+                            producto.IdProducto, connection, transaction);
+                    }
+
+                    HistoricoPrecio nuevoHistorico = new()
+                    {
+                        IdProducto = producto.IdProducto,
+                        Precio = producto.PrecioVenta,
+                        MotivoCambio = "Cambio de precio",
+                        IdEmpleadoResponsable =
+                            producto.IdEmpleadoResponsable
+                    };
+
+                    _historicoPrecioRepository.Insertar(
+                        nuevoHistorico, connection, transaction);
+                }
+
+                transaction.Commit();
+            }
+            catch
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch
+                {
+                }
+
+                throw;
+            }
+        }
+
+        public int InsertarConHistorico(Producto producto)
+        {
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            connection.Open();
+
+            using MySqlTransaction transaction =
+                connection.BeginTransaction();
+
+            try
+            {
+                int idProducto =
+                    Insertar(producto, connection, transaction);
+
+                HistoricoPrecio historicoPrecio = new()
+                {
+                    IdProducto = idProducto,
+                    Precio = producto.PrecioVenta,
+                    MotivoCambio = "Precio inicial",
+                    IdEmpleadoResponsable =
+                        producto.IdEmpleadoResponsable
+                };
+
+                _historicoPrecioRepository.Insertar(
+                    historicoPrecio, connection, transaction);
+
+                transaction.Commit();
+
+                return idProducto;
+            }
+            catch
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch
+                {
+                }
+
+                throw;
+            }
         }
     }
 
