@@ -11,7 +11,7 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorEditarModel : PageModel
     {
-        private readonly MySqlProveedorRepository _proveedorRepository;
+        private readonly ICRUD<Proveedor> _proveedorRepository;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorEditarModel> _logger;
 
@@ -25,8 +25,8 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorEditarModel(
-            ProveedorRepositoryCreator proveedorRepositoryCreator,
-            EmpleadoRepositoryCreator empleadoRepositoryCreator,
+            RepositoryCreator<Proveedor> proveedorRepositoryCreator,
+            RepositoryCreator<Empleado> empleadoRepositoryCreator,
             ILogger<ProveedorEditarModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
@@ -38,9 +38,9 @@ namespace FERRETERIA__Joel.Pages
         {
             CargarEmpleados();
 
-            string? slug = UrlProtector.Descifrar(token);
+            string? texto = UrlProtector.Descifrar(token);
 
-            if (string.IsNullOrWhiteSpace(slug))
+            if (!int.TryParse(texto, out int id))
             {
                 TempData["MensajeError"] =
                     "El proveedor solicitado no existe.";
@@ -48,7 +48,7 @@ namespace FERRETERIA__Joel.Pages
                 return RedirectToPage("Proveedores");
             }
 
-            var proveedor = _proveedorRepository.ObtenerPorSlug(slug);
+            var proveedor = _proveedorRepository.ObtenerPorId(id);
 
             if (proveedor == null)
             {

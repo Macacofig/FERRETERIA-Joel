@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Categorías";
     ViewData["ActiveMenu"] = "Categorias";
+    string accionFiltro = Model.SoloActivos ? "" : "true";
+    string etiquetaFiltro = Model.SoloActivos ? "Mostrar todas" : "Solo activas";
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/productos.css" asp-append-version="true" />
@@ -47,6 +49,12 @@
         </p>
 
         <div class="fj-toolbar-actions">
+            <a class="fj-btn fj-btn-edit"
+               asp-route-soloActivos="@accionFiltro">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
+                @etiquetaFiltro
+            </a>
+
             <a class="fj-btn fj-btn-primary" asp-page="CategoriaNueva">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 Agregar categoría

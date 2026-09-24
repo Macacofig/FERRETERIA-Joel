@@ -24,9 +24,9 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaEditarModel(
-        CategoriaRepositoryCreator categoriaRepositoryCreator,
-        EmpleadoRepositoryCreator empleadoRepositoryCreator,
-        ILogger<CategoriaEditarModel> logger)
+            RepositoryCreator<Categoria> categoriaRepositoryCreator,
+            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            ILogger<CategoriaEditarModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();

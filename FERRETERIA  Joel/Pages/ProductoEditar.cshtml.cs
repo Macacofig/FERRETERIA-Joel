@@ -14,7 +14,7 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoEditarModel : PageModel
     {
-        private readonly MySqlProductoRepository _productoRepository;
+        private readonly ICRUD<Producto> _productoRepository;
         private readonly ICRUD<Categoria> _categoriaRepository;
         private readonly ICRUD<Empleado> _empleadoRepository;
         private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
@@ -31,16 +31,18 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProductoEditarModel(
-            ProductoRepositoryCreator productoRepositoryCreator,
-            CategoriaRepositoryCreator categoriaRepositoryCreator,
-            EmpleadoRepositoryCreator empleadoRepositoryCreator,
-            HistoricoPrecioRepositoryCreator historicoPrecioRepositoryCreator,
+            RepositoryCreator<Producto> productoRepositoryCreator,
+            RepositoryCreator<Categoria> categoriaRepositoryCreator,
+            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
             ILogger<ProductoEditarModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();
             _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
-            _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
+            _historicoPrecioRepository =
+                (MySqlHistoricoPrecioRepository)historicoPrecioRepositoryCreator
+                    .CreateRepository();
             _logger = logger;
         }
 
@@ -48,9 +50,9 @@ namespace FERRETERIA__Joel.Pages
         {
             CargarCatalogos();
 
-            string? slug = UrlProtector.Descifrar(token);
+            string? texto = UrlProtector.Descifrar(token);
 
-            if (string.IsNullOrWhiteSpace(slug))
+            if (!int.TryParse(texto, out int id))
             {
                 TempData["MensajeError"] =
                     "El producto solicitado no existe.";
@@ -58,7 +60,7 @@ namespace FERRETERIA__Joel.Pages
                 return RedirectToPage("Productos");
             }
 
-            Producto? producto = _productoRepository.ObtenerPorSlug(slug);
+            Producto? producto = _productoRepository.ObtenerPorId(id);
 
             if (producto is null)
             {

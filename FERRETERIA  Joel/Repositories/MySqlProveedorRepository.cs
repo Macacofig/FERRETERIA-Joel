@@ -1,5 +1,4 @@
 ﻿using FERRETERIA__Joel.Factories;
-using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
@@ -135,16 +134,6 @@ namespace FERRETERIA__Joel.Repositories
             }
 
             return MapearProveedor(reader);
-        }
-
-
-        public Proveedor? ObtenerPorSlug(string slug)
-        {
-            return ObtenerTodos()
-                .FirstOrDefault(p =>
-                    SlugHelper.CrearSlug(p.RazonSocial).Equals(
-                        slug,
-                        StringComparison.OrdinalIgnoreCase));
         }
 
 

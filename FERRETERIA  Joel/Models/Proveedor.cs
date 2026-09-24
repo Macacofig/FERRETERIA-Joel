@@ -16,8 +16,6 @@ namespace FERRETERIA__Joel.Models
         public DateTime? FechaActualizacion { get; set; }
         public int IdEmpleadoResponsable { get; set; }
 
-        public string Slug => SlugHelper.CrearSlug(RazonSocial);
-
-        public string UrlToken => UrlProtector.Cifrar(Slug);
+        public string UrlToken => UrlProtector.Cifrar(IdProveedor.ToString());
     }
 }

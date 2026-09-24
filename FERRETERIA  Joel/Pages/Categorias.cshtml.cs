@@ -14,19 +14,26 @@ namespace FERRETERIA__Joel.Pages
         public string Mensaje { get; set; } = "";
         public List<Categoria> ListCategorias { get; set; } = new();
 
+        [BindProperty(SupportsGet = true)]
+        public bool SoloActivos { get; set; }
+
         public CategoriasModel(
-            CategoriaRepositoryCreator categoriaRepositoryCreator,
+            RepositoryCreator<Categoria> categoriaRepositoryCreator,
             ILogger<CategoriasModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(bool? soloActivos)
         {
+            SoloActivos = soloActivos ?? false;
+
             try
             {
-                ListCategorias = _repositorio.ObtenerTodos();
+                ListCategorias = SoloActivos
+                    ? _repositorio.ObtenerActivas()
+                    : _repositorio.ObtenerTodos();
             }
             catch (Exception ex)
             {
@@ -47,7 +54,7 @@ namespace FERRETERIA__Joel.Pages
                 _logger.LogError(ex, "Error al desactivar la categoría {Id}.", id);
                 TempData["MensajeError"] = "No se pudo desactivar la categoría. Inténtalo nuevamente.";
             }
-            return RedirectToPage();
+            return RedirectToPage(new { soloActivos = SoloActivos });
         }
     }
 }

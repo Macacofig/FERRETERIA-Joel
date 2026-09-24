@@ -32,10 +32,10 @@ namespace FERRETERIA__Joel.Pages
             { "Caja", "Kilogramo", "Litro", "Metro", "Par", "Unidad" };
 
         public ProductoNuevoModel(
-        ProductoRepositoryCreator productoRepositoryCreator,
-        CategoriaRepositoryCreator categoriaRepositoryCreator,
-        EmpleadoRepositoryCreator empleadoRepositoryCreator,
-        HistoricoPrecioRepositoryCreator historicoPrecioRepositoryCreator,
+        RepositoryCreator<Producto> productoRepositoryCreator,
+        RepositoryCreator<Categoria> categoriaRepositoryCreator,
+        RepositoryCreator<Empleado> empleadoRepositoryCreator,
+        RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
         ILogger<ProductoNuevoModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();

@@ -9,7 +9,7 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoHistoricoPrecioModel : PageModel
     {
-        private readonly MySqlProductoRepository _productoRepository;
+        private readonly ICRUD<Producto> _productoRepository;
         private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
         private readonly ILogger<ProductoHistoricoPrecioModel> _logger;
 
@@ -18,20 +18,22 @@ namespace FERRETERIA__Joel.Pages
         public string NombreProducto { get; set; } = string.Empty;
 
         public ProductoHistoricoPrecioModel(
-            ProductoRepositoryCreator productoRepositoryCreator,
-            HistoricoPrecioRepositoryCreator historicoPrecioRepositoryCreator,
+            RepositoryCreator<Producto> productoRepositoryCreator,
+            RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
             ILogger<ProductoHistoricoPrecioModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();
-            _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
+            _historicoPrecioRepository =
+                (MySqlHistoricoPrecioRepository)historicoPrecioRepositoryCreator
+                    .CreateRepository();
             _logger = logger;
         }
 
         public IActionResult OnGet(string token)
         {
-            string? slug = UrlProtector.Descifrar(token);
+            string? texto = UrlProtector.Descifrar(token);
 
-            if (string.IsNullOrWhiteSpace(slug))
+            if (!int.TryParse(texto, out int id))
             {
                 TempData["MensajeError"] =
                     "El producto solicitado no existe.";
@@ -39,7 +41,7 @@ namespace FERRETERIA__Joel.Pages
                 return RedirectToPage("Productos");
             }
 
-            var producto = _productoRepository.ObtenerPorSlug(slug);
+            var producto = _productoRepository.ObtenerPorId(id);
 
             if (producto is null)
             {

@@ -13,19 +13,26 @@ namespace FERRETERIA__Joel.Pages
 
         public List<Proveedor> ListProveedores { get; set; } = new();
 
+        [BindProperty(SupportsGet = true)]
+        public bool SoloActivos { get; set; }
+
         public ProveedoresModel(
-            ProveedorRepositoryCreator proveedorRepositoryCreator,
+            RepositoryCreator<Proveedor> proveedorRepositoryCreator,
             ILogger<ProveedoresModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(bool? soloActivos)
         {
+            SoloActivos = soloActivos ?? false;
+
             try
             {
-                ListProveedores = _proveedorRepository.ObtenerTodos();
+                ListProveedores = SoloActivos
+                    ? _proveedorRepository.ObtenerActivas()
+                    : _proveedorRepository.ObtenerTodos();
             }
             catch (Exception ex)
             {
@@ -58,7 +65,7 @@ namespace FERRETERIA__Joel.Pages
                     "No se pudo eliminar el proveedor. Inténtalo nuevamente.";
             }
 
-            return RedirectToPage();
+            return RedirectToPage(new { soloActivos = SoloActivos });
         }
     }
 }
