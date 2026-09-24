@@ -5,7 +5,6 @@ using FERRETERIA__Joel.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 
 UrlProtector.Inicializar(
@@ -13,13 +12,10 @@ UrlProtector.Inicializar(
         ?? throw new InvalidOperationException(
             "Falta la clave 'UrlProteccion:Clave' en la configuración."));
 
-// Patrones de diseño (SOLID):
-// - IDbConnectionFactory: Factory Method para crear conexiones MySQL.
-// - RepositoryCreator<T>: Factory Method para crear los repositorios (Concrete Products).
-// - Singleton: una única instancia del factory de conexiones, administrada por DI.
+
 builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
 
-// Concrete Creators del Factory Method de repositorios.
+
 builder.Services.AddScoped<RepositoryCreator<Producto>, ProductoRepositoryCreator>();
 builder.Services.AddScoped<RepositoryCreator<Categoria>, CategoriaRepositoryCreator>();
 builder.Services.AddScoped<RepositoryCreator<Proveedor>, ProveedorRepositoryCreator>();
@@ -28,11 +24,10 @@ builder.Services.AddScoped<RepositoryCreator<HistoricoPrecio>, HistoricoPrecioRe
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
