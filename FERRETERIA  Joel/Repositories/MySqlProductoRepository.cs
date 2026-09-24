@@ -141,6 +141,19 @@ namespace FERRETERIA__Joel.Repositories
 
         public int Insertar(Producto producto)
         {
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            connection.Open();
+
+            return Insertar(producto, connection, null);
+        }
+
+        public int Insertar(
+            Producto producto,
+            MySqlConnection connection,
+            MySqlTransaction? transaction)
+        {
             const string query = @"
                 INSERT INTO producto
                 (
@@ -167,11 +180,10 @@ namespace FERRETERIA__Joel.Repositories
                     @idEmpleadoResponsable
                 )";
 
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
+
+            command.Transaction = transaction;
 
             command.Parameters.AddWithValue(
                 "@idCategoria",
@@ -205,14 +217,25 @@ namespace FERRETERIA__Joel.Repositories
                 "@idEmpleadoResponsable",
                 producto.IdEmpleadoResponsable);
 
-            connection.Open();
-
             command.ExecuteNonQuery();
             return Convert.ToInt32(command.LastInsertedId);
         }
 
 
         public void Actualizar(Producto producto)
+        {
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            connection.Open();
+
+            Actualizar(producto, connection, null);
+        }
+
+        public void Actualizar(
+            Producto producto,
+            MySqlConnection connection,
+            MySqlTransaction? transaction)
         {
             const string query = @"
                 UPDATE producto
@@ -229,11 +252,10 @@ namespace FERRETERIA__Joel.Repositories
                     FechaActualizacion = CURRENT_TIMESTAMP
                 WHERE IdProducto = @idProducto";
 
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
+
+            command.Transaction = transaction;
 
             command.Parameters.AddWithValue(
                 "@idProducto",
@@ -274,8 +296,6 @@ namespace FERRETERIA__Joel.Repositories
             command.Parameters.AddWithValue(
                 "@estado",
                 producto.Estado);
-
-            connection.Open();
 
             command.ExecuteNonQuery();
         }

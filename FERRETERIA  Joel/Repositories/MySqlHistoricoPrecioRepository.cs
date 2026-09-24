@@ -146,6 +146,19 @@ namespace FERRETERIA__Joel.Repositories
 
         public int Insertar(HistoricoPrecio historicoPrecio)
         {
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            connection.Open();
+
+            return Insertar(historicoPrecio, connection, null);
+        }
+
+        public int Insertar(
+            HistoricoPrecio historicoPrecio,
+            MySqlConnection connection,
+            MySqlTransaction? transaction)
+        {
             const string query = @"
         INSERT INTO historico_precio
         (
@@ -168,11 +181,10 @@ namespace FERRETERIA__Joel.Repositories
             @idEmpleadoResponsable
         )";
 
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
+
+            command.Transaction = transaction;
 
             command.Parameters.AddWithValue(
                 "@idProducto",
@@ -189,8 +201,6 @@ namespace FERRETERIA__Joel.Repositories
             command.Parameters.AddWithValue(
                 "@idEmpleadoResponsable",
                 historicoPrecio.IdEmpleadoResponsable);
-
-            connection.Open();
 
             command.ExecuteNonQuery();
 
@@ -405,6 +415,19 @@ namespace FERRETERIA__Joel.Repositories
         }
         public void CerrarPrecioVigente(int idProducto)
         {
+            using MySqlConnection connection =
+                _connectionFactory.CreateConnection();
+
+            connection.Open();
+
+            CerrarPrecioVigente(idProducto, connection, null);
+        }
+
+        public void CerrarPrecioVigente(
+            int idProducto,
+            MySqlConnection connection,
+            MySqlTransaction? transaction)
+        {
             const string query = @"
         UPDATE historico_precio
         SET FechaFinVigencia = CURRENT_TIMESTAMP,
@@ -413,17 +436,14 @@ namespace FERRETERIA__Joel.Repositories
         AND FechaFinVigencia IS NULL
         AND Estado = 1";
 
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
             using MySqlCommand command =
                 new MySqlCommand(query, connection);
+
+            command.Transaction = transaction;
 
             command.Parameters.AddWithValue(
                 "@idProducto",
                 idProducto);
-
-            connection.Open();
 
             command.ExecuteNonQuery();
         }
