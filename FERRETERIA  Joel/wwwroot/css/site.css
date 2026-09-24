@@ -419,17 +419,6 @@ a.fj-menu-link:hover {
     justify-self: end;
 }
 
-.fj-dot {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 0.4375rem;
-    height: 0.4375rem;
-    border-radius: 50%;
-    background: var(--amarillo);
-    border: 0.125rem solid var(--fondo);
-}
-
 .fj-userchip {
     display: inline-flex;
     align-items: center;
