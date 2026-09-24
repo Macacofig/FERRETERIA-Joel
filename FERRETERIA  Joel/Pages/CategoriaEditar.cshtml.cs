@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -33,9 +34,17 @@ namespace FERRETERIA__Joel.Pages
             _logger = logger;
         }
 
-        public IActionResult OnGet(int id)
+        public IActionResult OnGet(string token)
         {
             CargarEmpleados();
+
+            string? texto = UrlProtector.Descifrar(token);
+
+            if (!int.TryParse(texto, out int id))
+            {
+                TempData["MensajeError"] = "La categoría solicitada no existe.";
+                return RedirectToPage("Categorias");
+            }
 
             var categoria = _repositorio.ObtenerPorId(id);
             if (categoria == null)

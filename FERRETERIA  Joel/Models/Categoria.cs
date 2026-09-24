@@ -1,3 +1,5 @@
+using FERRETERIA__Joel.Helpers;
+
 namespace FERRETERIA__Joel.Models
 {
     public class Categoria
@@ -11,5 +13,7 @@ namespace FERRETERIA__Joel.Models
         public DateTime FechaRegistro { get; set; }
         public DateTime? FechaActualizacion { get; set; }
         public int IdEmpleadoResponsable { get; set; }
+
+        public string UrlToken => UrlProtector.Cifrar(IdCategoria.ToString());
     }
 }
