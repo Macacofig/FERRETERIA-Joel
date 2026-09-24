@@ -1,4 +1,5 @@
 using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using FERRETERIA__Joel.Repositories;
 using FERRETERIA__Joel.Validaciones;
@@ -37,11 +38,21 @@ namespace FERRETERIA__Joel.Pages
             _logger = logger;
         }
 
-        public IActionResult OnGet(int id)
+        public IActionResult OnGet(string token)
         {
             CargarEmpleados();
 
-            var proveedor = _proveedorRepository.ObtenerPorId(id);
+            string? slug = UrlProtector.Descifrar(token);
+
+            if (string.IsNullOrWhiteSpace(slug))
+            {
+                TempData["MensajeError"] =
+                    "El proveedor solicitado no existe.";
+
+                return RedirectToPage("Proveedores");
+            }
+
+            var proveedor = _proveedorRepositoryFunciones.ObtenerPorSlug(slug);
 
             if (proveedor == null)
             {

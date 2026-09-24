@@ -1,4 +1,5 @@
 ﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Helpers;
 using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
@@ -95,6 +96,16 @@ namespace FERRETERIA__Joel.Repositories
             }
 
             return MapearProducto(reader);
+        }
+
+
+        public Producto? ObtenerPorSlug(string slug)
+        {
+            return ObtenerTodos()
+                .FirstOrDefault(p =>
+                    SlugHelper.CrearSlug(p.Nombre).Equals(
+                        slug,
+                        StringComparison.OrdinalIgnoreCase));
         }
 
 
