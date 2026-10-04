@@ -12,10 +12,11 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoNuevoModel : PageModel
     {
-        private readonly ICRUD<Producto> _productoRepository;
-        private readonly ICRUD<Categoria> _categoriaRepository;
-        private readonly ICRUD<Empleado> _empleadoRepository;
-        private readonly ICRUD<HistoricoPrecio> _historicoPrecioRepository;
+        private readonly IRepository<Producto> _productoRepository;
+        private readonly IModificacionRepository<Producto> _productoModificacionRepository;
+        private readonly IRepository<Categoria> _categoriaRepository;
+        private readonly IRepository<Empleado> _empleadoRepository;
+        private readonly IRepository<HistoricoPrecio> _historicoPrecioRepository;
         private readonly ILogger<ProductoNuevoModel> _logger;
 
         private readonly ProductoValidaciones _validacion = new();
@@ -32,13 +33,15 @@ namespace FERRETERIA__Joel.Pages
             { "Caja", "Kilogramo", "Litro", "Metro", "Par", "Unidad" };
 
         public ProductoNuevoModel(
-        RepositoryCreator<Producto> productoRepositoryCreator,
-        RepositoryCreator<Categoria> categoriaRepositoryCreator,
-        RepositoryCreator<Empleado> empleadoRepositoryCreator,
-        RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
+        RepositoryCreator<IRepository<Producto>> productoRepositoryCreator,
+            IModificacionRepository<Producto> modificacionRepository,
+        RepositoryCreator<IRepository<Categoria>> categoriaRepositoryCreator,
+        RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
+        RepositoryCreator<IRepository<HistoricoPrecio>> historicoPrecioRepositoryCreator,
         ILogger<ProductoNuevoModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();
+            _productoModificacionRepository = modificacionRepository;
             _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
@@ -48,14 +51,14 @@ namespace FERRETERIA__Joel.Pages
         public void OnGet()
         {
             Producto.Codigo =
-                $"PROD-{_productoRepository.Count() + 1:D3}";
+                $"PROD-{_productoModificacionRepository.Count() + 1:D3}";
 
             CargarCatalogos();
         }
 
         public IActionResult OnPost()
         {
-            Producto.Codigo = $"PROD-{_productoRepository.Count() + 1:D3}";
+            Producto.Codigo = $"PROD-{_productoModificacionRepository.Count() + 1:D3}";
             NormalizarPrecio();
             NormalizarDatos();
             Validar();

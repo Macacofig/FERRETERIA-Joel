@@ -1,6 +1,6 @@
 namespace FERRETERIA__Joel.Repositories
 {
-    public interface ICRUD<T>
+    public interface IRepository<T>
     {
         List<T> ObtenerTodos();
 
@@ -9,11 +9,5 @@ namespace FERRETERIA__Joel.Repositories
         T? ObtenerPorId(int id);
 
         int Insertar(T entidad);
-
-        void Actualizar(T entidad);
-
-        void CambiarEstado(int id);
-
-        int Count();
     }
 }

@@ -8,8 +8,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductosModel : PageModel
     {
-        private readonly ICRUD<Producto> _productoRepository;
-        private readonly ICRUD<Categoria> _categoriaRepository;
+        private readonly IRepository<Producto> _productoRepository;
+        private readonly IModificacionRepository<Producto> _productoModificacionRepository;
+        private readonly IRepository<Categoria> _categoriaRepository;
         private readonly ILogger<ProductosModel> _logger;
 
         public List<Producto> ListProductos { get; set; } = new();
@@ -19,11 +20,13 @@ namespace FERRETERIA__Joel.Pages
         public bool SoloActivos { get; set; }
 
         public ProductosModel(
-            RepositoryCreator<Producto> productoRepositoryCreator,
-            RepositoryCreator<Categoria> categoriaRepositoryCreator,
+            RepositoryCreator<IRepository<Producto>> productoRepositoryCreator,
+            IModificacionRepository<Producto> modificacionRepository,
+            RepositoryCreator<IRepository<Categoria>> categoriaRepositoryCreator,
             ILogger<ProductosModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();
+            _productoModificacionRepository = modificacionRepository;
             _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -44,7 +47,7 @@ namespace FERRETERIA__Joel.Pages
         {
             try
             {
-                _productoRepository.CambiarEstado(idProducto);
+                _productoModificacionRepository.CambiarEstado(idProducto);
 
                 TempData["Mensaje"] =
                     "Producto eliminado correctamente.";

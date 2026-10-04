@@ -1,9 +1,7 @@
-using FERRETERIA__Joel.Repositories;
-
 namespace FERRETERIA__Joel.Factories
 {
-    public abstract class RepositoryCreator<T>
+    public abstract class RepositoryCreator<TContrato>
     {
-        public abstract ICRUD<T> CreateRepository();
+        public abstract TContrato CreateRepository();
     }
 }

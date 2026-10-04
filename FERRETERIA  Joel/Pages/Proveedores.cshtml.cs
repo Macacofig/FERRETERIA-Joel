@@ -8,7 +8,8 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedoresModel : PageModel
     {
-        private readonly ICRUD<Proveedor> _proveedorRepository;
+        private readonly IRepository<Proveedor> _proveedorRepository;
+        private readonly IModificacionRepository<Proveedor> _proveedorModificacionRepository;
         private readonly ILogger<ProveedoresModel> _logger;
 
         public List<Proveedor> ListProveedores { get; set; } = new();
@@ -17,10 +18,12 @@ namespace FERRETERIA__Joel.Pages
         public bool SoloActivos { get; set; }
 
         public ProveedoresModel(
-            RepositoryCreator<Proveedor> proveedorRepositoryCreator,
+            RepositoryCreator<IRepository<Proveedor>> proveedorRepositoryCreator,
+            IModificacionRepository<Proveedor> modificacionRepository,
             ILogger<ProveedoresModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
+            _proveedorModificacionRepository = modificacionRepository;
             _logger = logger;
         }
 
@@ -49,7 +52,7 @@ namespace FERRETERIA__Joel.Pages
         {
             try
             {
-                _proveedorRepository.CambiarEstado(idProveedor);
+                _proveedorModificacionRepository.CambiarEstado(idProveedor);
 
                 TempData["Mensaje"] =
                     "Proveedor eliminado correctamente.";

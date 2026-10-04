@@ -11,8 +11,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorEditarModel : PageModel
     {
-        private readonly ICRUD<Proveedor> _proveedorRepository;
-        private readonly ICRUD<Empleado> _empleadoRepository;
+        private readonly IRepository<Proveedor> _proveedorRepository;
+        private readonly IModificacionRepository<Proveedor> _proveedorModificacionRepository;
+        private readonly IRepository<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorEditarModel> _logger;
 
         private readonly ProveedorValidaciones _validacion = new();
@@ -25,11 +26,13 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorEditarModel(
-            RepositoryCreator<Proveedor> proveedorRepositoryCreator,
-            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            RepositoryCreator<IRepository<Proveedor>> proveedorRepositoryCreator,
+            IModificacionRepository<Proveedor> modificacionRepository,
+            RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
             ILogger<ProveedorEditarModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
+            _proveedorModificacionRepository = modificacionRepository;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -76,7 +79,7 @@ namespace FERRETERIA__Joel.Pages
 
             try
             {
-                _proveedorRepository.Actualizar(Proveedor);
+                _proveedorModificacionRepository.Actualizar(Proveedor);
             }
             catch (Exception ex)
             {

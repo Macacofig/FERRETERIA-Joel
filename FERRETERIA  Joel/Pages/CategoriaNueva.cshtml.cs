@@ -11,8 +11,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaNuevaModel : PageModel
     {
-        private readonly ICRUD<Categoria> _repositorio;
-        private readonly ICRUD<Empleado> _empleadoRepository;
+        private readonly IRepository<Categoria> _repositorio;
+        private readonly IModificacionRepository<Categoria> _modificacionRepository;
+        private readonly IRepository<Empleado> _empleadoRepository;
         private readonly ILogger<CategoriaNuevaModel> _logger;
 
         private readonly CategoriaValidaciones _validador = new();
@@ -25,11 +26,13 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaNuevaModel(
-            RepositoryCreator<Categoria> categoriaRepositoryCreator,
-            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            RepositoryCreator<IRepository<Categoria>> categoriaRepositoryCreator,
+            IModificacionRepository<Categoria> modificacionRepository,
+            RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
             ILogger<CategoriaNuevaModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
+            _modificacionRepository = modificacionRepository;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -37,13 +40,13 @@ namespace FERRETERIA__Joel.Pages
         public void OnGet()
         {
             NuevaCategoria.Estado = 1;
-            NuevaCategoria.Codigo = $"CAT-{_repositorio.Count() + 1:D3}";
+            NuevaCategoria.Codigo = $"CAT-{_modificacionRepository.Count() + 1:D3}";
             CargarEmpleados();
         }
 
         public IActionResult OnPost()
         {
-            NuevaCategoria.Codigo = $"CAT-{_repositorio.Count() + 1:D3}";
+            NuevaCategoria.Codigo = $"CAT-{_modificacionRepository.Count() + 1:D3}";
             NuevaCategoria.PorcentajeGanancia = 0;
             NormalizarDatos();
             Validar();

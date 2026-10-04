@@ -1,10 +1,10 @@
-﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlHistoricoPrecioRepository : ICRUD<HistoricoPrecio>
+    public class MySqlHistoricoPrecioRepository : IRepository<HistoricoPrecio>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
@@ -195,98 +195,6 @@ namespace FERRETERIA__Joel.Repositories
             command.ExecuteNonQuery();
 
             return Convert.ToInt32(command.LastInsertedId);
-        }
-
-        public void Actualizar(HistoricoPrecio historicoPrecio)
-        {
-            const string query = @"
-        UPDATE historico_precio
-        SET
-            Precio = @precio,
-            FechaFinVigencia = @fechaFin,
-            MotivoCambio = @motivoCambio,
-            Estado = @estado,
-            IdEmpleadoResponsable = @idEmpleadoResponsable,
-            FechaActualizacion = CURRENT_TIMESTAMP
-        WHERE IdHistoricoPrecio = @idHistoricoPrecio";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            command.Parameters.AddWithValue(
-                "@idHistoricoPrecio",
-                historicoPrecio.IdHistoricoPrecio);
-
-            command.Parameters.AddWithValue(
-                "@precio",
-                historicoPrecio.Precio);
-
-            command.Parameters.AddWithValue(
-                "@fechaFin",
-                historicoPrecio.FechaFinVigencia.HasValue
-                    ? historicoPrecio.FechaFinVigencia.Value
-                    : DBNull.Value);
-
-            command.Parameters.AddWithValue(
-                "@motivoCambio",
-                historicoPrecio.MotivoCambio);
-
-            command.Parameters.AddWithValue(
-                "@estado",
-                historicoPrecio.Estado);
-
-            command.Parameters.AddWithValue(
-                "@idEmpleadoResponsable",
-                historicoPrecio.IdEmpleadoResponsable);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-        }
-
-        public void CambiarEstado(int id)
-        {
-            const string query = @"
-        UPDATE historico_precio
-        SET
-            Estado = CASE
-                WHEN Estado = 1 THEN 0
-                ELSE 1
-            END,
-            FechaActualizacion = CURRENT_TIMESTAMP
-        WHERE IdHistoricoPrecio = @id";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@id", id);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-        }
-
-        public int Count()
-        {
-            const string query = @"
-                SELECT COUNT(*)
-                FROM historico_precio";
-
-            using MySqlConnection connection =
-                _connectionFactory.CreateConnection();
-
-            using MySqlCommand command =
-                new MySqlCommand(query, connection);
-
-            connection.Open();
-
-            return Convert.ToInt32(command.ExecuteScalar());
         }
 
         public List<HistoricoPrecio> ObtenerPorProducto(int idProducto)
