@@ -21,6 +21,7 @@ builder.Services.AddScoped<RepositoryCreator<Categoria>, CategoriaRepositoryCrea
 builder.Services.AddScoped<RepositoryCreator<Proveedor>, ProveedorRepositoryCreator>();
 builder.Services.AddScoped<RepositoryCreator<Empleado>, EmpleadoRepositoryCreator>();
 builder.Services.AddScoped<RepositoryCreator<HistoricoPrecio>, HistoricoPrecioRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<Marca>, MarcaRepositoryCreator>();
 
 var app = builder.Build();
 

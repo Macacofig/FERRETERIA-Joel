@@ -1,8 +1,8 @@
-/* ============================================================
-   FERRETERÍA JOEL · Página: Gestión de productos
+﻿/* ============================================================
+   FERRETERÃA JOEL Â· PÃ¡gina: GestiÃ³n de productos
    ============================================================ */
 
-/* Encabezado de página */
+/* Encabezado de pÃ¡gina */
 .fj-page-head {
     margin-bottom: 38px;
 }
@@ -21,7 +21,7 @@
     font-size: 1rem;
 }
 
-/* Alertas e información */
+/* Alertas e informaciÃ³n */
 .fj-alert,
 .fj-notice {
     display: flex;
@@ -68,7 +68,7 @@
     color: var(--amarillo-texto);
 }
 
-/* Estadísticas superiores */
+/* EstadÃ­sticas superiores */
 .fj-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -101,7 +101,7 @@
     line-height: 1.35;
 }
 
-/* Barra de herramientas (cantidad / búsqueda / acción) */
+/* Barra de herramientas (cantidad / bÃºsqueda / acciÃ³n) */
 .fj-toolbar {
     display: grid;
     grid-template-columns: 1fr minmax(280px, 420px) auto;
@@ -207,7 +207,7 @@
 }
 
 .fj-table-wrap {
-    overflow-x: auto;
+    overflow-x: hidden;
 }
 
 .fj-table {
@@ -377,7 +377,7 @@
     justify-content: flex-end;
 }
 
-/* Vacío */
+/* VacÃ­o */
 .fj-table-vacio {
     padding: 0 !important;
 }
@@ -455,3 +455,35 @@
         font-size: 1.3rem;
     }
 }
+/* Modal de detalle de producto (DescripciÃ³n / Unidad de medida) */
+.fj-detalle-lista {
+    display: grid;
+    gap: 0.85rem;
+    text-align: left;
+    margin: 0 0 1.5rem;
+    padding: 1rem;
+    background: var(--fondo-panel, #ededf0);
+    border: 1px solid var(--borde, rgba(0, 0, 0, 0.08));
+    border-radius: 0.75rem;
+}
+
+.fj-detalle-item {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.fj-detalle-item strong {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--texto-ter, #8a94a6);
+}
+
+.fj-detalle-item span {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--texto, #2c3446);
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+

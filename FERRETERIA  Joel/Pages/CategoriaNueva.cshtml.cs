@@ -114,6 +114,13 @@ namespace FERRETERIA__Joel.Pages
                     "El código es obligatorio y debe tener máximo 20 caracteres.");
             }
 
+            if (!ValidacionCaracteres.EsValido(NuevaCategoria.Codigo))
+            {
+                AgregarErrorCampo(
+                    nameof(Categoria.Codigo),
+                    ValidacionCaracteres.MensajeError);
+            }
+
             if (!_validador.EsNombreValido(NuevaCategoria.Nombre))
             {
                 AgregarErrorCampo(
@@ -121,11 +128,25 @@ namespace FERRETERIA__Joel.Pages
                     "El nombre es obligatorio y debe tener máximo 100 caracteres.");
             }
 
+            if (!ValidacionCaracteres.EsValido(NuevaCategoria.Nombre))
+            {
+                AgregarErrorCampo(
+                    nameof(Categoria.Nombre),
+                    ValidacionCaracteres.MensajeError);
+            }
+
             if (!_validador.EsDescripcionValida(NuevaCategoria.Descripcion))
             {
                 AgregarErrorCampo(
                     nameof(Categoria.Descripcion),
                     "La descripción no debe superar los 255 caracteres.");
+            }
+
+            if (!ValidacionCaracteres.EsValido(NuevaCategoria.Descripcion))
+            {
+                AgregarErrorCampo(
+                    nameof(Categoria.Descripcion),
+                    ValidacionCaracteres.MensajeError);
             }
 
             if (!_validador.EsPorcentajeGananciaValido(

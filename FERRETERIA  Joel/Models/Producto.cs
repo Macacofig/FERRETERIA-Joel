@@ -9,7 +9,7 @@ namespace FERRETERIA__Joel.Models
         public string Codigo { get; set; } = string.Empty;
         public string Nombre { get; set; } = string.Empty;
         public string? Descripcion { get; set; }
-        public string? Marca { get; set; }
+        public int IdMarca { get; set; }
         public string UnidadMedida { get; set; } = string.Empty;
         public decimal PrecioVenta { get; set; }
 
@@ -19,6 +19,7 @@ namespace FERRETERIA__Joel.Models
         public int IdEmpleadoResponsable { get; set; }
 
         public string? NombreCategoria { get; set; }
+        public string? NombreMarca { get; set; }
 
         public string UrlToken => UrlProtector.Cifrar(IdProducto.ToString());
     }

@@ -63,7 +63,7 @@
 
             <div class="fj-form-field @(Model.ErroresCampo.ContainsKey("Telefono") ? "fj-form-field-error" : "")">
                 <label class="fj-form-label" asp-for="Proveedor.Telefono">Teléfono</label>
-                <input class="fj-input" asp-for="Proveedor.Telefono" type="tel" placeholder="Ej: 71234567" required maxlength="8" pattern="[67][0-9]{7}" />
+                <input class="fj-input" asp-for="Proveedor.Telefono" type="tel" placeholder="Ej: 71234567" required maxlength="8" pattern="[567][0-9]{7}" />
                 @if (Model.ErroresCampo.TryGetValue("Telefono", out var errorTelefono))
                 {
                     <p class="fj-form-error" role="alert">@errorTelefono</p>

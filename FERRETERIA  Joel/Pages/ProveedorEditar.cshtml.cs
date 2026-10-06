@@ -137,11 +137,25 @@ namespace FERRETERIA__Joel.Pages
                     "La razón social es obligatoria y debe tener máximo 150 caracteres.");
             }
 
+            if (!ValidacionCaracteres.EsValido(Proveedor.RazonSocial))
+            {
+                AgregarErrorCampo(
+                    nameof(Proveedor.RazonSocial),
+                    ValidacionCaracteres.MensajeError);
+            }
+
             if (!_validacion.EsNombreComercialValido(Proveedor.NombreComercial))
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.NombreComercial),
                     "El nombre comercial es obligatorio y debe tener máximo 150 caracteres.");
+            }
+
+            if (!ValidacionCaracteres.EsValido(Proveedor.NombreComercial))
+            {
+                AgregarErrorCampo(
+                    nameof(Proveedor.NombreComercial),
+                    ValidacionCaracteres.MensajeError);
             }
 
             if (!_validacion.EsNombreContactoValido(Proveedor.NombreContacto))
@@ -151,11 +165,18 @@ namespace FERRETERIA__Joel.Pages
                     "El nombre del contacto es obligatorio y debe tener máximo 150 caracteres.");
             }
 
+            if (!ValidacionCaracteres.EsValido(Proveedor.NombreContacto))
+            {
+                AgregarErrorCampo(
+                    nameof(Proveedor.NombreContacto),
+                    ValidacionCaracteres.MensajeError);
+            }
+
             if (!_validacion.EsTelefonoValido(Proveedor.Telefono))
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.Telefono),
-                    "El teléfono debe tener 8 dígitos y comenzar con 6 o 7.");
+                    "El celular debe tener 8 dígitos y comenzar con 5, 6 o 7.");
             }
 
             if (!_validacion.EsCorreoValido(Proveedor.CorreoElectronico))

@@ -20,20 +20,23 @@ namespace FERRETERIA__Joel.Repositories
 
             const string query = @"
                 SELECT
-                    IdProducto,
-                    IdCategoria,
-                    Codigo,
-                    Nombre,
-                    Descripcion,
-                    Marca,
-                    UnidadMedida,
-                    PrecioVenta,
-                    Estado,
-                    FechaRegistro,
-                    FechaActualizacion,
-                    IdEmpleadoResponsable
-                FROM producto
-                ORDER BY Nombre ASC";
+                    p.IdProducto,
+                    p.IdCategoria,
+                    p.Codigo,
+                    p.Nombre,
+                    p.Descripcion,
+                    p.Marca AS IdMarca,
+                    m.Nombre AS NombreMarca,
+                    p.UnidadMedida,
+                    p.PrecioVenta,
+                    p.Estado,
+                    p.FechaRegistro,
+                    p.FechaActualizacion,
+                    p.IdEmpleadoResponsable
+                FROM producto p
+                LEFT JOIN categoria c ON p.IdCategoria = c.IdCategoria
+                LEFT JOIN marca m ON p.Marca = m.IdMarca
+                ORDER BY p.Nombre ASC";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -60,21 +63,24 @@ namespace FERRETERIA__Joel.Repositories
 
             const string query = @"
                 SELECT
-                    IdProducto,
-                    IdCategoria,
-                    Codigo,
-                    Nombre,
-                    Descripcion,
-                    Marca,
-                    UnidadMedida,
-                    PrecioVenta,
-                    Estado,
-                    FechaRegistro,
-                    FechaActualizacion,
-                    IdEmpleadoResponsable
-                FROM producto
-                WHERE Estado = 1
-                ORDER BY Nombre ASC";
+                    p.IdProducto,
+                    p.IdCategoria,
+                    p.Codigo,
+                    p.Nombre,
+                    p.Descripcion,
+                    p.Marca AS IdMarca,
+                    m.Nombre AS NombreMarca,
+                    p.UnidadMedida,
+                    p.PrecioVenta,
+                    p.Estado,
+                    p.FechaRegistro,
+                    p.FechaActualizacion,
+                    p.IdEmpleadoResponsable
+                FROM producto p
+                LEFT JOIN categoria c ON p.IdCategoria = c.IdCategoria
+                LEFT JOIN marca m ON p.Marca = m.IdMarca
+                WHERE p.Estado = 1
+                ORDER BY p.Nombre ASC";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -100,20 +106,24 @@ namespace FERRETERIA__Joel.Repositories
         {
             const string query = @"
                 SELECT
-                    IdProducto,
-                    IdCategoria,
-                    Codigo,
-                    Nombre,
-                    Descripcion,
-                    Marca,
-                    UnidadMedida,
-                    PrecioVenta,
-                    Estado,
-                    FechaRegistro,
-                    FechaActualizacion,
-                    IdEmpleadoResponsable
-                FROM producto
-                WHERE IdProducto = @idProducto";
+                    p.IdProducto,
+                    p.IdCategoria,
+                    p.Codigo,
+                    p.Nombre,
+                    p.Descripcion,
+                    p.Marca AS IdMarca,
+                    m.Nombre AS NombreMarca,
+                    p.UnidadMedida,
+                    p.PrecioVenta,
+                    p.Estado,
+                    p.FechaRegistro,
+                    p.FechaActualizacion,
+                    p.IdEmpleadoResponsable,
+                    c.Nombre AS NombreCategoria
+                FROM producto p
+                LEFT JOIN categoria c ON p.IdCategoria = c.IdCategoria
+                LEFT JOIN marca m ON p.Marca = m.IdMarca
+                WHERE p.IdProducto = @idProducto";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -188,10 +198,9 @@ namespace FERRETERIA__Joel.Repositories
             command.Parameters.AddWithValue(
                 "@descripcion",
                 (object?)producto.Descripcion ?? DBNull.Value);
-
             command.Parameters.AddWithValue(
                 "@marca",
-                (object?)producto.Marca ?? DBNull.Value);
+                producto.IdMarca);
 
             command.Parameters.AddWithValue(
                 "@unidadMedida",
@@ -254,10 +263,9 @@ namespace FERRETERIA__Joel.Repositories
             command.Parameters.AddWithValue(
                 "@descripcion",
                 (object?)producto.Descripcion ?? DBNull.Value);
-
             command.Parameters.AddWithValue(
                 "@marca",
-                (object?)producto.Marca ?? DBNull.Value);
+                producto.IdMarca);
 
             command.Parameters.AddWithValue(
                 "@unidadMedida",
@@ -347,10 +355,15 @@ namespace FERRETERIA__Joel.Repositories
                     ? null
                     : reader["Descripcion"].ToString(),
 
-                Marca =
-                    reader["Marca"] == DBNull.Value
-                    ? null
-                    : reader["Marca"].ToString(),
+                IdMarca =
+                    reader["IdMarca"] == DBNull.Value
+                        ? 1
+                        : reader.GetInt32("IdMarca"),
+
+                NombreMarca =
+                    reader["NombreMarca"] == DBNull.Value
+                        ? null
+                        : reader["NombreMarca"].ToString(),
 
                 UnidadMedida =
                     reader["UnidadMedida"].ToString() ?? "",
@@ -374,5 +387,4 @@ namespace FERRETERIA__Joel.Repositories
             };
         }
     }
-
 }
