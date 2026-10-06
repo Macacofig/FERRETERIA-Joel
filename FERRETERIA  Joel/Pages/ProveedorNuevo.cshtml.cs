@@ -1,7 +1,6 @@
-using FERRETERIA__Joel.Factories;
-using FERRETERIA__Joel.Models;
-using FERRETERIA__Joel.Repositories;
-using FERRETERIA__Joel.Validaciones;
+using FERRETERIA__Joel.Aplicacion.Servicios;
+using FERRETERIA__Joel.Dominio.Entidades;
+using FERRETERIA__Joel.Dominio.Validaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.RegularExpressions;
@@ -10,8 +9,8 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorNuevoModel : PageModel
     {
-        private readonly IRepository<Proveedor> _proveedorRepository;
-        private readonly IRepository<Empleado> _empleadoRepository;
+        private readonly ServicioProveedor _servicio;
+        private readonly ServicioEmpleado _servicioEmpleado;
         private readonly ILogger<ProveedorNuevoModel> _logger;
 
         private readonly ProveedorValidaciones _validacion = new();
@@ -24,12 +23,12 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorNuevoModel(
-            RepositoryCreator<IRepository<Proveedor>> proveedorRepositoryCreator,
-            RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
+            ServicioProveedor servicio,
+            ServicioEmpleado servicioEmpleado,
             ILogger<ProveedorNuevoModel> logger)
         {
-            _proveedorRepository = proveedorRepositoryCreator.CreateRepository();
-            _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
+            _servicio = servicio;
+            _servicioEmpleado = servicioEmpleado;
             _logger = logger;
         }
         public void OnGet()
@@ -49,7 +48,7 @@ namespace FERRETERIA__Joel.Pages
 
             try
             {
-                _proveedorRepository.Insertar(Proveedor);
+                _servicio.Insertar(Proveedor);
             }
             catch (Exception ex)
             {
@@ -148,7 +147,7 @@ namespace FERRETERIA__Joel.Pages
         }
         private void CargarEmpleados()
         {
-            Empleados = _empleadoRepository.ObtenerTodos();
+            Empleados = _servicioEmpleado.ObtenerTodos();
         }
     }
 }

@@ -1,7 +1,6 @@
-using FERRETERIA__Joel.Factories;
-using FERRETERIA__Joel.Models;
-using FERRETERIA__Joel.Repositories;
-using FERRETERIA__Joel.Validaciones;
+using FERRETERIA__Joel.Aplicacion.Servicios;
+using FERRETERIA__Joel.Dominio.Entidades;
+using FERRETERIA__Joel.Dominio.Validaciones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
@@ -12,11 +11,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoNuevoModel : PageModel
     {
-        private readonly IRepository<Producto> _productoRepository;
-        private readonly IModificacionRepository<Producto> _productoModificacionRepository;
-        private readonly IRepository<Categoria> _categoriaRepository;
-        private readonly IRepository<Empleado> _empleadoRepository;
-        private readonly IRepository<HistoricoPrecio> _historicoPrecioRepository;
+        private readonly ServicioProducto _servicio;
+        private readonly ServicioCategoria _servicioCategoria;
+        private readonly ServicioEmpleado _servicioEmpleado;
         private readonly ILogger<ProductoNuevoModel> _logger;
 
         private readonly ProductoValidaciones _validacion = new();
@@ -33,32 +30,27 @@ namespace FERRETERIA__Joel.Pages
             { "Caja", "Kilogramo", "Litro", "Metro", "Par", "Unidad" };
 
         public ProductoNuevoModel(
-        RepositoryCreator<IRepository<Producto>> productoRepositoryCreator,
-            IModificacionRepository<Producto> modificacionRepository,
-        RepositoryCreator<IRepository<Categoria>> categoriaRepositoryCreator,
-        RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
-        RepositoryCreator<IRepository<HistoricoPrecio>> historicoPrecioRepositoryCreator,
-        ILogger<ProductoNuevoModel> logger)
+            ServicioProducto servicio,
+            ServicioCategoria servicioCategoria,
+            ServicioEmpleado servicioEmpleado,
+            ILogger<ProductoNuevoModel> logger)
         {
-            _productoRepository = productoRepositoryCreator.CreateRepository();
-            _productoModificacionRepository = modificacionRepository;
-            _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
-            _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
-            _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
+            _servicio = servicio;
+            _servicioCategoria = servicioCategoria;
+            _servicioEmpleado = servicioEmpleado;
             _logger = logger;
         }
 
         public void OnGet()
         {
-            Producto.Codigo =
-                $"PROD-{_productoModificacionRepository.Count() + 1:D3}";
+            Producto.Codigo = _servicio.SiguienteCodigo();
 
             CargarCatalogos();
         }
 
         public IActionResult OnPost()
         {
-            Producto.Codigo = $"PROD-{_productoModificacionRepository.Count() + 1:D3}";
+            Producto.Codigo = _servicio.SiguienteCodigo();
             NormalizarPrecio();
             NormalizarDatos();
             Validar();
@@ -192,7 +184,7 @@ namespace FERRETERIA__Joel.Pages
                     nameof(Producto.IdCategoria),
                     "Debe seleccionar una categoría.");
             }
-            else if (!_categoriaRepository
+            else if (!_servicioCategoria
                 .ObtenerActivas()
                 .Any(c => c.IdCategoria == Producto.IdCategoria))
             {
@@ -218,26 +210,15 @@ namespace FERRETERIA__Joel.Pages
         private void CargarCatalogos()
         {
             Categorias =
-                _categoriaRepository.ObtenerActivas();
+                _servicioCategoria.ObtenerActivas();
 
             Empleados =
-                _empleadoRepository.ObtenerTodos();
+                _servicioEmpleado.ObtenerTodos();
         }
 
         private void Insertar()
         {
-            int idProducto =
-                _productoRepository.Insertar(Producto);
-
-            HistoricoPrecio historicoPrecio = new()
-            {
-                IdProducto = idProducto,
-                Precio = Producto.PrecioVenta,
-                MotivoCambio = "Precio inicial",
-                IdEmpleadoResponsable = Producto.IdEmpleadoResponsable
-            };
-
-            _historicoPrecioRepository.Insertar(historicoPrecio);
+            _servicio.Crear(Producto);
         }
     }
 }
