@@ -14,11 +14,12 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoEditarModel : PageModel
     {
-        private readonly ICRUD<Producto> _productoRepository;
-        private readonly ICRUD<Categoria> _categoriaRepository;
-        private readonly ICRUD<Empleado> _empleadoRepository;
-        private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
-        private readonly ICRUD<Marca> _marcaRepository;
+        private readonly IRepository<Producto> _productoRepository;
+        private readonly IModificacionRepository<Producto> _productoModificacionRepository;
+        private readonly IRepository<Categoria> _categoriaRepository;
+        private readonly IRepository<Empleado> _empleadoRepository;
+        private readonly IRepository<HistoricoPrecio> _historicoPrecioRepository;
+        private readonly MySqlHistoricoPrecioRepository _historicoPrecioEspecial;
         private readonly ILogger<ProductoEditarModel> _logger;
 
         private readonly ProductoValidaciones _validacion = new();
@@ -33,20 +34,20 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProductoEditarModel(
-            RepositoryCreator<Producto> productoRepositoryCreator,
-            RepositoryCreator<Categoria> categoriaRepositoryCreator,
-            RepositoryCreator<Empleado> empleadoRepositoryCreator,
-            RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
-            RepositoryCreator<Marca> marcaRepositoryCreator,
+            RepositoryCreator<IRepository<Producto>> productoRepositoryCreator,
+            IModificacionRepository<Producto> modificacionRepository,
+            RepositoryCreator<IRepository<Categoria>> categoriaRepositoryCreator,
+            RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
+            RepositoryCreator<IRepository<HistoricoPrecio>> historicoPrecioRepositoryCreator,
+            MySqlHistoricoPrecioRepository historicoPrecioRepository,
             ILogger<ProductoEditarModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();
+            _productoModificacionRepository = modificacionRepository;
             _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
-            _historicoPrecioRepository =
-                (MySqlHistoricoPrecioRepository)historicoPrecioRepositoryCreator
-                    .CreateRepository();
-            _marcaRepository = marcaRepositoryCreator.CreateRepository();
+            _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
+            _historicoPrecioEspecial = historicoPrecioRepository;
             _logger = logger;
         }
 
@@ -272,10 +273,10 @@ namespace FERRETERIA__Joel.Pages
         private void Actualizar()
         {
             HistoricoPrecio? precioVigente =
-                _historicoPrecioRepository.ObtenerPrecioVigente(
+                _historicoPrecioEspecial.ObtenerPrecioVigente(
                     Producto.IdProducto);
 
-            _productoRepository.Actualizar(Producto);
+            _productoModificacionRepository.Actualizar(Producto);
 
             bool cambioPrecio =
                 precioVigente is null ||
@@ -285,7 +286,7 @@ namespace FERRETERIA__Joel.Pages
             {
                 if (precioVigente is not null)
                 {
-                    _historicoPrecioRepository.CerrarPrecioVigente(
+                    _historicoPrecioEspecial.CerrarPrecioVigente(
                         Producto.IdProducto);
                 }
 

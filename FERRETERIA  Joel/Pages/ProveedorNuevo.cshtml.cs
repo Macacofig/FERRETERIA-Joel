@@ -10,8 +10,8 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProveedorNuevoModel : PageModel
     {
-        private readonly ICRUD<Proveedor> _proveedorRepository;
-        private readonly ICRUD<Empleado> _empleadoRepository;
+        private readonly IRepository<Proveedor> _proveedorRepository;
+        private readonly IRepository<Empleado> _empleadoRepository;
         private readonly ILogger<ProveedorNuevoModel> _logger;
 
         private readonly ProveedorValidaciones _validacion = new();
@@ -24,8 +24,8 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public ProveedorNuevoModel(
-            RepositoryCreator<Proveedor> proveedorRepositoryCreator,
-            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            RepositoryCreator<IRepository<Proveedor>> proveedorRepositoryCreator,
+            RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
             ILogger<ProveedorNuevoModel> logger)
         {
             _proveedorRepository = proveedorRepositoryCreator.CreateRepository();

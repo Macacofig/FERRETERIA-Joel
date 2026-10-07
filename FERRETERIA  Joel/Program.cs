@@ -16,12 +16,16 @@ UrlProtector.Inicializar(
 builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
 
 
-builder.Services.AddScoped<RepositoryCreator<Producto>, ProductoRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<Categoria>, CategoriaRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<Proveedor>, ProveedorRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<Empleado>, EmpleadoRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<HistoricoPrecio>, HistoricoPrecioRepositoryCreator>();
-builder.Services.AddScoped<RepositoryCreator<Marca>, MarcaRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<IRepository<Producto>>, ProductoRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<IRepository<Categoria>>, CategoriaRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<IRepository<Proveedor>>, ProveedorRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<IRepository<Empleado>>, EmpleadoRepositoryCreator>();
+builder.Services.AddScoped<RepositoryCreator<IRepository<HistoricoPrecio>>, HistoricoPrecioRepositoryCreator>();
+builder.Services.AddScoped<IModificacionRepository<Producto>, MySqlProductoRepository>();
+builder.Services.AddScoped<IModificacionRepository<Categoria>, MySqlCategoriaRepository>();
+builder.Services.AddScoped<IModificacionRepository<Proveedor>, MySqlProveedorRepository>();
+builder.Services.AddScoped<IModificacionRepository<Empleado>, MySqlEmpleadoRepository>();
+builder.Services.AddScoped<MySqlHistoricoPrecioRepository>();
 
 var app = builder.Build();
 

@@ -9,8 +9,8 @@ namespace FERRETERIA__Joel.Pages
 {
     public class ProductoHistoricoPrecioModel : PageModel
     {
-        private readonly ICRUD<Producto> _productoRepository;
-        private readonly MySqlHistoricoPrecioRepository _historicoPrecioRepository;
+        private readonly IRepository<Producto> _productoRepository;
+        private readonly MySqlHistoricoPrecioRepository _historicoPrecioEspecial;
         private readonly ILogger<ProductoHistoricoPrecioModel> _logger;
 
         public List<HistoricoPrecio> Historicos { get; set; } = new();
@@ -18,14 +18,13 @@ namespace FERRETERIA__Joel.Pages
         public string NombreProducto { get; set; } = string.Empty;
 
         public ProductoHistoricoPrecioModel(
-            RepositoryCreator<Producto> productoRepositoryCreator,
-            RepositoryCreator<HistoricoPrecio> historicoPrecioRepositoryCreator,
+            RepositoryCreator<IRepository<Producto>> productoRepositoryCreator,
+            RepositoryCreator<IRepository<HistoricoPrecio>> historicoPrecioRepositoryCreator,
+            MySqlHistoricoPrecioRepository historicoPrecioRepository,
             ILogger<ProductoHistoricoPrecioModel> logger)
         {
             _productoRepository = productoRepositoryCreator.CreateRepository();
-            _historicoPrecioRepository =
-                (MySqlHistoricoPrecioRepository)historicoPrecioRepositoryCreator
-                    .CreateRepository();
+            _historicoPrecioEspecial = historicoPrecioRepository;
             _logger = logger;
         }
 
@@ -56,7 +55,7 @@ namespace FERRETERIA__Joel.Pages
             try
             {
                 Historicos =
-                    _historicoPrecioRepository.ObtenerPorProducto(producto.IdProducto);
+                    _historicoPrecioEspecial.ObtenerPorProducto(producto.IdProducto);
             }
             catch (Exception ex)
             {

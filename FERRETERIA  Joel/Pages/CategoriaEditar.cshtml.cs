@@ -12,8 +12,9 @@ namespace FERRETERIA__Joel.Pages
 {
     public class CategoriaEditarModel : PageModel
     {
-        private readonly ICRUD<Categoria> _repositorio;
-        private readonly ICRUD<Empleado> _empleadoRepository;
+        private readonly IRepository<Categoria> _repositorio;
+        private readonly IModificacionRepository<Categoria> _modificacionRepository;
+        private readonly IRepository<Empleado> _empleadoRepository;
         private readonly ILogger<CategoriaEditarModel> _logger;
         private readonly CategoriaValidaciones _validador = new();
 
@@ -25,11 +26,13 @@ namespace FERRETERIA__Joel.Pages
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
 
         public CategoriaEditarModel(
-            RepositoryCreator<Categoria> categoriaRepositoryCreator,
-            RepositoryCreator<Empleado> empleadoRepositoryCreator,
+            RepositoryCreator<IRepository<Categoria>> categoriaRepositoryCreator,
+            IModificacionRepository<Categoria> modificacionRepository,
+            RepositoryCreator<IRepository<Empleado>> empleadoRepositoryCreator,
             ILogger<CategoriaEditarModel> logger)
         {
             _repositorio = categoriaRepositoryCreator.CreateRepository();
+            _modificacionRepository = modificacionRepository;
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _logger = logger;
         }
@@ -79,7 +82,7 @@ namespace FERRETERIA__Joel.Pages
 
             try
             {
-                _repositorio.Actualizar(CategoriaEdit);
+                _modificacionRepository.Actualizar(CategoriaEdit);
                 TempData["Mensaje"] = "Categoría actualizada con éxito.";
                 return RedirectToPage("Categorias");
             }

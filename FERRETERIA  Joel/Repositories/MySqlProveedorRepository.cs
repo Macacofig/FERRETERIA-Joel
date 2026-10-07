@@ -1,10 +1,10 @@
-﻿using FERRETERIA__Joel.Factories;
+using FERRETERIA__Joel.Factories;
 using FERRETERIA__Joel.Models;
 using MySql.Data.MySqlClient;
 
 namespace FERRETERIA__Joel.Repositories
 {
-    public class MySqlProveedorRepository : ICRUD<Proveedor>
+    public class MySqlProveedorRepository : IRepository<Proveedor>, IModificacionRepository<Proveedor>
     {
         private readonly IDbConnectionFactory _connectionFactory;
 
