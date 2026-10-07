@@ -44,11 +44,14 @@ builder.Services.AddScoped<MySqlHistoricoPrecioRepository>();
 builder.Services.AddScoped<IHistoricoPrecioRepository>(provider =>
     provider.GetRequiredService<MySqlHistoricoPrecioRepository>());
 
+builder.Services.AddScoped<IMarcaRepository, MySqlMarcaRepository>();
+
 builder.Services.AddScoped<ServicioCategoria>();
 builder.Services.AddScoped<ServicioProducto>();
 builder.Services.AddScoped<ServicioProveedor>();
 builder.Services.AddScoped<ServicioEmpleado>();
 builder.Services.AddScoped<ServicioHistoricoPrecio>();
+builder.Services.AddScoped<ServicioMarca>();
 
 var app = builder.Build();
 

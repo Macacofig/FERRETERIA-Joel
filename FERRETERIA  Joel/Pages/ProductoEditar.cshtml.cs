@@ -15,6 +15,7 @@ namespace FERRETERIA__Joel.Pages
         private readonly ServicioProducto _servicio;
         private readonly ServicioCategoria _servicioCategoria;
         private readonly ServicioEmpleado _servicioEmpleado;
+        private readonly ServicioMarca _servicioMarca;
         private readonly ILogger<ProductoEditarModel> _logger;
 
         private readonly ProductoValidaciones _validacion = new();
@@ -23,6 +24,7 @@ namespace FERRETERIA__Joel.Pages
         public Producto Producto { get; set; } = new();
 
         public List<Categoria> Categorias { get; set; } = new();
+        public List<Marca> Marcas { get; set; } = new();
         public List<Empleado> Empleados { get; set; } = new();
         public List<string> Errores { get; set; } = new();
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
@@ -31,11 +33,13 @@ namespace FERRETERIA__Joel.Pages
             ServicioProducto servicio,
             ServicioCategoria servicioCategoria,
             ServicioEmpleado servicioEmpleado,
+            ServicioMarca servicioMarca,
             ILogger<ProductoEditarModel> logger)
         {
             _servicio = servicio;
             _servicioCategoria = servicioCategoria;
             _servicioEmpleado = servicioEmpleado;
+            _servicioMarca = servicioMarca;
             _logger = logger;
         }
 
@@ -132,11 +136,6 @@ namespace FERRETERIA__Joel.Pages
                     ? null
                     : NormalizarTexto(Producto.Descripcion);
 
-            Producto.Marca =
-                string.IsNullOrWhiteSpace(Producto.Marca)
-                    ? null
-                    : NormalizarTexto(Producto.Marca);
-
             Producto.UnidadMedida =
                 NormalizarTexto(Producto.UnidadMedida);
 
@@ -154,11 +153,19 @@ namespace FERRETERIA__Joel.Pages
                     "El nombre es obligatorio, debe tener máximo 150 caracteres y solo admite letras y espacios (sin números ni caracteres especiales).");
             }
 
-            if (!_validacion.EsMarcaValida(Producto.Marca))
+            if (!_validacion.EsMarcaValida(Producto.IdMarca))
             {
                 AgregarErrorCampo(
-                    nameof(Producto.Marca),
-                    "La marca es obligatoria, debe tener máximo 100 caracteres y solo admite letras y espacios (sin números ni caracteres especiales).");
+                    nameof(Producto.IdMarca),
+                    "Debe seleccionar una marca.");
+            }
+            else if (!_servicioMarca
+                .ObtenerActivas()
+                .Any(m => m.IdMarca == Producto.IdMarca))
+            {
+                AgregarErrorCampo(
+                    nameof(Producto.IdMarca),
+                    "La marca seleccionada no existe o está inactiva.");
             }
 
             if (!_validacion.EsDescripcionValida(Producto.Descripcion))
@@ -234,6 +241,9 @@ namespace FERRETERIA__Joel.Pages
         {
             Categorias =
                 _servicioCategoria.ObtenerActivas();
+
+            Marcas =
+                _servicioMarca.ObtenerActivas();
 
             Empleados =
                 _servicioEmpleado.ObtenerTodos();

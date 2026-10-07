@@ -23,11 +23,9 @@ namespace FERRETERIA__Joel.Dominio.Validaciones
                 || descripcion.Trim().Length <= ConfiguracionProducto.DescripcionMaxLength;
         }
 
-        public bool EsMarcaValida(string? marca)
+        public bool EsMarcaValida(int idMarca)
         {
-            return ValidacionesTexto.EsNombreValido(
-                marca,
-                ConfiguracionProducto.MarcaMaxLength);
+            return idMarca >= ConfiguracionProducto.MarcaMinima;
         }
 
         public bool EsUnidadMedidaValida(string? unidadMedida)

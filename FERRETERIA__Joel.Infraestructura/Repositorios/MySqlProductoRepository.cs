@@ -21,20 +21,22 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
 
             const string query = @"
                 SELECT
-                    IdProducto,
-                    IdCategoria,
-                    Codigo,
-                    Nombre,
-                    Descripcion,
-                    Marca,
-                    UnidadMedida,
-                    PrecioVenta,
-                    Estado,
-                    FechaRegistro,
-                    FechaActualizacion,
-                    IdEmpleadoResponsable
-                FROM producto
-                ORDER BY Nombre ASC";
+                    p.IdProducto,
+                    p.IdCategoria,
+                    p.Codigo,
+                    p.Nombre,
+                    p.Descripcion,
+                    p.Marca AS IdMarca,
+                    m.Nombre AS NombreMarca,
+                    p.UnidadMedida,
+                    p.PrecioVenta,
+                    p.Estado,
+                    p.FechaRegistro,
+                    p.FechaActualizacion,
+                    p.IdEmpleadoResponsable
+                FROM producto p
+                LEFT JOIN marca m ON m.IdMarca = p.Marca
+                ORDER BY p.Nombre ASC";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -61,21 +63,23 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
 
             const string query = @"
                 SELECT
-                    IdProducto,
-                    IdCategoria,
-                    Codigo,
-                    Nombre,
-                    Descripcion,
-                    Marca,
-                    UnidadMedida,
-                    PrecioVenta,
-                    Estado,
-                    FechaRegistro,
-                    FechaActualizacion,
-                    IdEmpleadoResponsable
-                FROM producto
-                WHERE Estado = 1
-                ORDER BY Nombre ASC";
+                    p.IdProducto,
+                    p.IdCategoria,
+                    p.Codigo,
+                    p.Nombre,
+                    p.Descripcion,
+                    p.Marca AS IdMarca,
+                    m.Nombre AS NombreMarca,
+                    p.UnidadMedida,
+                    p.PrecioVenta,
+                    p.Estado,
+                    p.FechaRegistro,
+                    p.FechaActualizacion,
+                    p.IdEmpleadoResponsable
+                FROM producto p
+                LEFT JOIN marca m ON m.IdMarca = p.Marca
+                WHERE p.Estado = 1
+                ORDER BY p.Nombre ASC";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -101,20 +105,22 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
         {
             const string query = @"
                 SELECT
-                    IdProducto,
-                    IdCategoria,
-                    Codigo,
-                    Nombre,
-                    Descripcion,
-                    Marca,
-                    UnidadMedida,
-                    PrecioVenta,
-                    Estado,
-                    FechaRegistro,
-                    FechaActualizacion,
-                    IdEmpleadoResponsable
-                FROM producto
-                WHERE IdProducto = @idProducto";
+                    p.IdProducto,
+                    p.IdCategoria,
+                    p.Codigo,
+                    p.Nombre,
+                    p.Descripcion,
+                    p.Marca AS IdMarca,
+                    m.Nombre AS NombreMarca,
+                    p.UnidadMedida,
+                    p.PrecioVenta,
+                    p.Estado,
+                    p.FechaRegistro,
+                    p.FechaActualizacion,
+                    p.IdEmpleadoResponsable
+                FROM producto p
+                LEFT JOIN marca m ON m.IdMarca = p.Marca
+                WHERE p.IdProducto = @idProducto";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -161,7 +167,7 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                     @codigo,
                     @nombre,
                     @descripcion,
-                    @marca,
+                    @idMarca,
                     @unidadMedida,
                     @precioVenta,
                     1,
@@ -191,8 +197,8 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                 (object?)producto.Descripcion ?? DBNull.Value);
 
             command.Parameters.AddWithValue(
-                "@marca",
-                (object?)producto.Marca ?? DBNull.Value);
+                "@idMarca",
+                producto.IdMarca);
 
             command.Parameters.AddWithValue(
                 "@unidadMedida",
@@ -222,7 +228,7 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                     Codigo = @codigo,
                     Nombre = @nombre,
                     Descripcion = @descripcion,
-                    Marca = @marca,
+                    Marca = @idMarca,
                     UnidadMedida = @unidadMedida,
                     PrecioVenta = @precioVenta,
                     IdEmpleadoResponsable = @idEmpleadoResponsable,
@@ -257,8 +263,8 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                 (object?)producto.Descripcion ?? DBNull.Value);
 
             command.Parameters.AddWithValue(
-                "@marca",
-                (object?)producto.Marca ?? DBNull.Value);
+                "@idMarca",
+                producto.IdMarca);
 
             command.Parameters.AddWithValue(
                 "@unidadMedida",
@@ -337,6 +343,9 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                 IdCategoria =
                     reader.GetInt32("IdCategoria"),
 
+                IdMarca =
+                    reader.GetInt32("IdMarca"),
+
                 Codigo =
                     reader["Codigo"].ToString() ?? "",
 
@@ -348,10 +357,10 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                     ? null
                     : reader["Descripcion"].ToString(),
 
-                Marca =
-                    reader["Marca"] == DBNull.Value
+                NombreMarca =
+                    reader["NombreMarca"] == DBNull.Value
                     ? null
-                    : reader["Marca"].ToString(),
+                    : reader["NombreMarca"].ToString(),
 
                 UnidadMedida =
                     reader["UnidadMedida"].ToString() ?? "",
