@@ -131,7 +131,7 @@ namespace FERRETERIA__Joel.Pages
             {
                 AgregarErrorCampo(
                     nameof(Categoria.Nombre),
-                    "El nombre es obligatorio y debe tener máximo 100 caracteres.");
+                    "El nombre es obligatorio, debe tener máximo 100 caracteres y solo admite letras y espacios (sin números ni caracteres especiales).");
             }
 
             if (!_validador.EsDescripcionValida(CategoriaEdit.Descripcion))

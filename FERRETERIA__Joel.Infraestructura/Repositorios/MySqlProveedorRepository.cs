@@ -33,7 +33,7 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                     FechaActualizacion,
                     IdEmpleadoResponsable
                 FROM proveedor
-                ORDER BY NombreComercial ASC";
+                ORDER BY RazonSocial ASC";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();
@@ -74,7 +74,7 @@ namespace FERRETERIA__Joel.Infraestructura.Repositorios
                     IdEmpleadoResponsable
                 FROM proveedor
                 WHERE Estado = 1
-                ORDER BY NombreComercial ASC";
+                ORDER BY RazonSocial ASC";
 
             using MySqlConnection connection =
                 _connectionFactory.CreateConnection();

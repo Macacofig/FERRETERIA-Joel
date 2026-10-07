@@ -13,8 +13,9 @@ namespace FERRETERIA__Joel.Dominio.Validaciones
 
         public bool EsNombreValido(string? nombre)
         {
-            return !string.IsNullOrWhiteSpace(nombre)
-                && nombre.Trim().Length <= ConfiguracionCategoria.NombreMaxLength;
+            return ValidacionesTexto.EsNombreValido(
+                nombre,
+                ConfiguracionCategoria.NombreMaxLength);
         }
 
         public bool EsDescripcionValida(string? descripcion)

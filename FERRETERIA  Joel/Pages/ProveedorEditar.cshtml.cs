@@ -133,28 +133,28 @@ namespace FERRETERIA__Joel.Pages
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.RazonSocial),
-                    "La razón social es obligatoria y debe tener máximo 150 caracteres.");
+                    "La razón social es obligatoria, debe tener máximo 150 caracteres y solo admite letras y espacios (sin números ni caracteres especiales).");
             }
 
             if (!_validacion.EsNombreComercialValido(Proveedor.NombreComercial))
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.NombreComercial),
-                    "El nombre comercial es obligatorio y debe tener máximo 150 caracteres.");
+                    "El nombre comercial es obligatorio, debe tener máximo 150 caracteres y solo admite letras y espacios (sin números ni caracteres especiales).");
             }
 
             if (!_validacion.EsNombreContactoValido(Proveedor.NombreContacto))
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.NombreContacto),
-                    "El nombre del contacto es obligatorio y debe tener máximo 150 caracteres.");
+                    "El nombre del contacto es obligatorio, debe tener máximo 150 caracteres y solo admite letras y espacios (sin números ni caracteres especiales).");
             }
 
             if (!_validacion.EsTelefonoValido(Proveedor.Telefono))
             {
                 AgregarErrorCampo(
                     nameof(Proveedor.Telefono),
-                    "El teléfono debe tener 8 dígitos y comenzar con 6 o 7.");
+                    "El teléfono debe tener 8 dígitos y comenzar con 5, 6, 7 u 8.");
             }
 
             if (!_validacion.EsCorreoValido(Proveedor.CorreoElectronico))

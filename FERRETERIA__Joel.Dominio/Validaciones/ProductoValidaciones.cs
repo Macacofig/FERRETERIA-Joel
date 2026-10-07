@@ -12,8 +12,9 @@ namespace FERRETERIA__Joel.Dominio.Validaciones
 
         public bool EsNombreValido(string nombre)
         {
-            return !string.IsNullOrWhiteSpace(nombre)
-                && nombre.Trim().Length <= ConfiguracionProducto.NombreMaxLength;
+            return ValidacionesTexto.EsNombreValido(
+                nombre,
+                ConfiguracionProducto.NombreMaxLength);
         }
 
         public bool EsDescripcionValida(string? descripcion)
@@ -24,8 +25,9 @@ namespace FERRETERIA__Joel.Dominio.Validaciones
 
         public bool EsMarcaValida(string? marca)
         {
-            return !string.IsNullOrWhiteSpace(marca)
-                && marca.Trim().Length <= ConfiguracionProducto.MarcaMaxLength;
+            return ValidacionesTexto.EsNombreValido(
+                marca,
+                ConfiguracionProducto.MarcaMaxLength);
         }
 
         public bool EsUnidadMedidaValida(string? unidadMedida)
