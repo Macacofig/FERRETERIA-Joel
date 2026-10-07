@@ -22,10 +22,9 @@ namespace FERRETERIA__Joel.Validaciones
                 || descripcion.Trim().Length <= ConfiguracionProducto.DescripcionMaxLength;
         }
 
-        public bool EsMarcaValida(string? marca)
+        public bool EsMarcaValida(int idMarca)
         {
-            return !string.IsNullOrWhiteSpace(marca)
-                && marca.Trim().Length <= ConfiguracionProducto.MarcaMaxLength;
+            return idMarca >= 1;
         }
 
         public bool EsUnidadMedidaValida(string? unidadMedida)

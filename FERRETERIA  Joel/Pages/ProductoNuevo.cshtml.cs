@@ -25,6 +25,7 @@ namespace FERRETERIA__Joel.Pages
         public Producto Producto { get; set; } = new();
 
         public List<Categoria> Categorias { get; set; } = new();
+        public List<Marca> Marcas { get; set; } = new();
         public List<Empleado> Empleados { get; set; } = new();
         public List<string> Errores { get; set; } = new();
         public Dictionary<string, string> ErroresCampo { get; set; } = new();
@@ -45,6 +46,7 @@ namespace FERRETERIA__Joel.Pages
             _categoriaRepository = categoriaRepositoryCreator.CreateRepository();
             _empleadoRepository = empleadoRepositoryCreator.CreateRepository();
             _historicoPrecioRepository = historicoPrecioRepositoryCreator.CreateRepository();
+            _marcaRepository = marcaRepositoryCreator.CreateRepository();
             _logger = logger;
         }
 
@@ -114,11 +116,6 @@ namespace FERRETERIA__Joel.Pages
                     ? null
                     : NormalizarTexto(Producto.Descripcion);
 
-            Producto.Marca =
-                string.IsNullOrWhiteSpace(Producto.Marca)
-                    ? null
-                    : NormalizarTexto(Producto.Marca);
-
             Producto.UnidadMedida =
                 NormalizarTexto(Producto.UnidadMedida);
         }
@@ -151,6 +148,13 @@ namespace FERRETERIA__Joel.Pages
                     "El código es obligatorio y debe tener máximo 30 caracteres.");
             }
 
+            if (!ValidacionCaracteres.EsValido(Producto.Codigo))
+            {
+                AgregarErrorCampo(
+                    nameof(Producto.Codigo),
+                    ValidacionCaracteres.MensajeError);
+            }
+
             if (!_validacion.EsNombreValido(Producto.Nombre))
             {
                 AgregarErrorCampo(
@@ -158,11 +162,18 @@ namespace FERRETERIA__Joel.Pages
                     "El nombre es obligatorio y debe tener máximo 150 caracteres.");
             }
 
-            if (!_validacion.EsMarcaValida(Producto.Marca))
+            if (!ValidacionCaracteres.EsValido(Producto.Nombre))
             {
                 AgregarErrorCampo(
-                    nameof(Producto.Marca),
-                    "La marca es obligatoria y debe tener máximo 100 caracteres.");
+                    nameof(Producto.Nombre),
+                    ValidacionCaracteres.MensajeError);
+            }
+
+            if (!_validacion.EsMarcaValida(Producto.IdMarca))
+            {
+                AgregarErrorCampo(
+                    nameof(Producto.IdMarca),
+                    "Debe seleccionar una marca.");
             }
 
             if (!_validacion.EsDescripcionValida(Producto.Descripcion))
@@ -170,6 +181,13 @@ namespace FERRETERIA__Joel.Pages
                 AgregarErrorCampo(
                     nameof(Producto.Descripcion),
                     "La descripción no debe superar los 500 caracteres.");
+            }
+
+            if (!ValidacionCaracteres.EsValido(Producto.Descripcion))
+            {
+                AgregarErrorCampo(
+                    nameof(Producto.Descripcion),
+                    ValidacionCaracteres.MensajeError);
             }
 
             if (!_validacion.EsUnidadMedidaValida(Producto.UnidadMedida))
@@ -219,6 +237,9 @@ namespace FERRETERIA__Joel.Pages
         {
             Categorias =
                 _categoriaRepository.ObtenerActivas();
+
+            Marcas =
+                _marcaRepository.ObtenerActivas();
 
             Empleados =
                 _empleadoRepository.ObtenerTodos();

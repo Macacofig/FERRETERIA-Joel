@@ -122,6 +122,48 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 // ---------------------------------------------------------
+// Modal de detalle de producto (Descripción y Unidad de
+// medida). Los botones con data-fj-detalle abren el modal
+// #fjDetalleModal y lo rellenan con sus atributos data-*.
+// ---------------------------------------------------------
+(function () {
+    var modal = document.getElementById('fjDetalleModal');
+    if (!modal) return;
+
+    var nombreEl = document.getElementById('fjDetalleNombre');
+    var descripcionEl = document.getElementById('fjDetalleDescripcion');
+    var unidadEl = document.getElementById('fjDetalleUnidad');
+
+    function cerrarDetalle() {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('fj-modal-open');
+    }
+
+    document.querySelectorAll('[data-fj-detalle]').forEach(function (boton) {
+        boton.addEventListener('click', function () {
+            if (nombreEl) nombreEl.textContent = boton.getAttribute('data-nombre') || '';
+            if (descripcionEl) descripcionEl.textContent = boton.getAttribute('data-descripcion') || 'Sin descripción';
+            if (unidadEl) unidadEl.textContent = boton.getAttribute('data-unidad') || 'Sin unidad';
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('fj-modal-open');
+        });
+    });
+
+    modal.addEventListener('click', function (event) {
+        if (event.target.classList.contains('fj-modal-backdrop') ||
+            event.target.closest('[data-fj-modal-close]')) {
+            cerrarDetalle();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') cerrarDetalle();
+    });
+})();
+
+// ---------------------------------------------------------
 // Normalización de textos de formularios: elimina espacios
 // redundantes al inicio/fin antes de enviar.
 // ---------------------------------------------------------

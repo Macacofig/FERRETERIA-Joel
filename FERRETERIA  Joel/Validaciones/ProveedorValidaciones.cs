@@ -6,7 +6,7 @@ namespace FERRETERIA__Joel.Validaciones
     public class ProveedorValidaciones
     {
         private static readonly Regex FormatoTelefono =
-            new(@"^[67][0-9]{7}$", RegexOptions.Compiled);
+            new(@"^[567][0-9]{7}$", RegexOptions.Compiled);
         private static readonly Regex FormatoCorreo =
             new(@"^(?=.{1,254}$)(?=.{6,64}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,24}$", RegexOptions.Compiled);
         public bool EsRazonSocialValida(string? razonSocial)
